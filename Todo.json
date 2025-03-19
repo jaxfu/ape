@@ -1,0 +1,12 @@
+{
+  "name": "Todo",
+  "description": "Todo object created by users",
+  "props": {
+    "message": {
+      "type": "text"
+    },
+    "due_date": {
+      "type": "int"
+    }
+  }
+}
