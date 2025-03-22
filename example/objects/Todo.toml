@@ -1,0 +1,34 @@
+name = "Todo"
+category = "Todos"
+description = "main todo object created by users"
+
+[props.user_id]
+type = "ref"
+target = "Users.Props.Username"
+
+[props.message]
+type = "text"
+min_length = 16
+max_length = 256
+regex = "as"
+alnum = true
+alpha = false
+num = true
+
+[props.rating]
+type = "int"
+max = 100
+
+[props.due_date]
+type = "uint"
+max = 1200
+
+[props.notifications]
+type = "text"
+array = true
+min_length = 16
+max_length = 128
+
+[props.ratio]
+type = "float"
+max = 12.2

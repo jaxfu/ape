@@ -1,0 +1,11 @@
+name = "Username"
+category = "Users"
+description = "alphanumeric unique user identifier"
+type = "text"
+min_length = 4
+max_length = 16
+array = true
+regex = "+w"
+alnum = true
+alpha = false
+num = false

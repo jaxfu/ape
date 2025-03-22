@@ -1,0 +1,7 @@
+.tmp/
+.air.toml
+build/
+ape.db
+.idea/
+test_data/
+build_and_run.sh

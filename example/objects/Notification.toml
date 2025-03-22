@@ -1,0 +1,23 @@
+name = "Notification"
+category = "System"
+description = "content for User notification messages"
+
+
+[props.test_ref]
+type = "ref"
+target = "Todos.objects.Todo.rating"
+
+[props.message]
+type = "text"
+min_length = 16
+max_length = 256
+regex = "/as/"
+alnum = true
+alpha = false
+num = true
+
+[props.created_at]
+type = "uint"
+
+[props.has_been_read]
+type = "bool"

@@ -1,64 +1,112 @@
 # `Props`
 
-Describes and gives a name to the shape of a field's
+Describes and gives a name to the shape of a field's value.
 
 ### **Structure:**
 
+- ...metadata
+- `type` [***required***]
+  - `"int"`
+  - `"uint"`
+  - `"float"`
+  - `"text"`
+  - `"bool"`
+  - `"blob"`
+  - `"map"`
+- `array` [optional | default=`false`]
+  - `true` | `false`
+- `opts` [optional | default=*type-specific*]
+  - ...type-specific fields
+
+### **Example:**
+
+TOML:
+
 ```toml
-[props.prop_name]
-type = "int|float|text|bool|blob"
-array = "true|false"
-description = "prop description"
-# ... type-specific
+name = "Username"
+category = "Users"
+description = "alphanumeric unique user identifier"
+type = "text"
+
+[opts]
+max_length = 16
+alnum = true
 ```
 
-These are the "type" fields that all props share:
+JSON:
 
-- `type` **[required]**
-
-  - `int`: integer
-  - `float`: floating point number
-  - `text`: utf-8 string
-  - `bool`: boolean
-  - `blob`: arbitrary chunk of binary data
-
-- `array` **[optional | default=false]**
-
-  - `true` or `false`
-  - declares if prop is an array
-  - if not given, will default to false
-
-- `description` **[optional]**
-
-  - short description of prop
+```json
+{
+  "category": "Users",
+  "description": "alphanumeric unique user identifier",
+  "name": "Username",
+  "type": "text",
+  "opts": {
+    "max_length": 16,
+    "alnum": true
+  }
+}
+```
 
 ---
 
-### **Child Props:**
+### _Types_:
 
-Props can declare child props to an indefinite depth like so:
+Types are used to describe the shape of the value of a `Prop`. These are
+the core types:
 
-```toml
-[props.prop_name.child_prop_name...]
-type = "int|float|text|bool|blob"
-array = "true|false"
-```
+- `int`: signed integer
+- `uint`: unsigned integer
+- `float`: floating point number
+- `text`: utf-8 string
+- `bool`: boolean
+- `blob`: arbitrary chunk of binary data
+- `map`: `key`:`value` structure with dynamic `keys` and `values`
 
 ---
 
-### **Arrays:**
+### _Opts_:
 
-To declare a prop as an array of the specified type, declare the field `array` as `true`. You can optionally add constraints when `array` is `true`:
+Only the core type needs to be specified, but the `opts` object allows for further specificity to be given. When generating code, the highest possible level of type specificity for the target language will be used.
 
-```toml
-[props.prop_name]
-type = "float"
+- `int`:
 
-# optional
-array = "true"
-array_min_length = "some_int"
-array_max_length = "some_int"
-```
+  - size: [`8` | `16` | `32` | `64`]
+  - min: int
+  - max: int
+
+- `uint`:
+
+  - size: [`8` | `16` | `32` | `64`]
+  - min: int
+  - max: int
+
+- `float`:
+
+  - precision: [`single` | `double`]
+  - size: [`8` | `16` | `32` | `64`]
+  - min: float
+  - max: float
+
+- `text`:
+
+  - min_chars: int
+  - max_chars: int
+  - regex: string
+  - alpha (only alphabetic): [`true` | `false`]
+  - alnum (only alphanumeric): [`true` | `false`]
+  - num (only numeric): [`true` | `false`]
+
+- `blob`:
+
+  - min_size (in bytes): int
+  - max_size (in bytes): int
+
+- ***
+
+### _Arrays_:
+
+The `array` field defines whether the prop's value should be an array of the type. It defaults to `false` if not specified.
 
 ---
 
@@ -72,3 +120,15 @@ array_max_length = "some_int"
 `@CATEGORY_NAME`.`Props`.`Prop_Name`
 
 - e.g. `@Main.Props.Date`, `@Users.Props.Username`
+
+---
+
+### **Child Props:**
+
+Props can declare child props to an indefinite depth like so:
+
+```toml
+[props.prop_name.child_prop_name...]
+type = "int|float|text|bool|blob"
+array = "true|false"
+```

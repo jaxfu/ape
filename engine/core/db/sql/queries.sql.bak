@@ -1,0 +1,106 @@
+-- name: GetComponentByComponentId :one
+SELECT *
+FROM components
+WHERE component_id = ?;
+
+-- name: InsertComponentMetadata :exec
+INSERT INTO components(component_id, display_id, name, category_id, description)
+VALUES (?, ?, ?, ?, ?);
+
+-- name: GetObjects :many
+SELECT *
+FROM components
+         NATURAL JOIN objects;
+
+-- name: InsertObject :exec
+INSERT INTO objects(component_id)
+VALUES (?);
+
+-- name: GetProps :many
+SELECT *
+FROM components
+         LEFT JOIN props ON props.component_id = components.component_id;
+
+-- name: GetPropsByParentId :many
+SELECT *
+FROM props
+         INNER JOIN components ON components.component_id = props.component_id
+WHERE props.parent_id = ?;
+
+-- name: InsertProp :exec
+INSERT INTO props(component_id, prop_type, parent_id)
+VALUES (?, ?, ?);
+
+-- name: GetCategoryByCategoryId :one
+SELECT *
+FROM categories
+WHERE category_id = ?;
+
+-- name: InsertCategory :exec
+INSERT INTO categories(category_id, name)
+VALUES (?, ?);
+
+-- name: GetRefByComponentId :one
+SELECT *
+FROM refs
+         INNER JOIN props ON props.component_id = refs.component_id
+WHERE refs.component_id = ?;
+
+-- name: GetRefsByTargetId :many
+SELECT *
+FROM refs
+WHERE LOWER(raw_target_id) = ?;
+
+-- name: InsertRef :exec
+INSERT INTO refs(component_id, raw_target_id, linked_target_id)
+VALUES (?, ?, ?);
+
+-- name: UpdateRef :exec
+UPDATE refs
+SET linked_target_id = ?
+WHERE component_id = ?;
+
+-- name: GetOptsIntByPropId :one
+SELECT *
+FROM opts_int
+WHERE parent_id = ?;
+
+-- name: InsertOptsInt :exec
+INSERT INTO opts_int(parent_id, array, size, min, max)
+VALUES (?, ?, ?, ?, ?);
+
+-- name: GetOptsUintByPropId :one
+SELECT *
+FROM opts_uint
+WHERE parent_id = ?;
+
+-- name: InsertOptsUint :exec
+INSERT INTO opts_uint(parent_id, array, size, min, max)
+VALUES (?, ?, ?, ?, ?);
+
+-- name: GetOptsFloatByPropId :one
+SELECT *
+FROM opts_float
+WHERE parent_id = ?;
+
+-- name: InsertOptsFloat :exec
+INSERT INTO opts_float(parent_id, array, precision, min, max)
+VALUES (?, ?, ?, ?, ?);
+
+-- name: GetOptsTextByPropId :one
+SELECT *
+FROM opts_text
+WHERE parent_id = ?;
+
+-- name: InsertOptsText :exec
+INSERT INTO opts_text(parent_id, array, min_length, max_length, regex, alnum, alpha, num)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+-- name: GetOptsBlobByPropId :one
+SELECT *
+FROM opts_blob
+WHERE parent_id = ?;
+
+-- name: InsertOptsBlob :exec
+INSERT INTO opts_blob(parent_id, array, min_size, max_size)
+VALUES (?, ?, ?, ?);

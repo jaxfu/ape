@@ -1,9 +1,0 @@
-name = "Todo"
-category = "main"
-description = "Todo object created by users"
-
-[props.message]
-type = "text"
-
-[props.due_date]
-type = "int"

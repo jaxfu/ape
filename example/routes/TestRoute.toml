@@ -1,0 +1,28 @@
+name = "Create"
+category = "Todos"
+description = "user submits new Todo"
+url = "/todos"
+method = "POST"
+
+[request.body.passkey]
+type = "text"
+min_length = 16
+max_length = 16
+
+[request.headers]
+Authorization = "BEARER auth_token"
+Content-Type = "application/json"
+
+[responses]
+
+[responses.success]
+status_code = 201
+[responses.success.body.todo_id]
+type = "ref"
+target = "Todos.Props.todo_id"
+
+[responses.failure]
+status_code = 400
+[responses.failure.body.error_message]
+type = "text"
+max_length = 128

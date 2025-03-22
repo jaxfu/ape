@@ -1,7 +1,5 @@
 # Ape: Simplifying API Design
 
-## created by: github.com/jaxfu
-
 <p align="center">
 	<img src="docs/ape.svg">
 </p>
@@ -41,31 +39,17 @@ These are the `4 core components` of **_Ape_**, ordered by increasing generality
 
 ### _Metadata_:
 
-All components contains the "metadata" fields in their top level, which are:
+All components contain the "metadata" fields in their top level, which are:
 
 - `name` [***required***]
   - alphanumeric identifier for the component
   - utf-8
   - must be case-insensitively unique among the same kind of component
     in the same category
-- `category` [optional | default="Main"]
+- `category` [optional | default=NULL]
   - top-level organization for components
 - `description` [optional | default=NULL]
-
-  - short utf-8 string describing the component
-
----
-
-### _Types_:
-
-Types are used to describe the shape of the value of a `Prop`. These are
-the core types:
-
-- `int`: integer
-- `float`: floating point number
-- `text`: utf-8 string
-- `bool`: boolean
-- `blob`: arbitrary chunk of binary data
+  - utf-8 string describing the component
 
 ---
 
@@ -78,6 +62,7 @@ Structure:
 - ...metadata
 - `type` [***required***]
   - `"int"`
+  - `"uint"`
   - `"float"`
   - `"text"`
   - `"bool"`
@@ -87,6 +72,8 @@ Structure:
   - `true` | `false`
 - `opts` [optional | default=*type-specific*]
   - ...type-specific fields
+
+Example:
 
 TOML:
 
@@ -105,27 +92,42 @@ JSON:
 
 ```json
 {
-	"category": "Users",
-	"description": "alphanumeric unique user identifier",
-	"name": "Username",
-	"type": "text",
-	"opts": {
-		"max_length": 16,
-		"alnum": true
-	}
+  "category": "Users",
+  "description": "alphanumeric unique user identifier",
+  "name": "Username",
+  "type": "text",
+  "opts": {
+    "max_length": 16,
+    "alnum": true
+  }
 }
 ```
 
 ---
 
+### _Types_:
+
+Types are used to describe the shape of the value of a `Prop`. These are
+the core types:
+
+- `int`: signed integer
+- `uint`: unsigned integer
+- `float`: floating point number
+- `text`: utf-8 string
+- `bool`: boolean
+- `blob`: arbitrary chunk of binary data
+- `map`: `key`:`value` structure with dynamic `keys` and `values`
+
+---
+
 ### 2. `Objects`:
 
-A piece of structured data consisting of a collection of `Props`. It consists of the metadata fields, and an object that contains the `Props` that make up the `Object`. `Props` on an `Object` can either have their type data defined directly, or they can reference existing `Props` to use their type data.
+A piece of structured data consisting of a collection of `Props`. It consists of the metadata fields, and an object that contains the `Props` that make up the `Object`. `Props` on an `Object` can either have their type data defined directly, or they can reference existing `Props` to copy their type data.
 
 Structure:
 
 - ...metadata
-- `props` [optional | default=NULL]
+- `Props` [optional | default=NULL]
 
 Example:
 
@@ -157,25 +159,25 @@ max_chars = 128
 
 ```json
 {
-	"name": "Todo",
-	"category": "Main",
-	"description": "Todo object created by users",
-	"props": {
-		"user_id": "@Users.Types.Username",
-		"message": {
-			"type": "text",
-			"max_chars": 256
-		},
-		"due_date": {
-			"type": "int",
-			"signed": false
-		},
-		"notifications": {
-			"type": "text",
-			"array": true,
-			"max_chars": 128
-		}
-	}
+  "name": "Todo",
+  "category": "Main",
+  "description": "Todo object created by users",
+  "props": {
+    "user_id": "@Users.Types.Username",
+    "message": {
+      "type": "text",
+      "max_chars": 256
+    },
+    "due_date": {
+      "type": "int",
+      "signed": false
+    },
+    "notifications": {
+      "type": "text",
+      "array": true,
+      "max_chars": 128
+    }
+  }
 }
 ```
 
@@ -202,14 +204,14 @@ Structure:
     - `status_code`
     - `props`
 
-Examples:
+Example:
 
 - TOML:
 
 ```toml
 name = "Create"
 category = "Todos"
-description = "user submits new todo"
+description = "user submits new Todo"
 
 [request]
 url = "/todos"
@@ -240,35 +242,35 @@ max_length = 128
 
 ```json
 {
-	"name": "Create",
-	"category": "Todos",
-	"description": "user submits new todo",
-	"request": {
-		"url": "/todos",
-		"method": "POST",
-		"headers": {
-			"Authorization": "BEARER auth_token",
-			"Content-Type": "application/json"
-		},
-		"props": "@Main.Objects.Todo"
-	},
-	"responses": {
-		"failure": {
-			"status_code": 400,
-			"props": {
-				"error_message": {
-					"max_length": 128,
-					"type": "text"
-				}
-			}
-		},
-		"success": {
-			"status_code": 201,
-			"props": {
-				"id": "@Todos.Props.todo_id"
-			}
-		}
-	}
+  "name": "Create",
+  "category": "Todos",
+  "description": "user submits new Todo",
+  "request": {
+    "url": "/todos",
+    "method": "POST",
+    "headers": {
+      "Authorization": "BEARER auth_token",
+      "Content-Type": "application/json"
+    },
+    "props": "@Main.Objects.Todo"
+  },
+  "responses": {
+    "failure": {
+      "status_code": 400,
+      "props": {
+        "error_message": {
+          "max_length": 128,
+          "type": "text"
+        }
+      }
+    },
+    "success": {
+      "status_code": 201,
+      "props": {
+        "id": "@Todos.Props.todo_id"
+      }
+    }
+  }
 }
 ```
 
