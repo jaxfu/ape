@@ -9,7 +9,7 @@ import (
 type DbInterface interface {
 	Conn() *sql.DB
 	InsertComponent(id string, content []byte) error
-	GetComponent(id string) (bool, string, error)
+	GetComponent(id string) (bool, []byte, error)
 }
 
 func NewDb(dbPath, initSqlPath string) (DbInterface, error) {

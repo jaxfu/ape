@@ -7,13 +7,13 @@ import (
 	"github.com/jaxfu/ape/engine/compiler/internal/assembler/internal/props/constraints"
 	"github.com/jaxfu/ape/engine/compiler/internal/assembler/internal/shared"
 	"github.com/jaxfu/ape/engine/compiler/internal/parser"
+	compShared "github.com/jaxfu/ape/engine/compiler/internal/shared"
 )
 
-func AssembleProp(parsedProp parser.ParsedProp) (components.Prop, error) {
+func AssembleProp(parsedProp parser.ParsedProp) (compShared.CompiledProp, error) {
 	if parsedProp.PropMetadata.PropType == "" {
-		return components.Prop{}, fmt.Errorf(
-			"no type given for prop %s",
-			parsedProp.ComponentMetadata.Name,
+		return compShared.CompiledProp{}, fmt.Errorf(
+			"no prop type given",
 		)
 	}
 
@@ -23,7 +23,7 @@ func AssembleProp(parsedProp parser.ParsedProp) (components.Prop, error) {
 		parsedProp.Context,
 	)
 	if err != nil {
-		return components.Prop{}, fmt.Errorf("Assembler.AssembleComponentMetadata: %+v", err)
+		return compShared.CompiledProp{}, fmt.Errorf("Assembler.AssembleComponentMetadata: %+v", err)
 	}
 
 	constraints, err := constraints.AssembleConstraints(
@@ -31,12 +31,12 @@ func AssembleProp(parsedProp parser.ParsedProp) (components.Prop, error) {
 		parsedProp.Constraints,
 	)
 	if err != nil {
-		return components.Prop{}, fmt.Errorf("Assembler.AssembleOpts: %+v", err)
+		return compShared.CompiledProp{}, fmt.Errorf("Assembler.AssembleOpts: %+v", err)
 	}
 
 	isArr := parsedProp.PropMetadata.IsArray != nil && *parsedProp.PropMetadata.IsArray
 
-	return components.Prop{
+	return compShared.CompiledProp{
 		ComponentMetadata: metadata,
 		PropMetadata: components.PropMetadata{
 			PropType: parsedProp.PropMetadata.PropType,

@@ -1,14 +1,11 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"path/filepath"
 
-	"github.com/jaxfu/ape/components"
 	"github.com/jaxfu/ape/engine/compiler"
-	"github.com/jaxfu/ape/engine/core/db"
 	"github.com/jaxfu/ape/engine/pkg/dev"
 	"github.com/jaxfu/ape/engine/pkg/extras"
 	"github.com/jaxfu/ape/engine/pkg/filehandler"
@@ -45,36 +42,50 @@ func main() {
 	if err != nil {
 		log.Fatalf("error compiling file %s: %+v", rawFile.Path(), err)
 	}
-	// dev.PrettyPrint(compiled.Routes[0])
+	route := compiled.Routes[0]
+	dev.PrettyPrint(route)
 
-	db, err := db.NewDb(DB_NAME, INIT_DB_SQL)
-	if err != nil {
-		log.Fatalf("error opening db at %s: %+v\n", DB_NAME, err)
-	}
-	defer db.Conn().Close()
+	// str := store.NewStore()
+	// if err := str.Components.Add(route); err != nil {
+	// 	log.Fatalf("Store.Add: %+v", err)
+	// }
+	//
+	// rte, err := store.Get[apeComponents.Route](
+	// 	str.Components,
+	// 	"Todos.routes.Create",
+	// )
+	// if err != nil {
+	// 	log.Fatalf("Store.Get: %+v", err)
+	// }
+	// dev.PrettyPrint(rte)
 
-	m, err := json.Marshal(compiled.Routes[0])
-	if err != nil {
-		log.Fatalf("json.Marshal: %+v", err)
-	}
-	if err := db.InsertComponent("test", m); err != nil {
-		log.Fatalf("db.InsertComponent: %+v", err)
-	}
-
-	ok, data, err := db.GetComponent("test")
-	if !ok {
-		log.Fatalf("no component with id %s found", "test")
-	}
-	if err != nil {
-		log.Fatalf("db.GetComponent: %+v", err)
-	}
-
-	rt := components.Route{}
-	if err := json.Unmarshal([]byte(data), &rt); err != nil {
-		log.Fatalf("json.Unmarshal: %+v", err)
-	}
-
-	dev.PrettyPrint(rt)
+	// db, err := db.NewDb(DB_NAME, INIT_DB_SQL)
+	// if err != nil {
+	// 	log.Fatalf("error opening db at %s: %+v\n", DB_NAME, err)
+	// }
+	// defer db.Conn().Close()
+	//
+	// m, err := json.Marshal(compiled.Routes[0])
+	// if err != nil {
+	// 	log.Fatalf("json.Marshal: %+v", err)
+	// }
+	// if err := db.InsertComponent("test", m); err != nil {
+	// 	log.Fatalf("db.InsertComponent: %+v", err)
+	// }
+	//
+	// ok, data, err := db.GetComponent("test")
+	// if !ok {
+	// 	log.Fatalf("no component with id %s found", "test")
+	// }
+	// if err != nil {
+	// 	log.Fatalf("db.GetComponent: %+v", err)
+	// }
+	//
+	// rt := components.Route{}
+	// if err := json.Unmarshal([]byte(data), &rt); err != nil {
+	// 	log.Fatalf("json.Unmarshal: %+v", err)
+	// }
+	// dev.PrettyPrint(rt.ComponentMetadata)
 
 	// clientDir, err := filepath.Abs(CLIENT_DIR)
 	// if err != nil {

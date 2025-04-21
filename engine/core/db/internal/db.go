@@ -35,7 +35,7 @@ func (db *Db) InsertComponent(id string, content []byte) error {
 		context.Background(),
 		generated.InsertComponentMetadataParams{
 			ComponentID: id,
-			Content:     string(content),
+			Content:     content,
 		},
 	); err != nil {
 		return err
@@ -44,13 +44,13 @@ func (db *Db) InsertComponent(id string, content []byte) error {
 	return nil
 }
 
-func (db *Db) GetComponent(id string) (bool, string, error) {
+func (db *Db) GetComponent(id string) (bool, []byte, error) {
 	content, err := db.Query.GetComponentByComponentId(context.Background(), id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return false, "", nil
+			return false, []byte{}, nil
 		}
-		return true, "", fmt.Errorf("Query.GetComponentByComponentId: %+v", err)
+		return true, []byte{}, fmt.Errorf("Query.GetComponentByComponentId: %+v", err)
 	}
 
 	return true, content, nil

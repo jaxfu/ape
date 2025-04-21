@@ -1,5 +1,6 @@
 ### Todo
 
+- change Compiler types
 - Linker
   - need to redesign Store to link properly
 - Routes

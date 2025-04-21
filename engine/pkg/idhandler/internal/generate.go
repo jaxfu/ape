@@ -13,6 +13,7 @@ func DefaultIdHandler() IdHandler {
 
 type IdHandler struct{}
 
+// TODO: return string
 func (idh IdHandler) Generate(params GenerateIdParams) (components.ComponentId, error) {
 	// if name required, need name
 	if _, ok := typesNameRequired[params.ComponentType]; ok {

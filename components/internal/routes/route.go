@@ -15,6 +15,10 @@ type Route struct {
 	Responses         ResponsesMap `json:"responses" toml:"responses"`
 }
 
+func (r Route) GetMetadata() shared.ComponentMetadata {
+	return r.ComponentMetadata
+}
+
 type (
 	Request         = request.Request
 	Response        = responses.Response

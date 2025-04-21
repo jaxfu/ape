@@ -1,8 +1,6 @@
 package objects
 
 import (
-	"encoding/json"
-
 	"github.com/jaxfu/ape/components/internal/props"
 	"github.com/jaxfu/ape/components/internal/shared"
 )
@@ -12,8 +10,6 @@ type Object struct {
 	Props             props.PropsMap `json:"props,omitempty" toml:"props,omitempty"`
 }
 
-func (obj *Object) String() string {
-	marshalled, _ := json.MarshalIndent(obj, "", "\t")
-
-	return string(marshalled)
+func (obj Object) GetMetadata() shared.ComponentMetadata {
+	return obj.ComponentMetadata
 }

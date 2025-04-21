@@ -11,6 +11,10 @@ type Prop struct {
 	Constraints       constraints.PropConstraints
 }
 
+func (p Prop) GetMetadata() shared.ComponentMetadata {
+	return p.ComponentMetadata
+}
+
 type PropsMap map[string]Prop
 
 type PropMetadata struct {
