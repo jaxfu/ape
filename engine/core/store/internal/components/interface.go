@@ -6,21 +6,14 @@ import (
 )
 
 type ComponentStore interface {
-	Add(Component) error
-	GetOne(string) (DefaultStoredComponent, error)
-	GetAll() map[string]any
+	Store(Component) error
+	Load(components.ComponentId) (Component, error)
+	Exists(components.ComponentId) bool
+	All() (components.AllComponents, error)
 }
-
-type (
-	Component              = internal.Component
-	DefaultStoredComponent = internal.StoredComponent
-)
 
 func NewComponentStore() ComponentStore {
 	return internal.NewComponentStore()
 }
 
-type StoredComponent interface {
-	Info() (string, components.ComponentType, []byte)
-	Bind(dest any) error
-}
+type Component = internal.Component

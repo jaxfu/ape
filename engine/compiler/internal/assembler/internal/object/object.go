@@ -18,7 +18,7 @@ func AssembleObject(parsedObj parser.ParsedObject) (shared.CompiledObject, error
 		return shared.CompiledObject{}, fmt.Errorf("shared.AssembleComponentMetadata: %+v", err)
 	}
 
-	propsMap := shared.CompiledProps{}
+	propsMap := map[string]shared.CompiledProp{}
 	for k, v := range parsedObj.Props {
 		v.Context.ParentId = &metadata.ComponentId
 

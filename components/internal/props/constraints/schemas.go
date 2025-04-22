@@ -8,7 +8,11 @@ type PropConstraints = any
 
 // Ref
 type PropConstraintsRef struct {
-	Reference refs.Reference `json:"target_id" toml:"target_id"`
+	Reference refs.ReferenceTag `json:"target_id" toml:"target_id"`
+}
+
+func (r PropConstraintsRef) Id() string {
+	return r.Reference
 }
 
 // Int

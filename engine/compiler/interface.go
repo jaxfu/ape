@@ -14,11 +14,13 @@ func NewCompiler() Compiler {
 }
 
 type (
-	CompiledComponents = shared.CompiledComponents
-	CompiledProp       = shared.CompiledProp
-	CompiledObject     = shared.CompiledObject
-	CompiledRoute      = shared.CompiledRoute
-	CompiledBody       = shared.CompiledBody
-	CompiledRequest    = shared.CompiledRequest
-	CompiledResponse   shared.CompiledResponse
+	CompiledComponents        = shared.CompiledComponents
+	CompiledComponentMetadata = shared.CompiledComponentMetadata
+	CompiledProp              = shared.CompiledProp
+	CompiledObject            = shared.CompiledObject
+	CompiledRoute             = shared.CompiledRoute
+	CompiledRouteMetadata     = shared.CompiledRouteMetadata
+	CompiledBody              = shared.CompiledBody
+	CompiledRequest           = shared.CompiledRequest
+	CompiledResponse          = shared.CompiledResponse
 )

@@ -16,8 +16,7 @@ func assembleRefConstraints(fields map[string]any) (components.PropConstraints, 
 		return nil, fmt.Errorf("ref missing target")
 	}
 
-	ref := components.NewReference(refStr)
 	return components.PropConstraintsRef{
-		Reference: ref,
+		Reference: refStr,
 	}, nil
 }

@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 
 	"github.com/jaxfu/ape/engine/compiler"
+	"github.com/jaxfu/ape/engine/core/linker"
+	"github.com/jaxfu/ape/engine/core/store"
 	"github.com/jaxfu/ape/engine/pkg/dev"
 	"github.com/jaxfu/ape/engine/pkg/extras"
 	"github.com/jaxfu/ape/engine/pkg/filehandler"
@@ -32,23 +34,29 @@ func main() {
 	// read file
 	filehandler := filehandler.NewFileHandler()
 	rawFile, err := filehandler.ReadFile(
-		fmt.Sprintf("%s/routes/CreateTodo.toml", rootDir),
+		fmt.Sprintf("%s/objects/Todo.toml", rootDir),
 	)
 	if err != nil {
 		log.Fatalf("FileHandler.ReadFile: %+v", err)
 	}
 
-	compiled, err := compiler.NewCompiler().File(rawFile.Path(), rawFile.Bytes())
+	compiled, err := compiler.NewCompiler().File(
+		rawFile.Path(),
+		rawFile.Bytes(),
+	)
 	if err != nil {
 		log.Fatalf("error compiling file %s: %+v", rawFile.Path(), err)
 	}
-	dev.PrettyPrint(compiled.Routes[0])
+	// dev.PrettyPrint(compiled)
 
-	// str := store.NewStore()
-	// if err := str.Components.Add(route); err != nil {
-	// 	log.Fatalf("Store.Add: %+v", err)
-	// }
-	//
+	str := store.NewStore()
+	lnkr := linker.NewLinker(str)
+	ac, err := lnkr.LinkAll(compiled)
+	if err != nil {
+		log.Fatalf("Linker.LinkAll: %+v", err)
+	}
+	dev.PrettyPrint(ac)
+
 	// rte, err := store.Get[apeComponents.Route](
 	// 	str.Components,
 	// 	"Todos.routes.Create",

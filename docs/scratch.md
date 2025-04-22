@@ -1,7 +1,7 @@
 ### Todo
 
 - Linker
-  - need to redesign Store to link properly
+  - add category linking
 - Routes
   - Store
 - OpenApi translator

@@ -3,8 +3,7 @@ package shared
 import "github.com/jaxfu/ape/components"
 
 type (
-	CompiledProps = map[string]CompiledProp
-	CompiledProp  struct {
+	CompiledProp struct {
 		ComponentMetadata CompiledComponentMetadata
 		PropMetadata      components.PropMetadata
 		Constraints       components.PropConstraints
@@ -13,14 +12,14 @@ type (
 
 type CompiledObject struct {
 	ComponentMetadata CompiledComponentMetadata
-	Props             CompiledProps
+	Props             map[string]CompiledProp
 }
 
 type CompiledBody struct {
 	ComponentMetadata CompiledComponentMetadata
 	BodyType          components.MessageBodyType
 	Ref               components.ReferenceTag
-	Props             CompiledProps
+	Props             map[string]CompiledProp
 }
 
 type CompiledRouteMetadata struct {

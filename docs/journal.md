@@ -1,6 +1,11 @@
-### 21.4.25
+### 23.4.25
+
+- made engine/core/store threadsafe
+
+### 22.4.25
 
 - Compiler redesign
+- Store.Categories
 
 ### 21.4.25
 

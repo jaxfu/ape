@@ -30,18 +30,25 @@ func (c Compiler) File(path string, bytes []byte) (shared.CompiledComponents, er
 	}
 
 	// parse
-	parsed, err := parser.NewParser().ParseRoute(scanned, true)
+	parsed, err := parser.NewParser().ParseObject(scanned, true)
 	if err != nil {
 		return shared.CompiledComponents{}, fmt.Errorf("Parser.ParseRoute: %+v", err)
 	}
 
 	// assemble
-	assembled, err := assembler.NewAssembler().AssembleRoute(parsed)
+	assembled, err := assembler.NewAssembler().AssembleObject(parsed)
 	if err != nil {
 		return shared.CompiledComponents{}, fmt.Errorf("Assembler.AssembleRoute: %+v", err)
 	}
 
 	return shared.CompiledComponents{
-		Routes: []shared.CompiledRoute{assembled},
+		Props: map[string]shared.CompiledProp{},
+		Objects: map[string]shared.CompiledObject{
+			assembled.ComponentMetadata.Name: assembled,
+		},
+		Routes:    map[string]shared.CompiledRoute{},
+		Bodies:    map[string]shared.CompiledBody{},
+		Requests:  map[string]shared.CompiledRequest{},
+		Responses: map[string]shared.CompiledResponse{},
 	}, nil
 }

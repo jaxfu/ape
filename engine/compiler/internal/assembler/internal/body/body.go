@@ -51,8 +51,8 @@ func AssembleMessageBody(body parser.ParsedMessageBody) (compshared.CompiledBody
 	return compshared.CompiledBody{}, fmt.Errorf("invalid message body type %s", body.BodyType)
 }
 
-func assembleMessageBodyProps(parsedProps parser.ParsedProps, parentId string) (compshared.CompiledProps, error) {
-	propsMap := compshared.CompiledProps{}
+func assembleMessageBodyProps(parsedProps parser.ParsedProps, parentId string) (map[string]compshared.CompiledProp, error) {
+	propsMap := map[string]compshared.CompiledProp{}
 
 	for k, v := range parsedProps {
 		v.Context.ParentId = &parentId

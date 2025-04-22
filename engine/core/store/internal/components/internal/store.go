@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 	"sync"
@@ -11,66 +10,40 @@ import (
 
 func NewComponentStore() *ComponentStore {
 	return &ComponentStore{
-		Components: &sync.Map{},
+		Components: ComponentsMap{},
+		Mutex:      new(sync.Mutex),
 	}
 }
 
+type ComponentsMap = map[components.ComponentId]Component
+
 type ComponentStore struct {
-	Components *sync.Map
+	Mutex      *sync.Mutex
+	Components ComponentsMap
 }
 
 type Component interface {
 	GetMetadata() components.ComponentMetadata
 }
 
-func (cs *ComponentStore) Add(comp Component) error {
-	metadata := comp.GetMetadata()
-	id := strings.ToLower(metadata.ComponentId.Display)
-	compType := metadata.ComponentType
+func (cs *ComponentStore) Store(comp Component) error {
+	id := strings.ToLower(comp.GetMetadata().ComponentId)
 
-	marshalled, err := json.Marshal(comp)
+	cs.Mutex.Lock()
+	component, err := DeepCopy(&comp)
 	if err != nil {
-		return fmt.Errorf("json.Marshal: %+v", err)
+		return fmt.Errorf("ComponentStore.DeepCopy for %s: %+v", comp.GetMetadata().ComponentId, err)
 	}
-
-	cs.Components.Store(
-		id,
-		NewStoredComponent(id, compType, marshalled),
-	)
+	cs.Components[id] = component
+	cs.Mutex.Unlock()
 
 	return nil
 }
 
-func (cs *ComponentStore) GetOne(id string) (StoredComponent, error) {
+func (cs *ComponentStore) Exists(id components.ComponentId) bool {
 	id = strings.ToLower(id)
-
-	found, ok := cs.Components.Load(id)
-	if !ok {
-		return StoredComponent{}, fmt.Errorf("no component found with id %s", id)
-	}
-
-	comp, ok := found.(StoredComponent)
-	if !ok {
-		return StoredComponent{}, fmt.Errorf("component has invalid format")
-	}
-
-	return comp, nil
-}
-
-func (cs *ComponentStore) GetAll() map[string]any {
-	comps := map[string]any{}
-
-	cs.Components.Range(rangeFunc(comps))
-
-	return comps
-}
-
-func rangeFunc(comps map[string]any) func(any, any) bool {
-	return func(key any, value any) bool {
-		keyStr, _ := key.(string)
-		comp, _ := value.(StoredComponent)
-		comps[keyStr] = comp
-
-		return true
-	}
+	cs.Mutex.Lock()
+	_, ok := cs.Components[id]
+	cs.Mutex.Unlock()
+	return ok
 }

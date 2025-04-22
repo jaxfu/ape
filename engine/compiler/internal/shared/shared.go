@@ -3,12 +3,12 @@ package shared
 import "github.com/jaxfu/ape/components"
 
 type CompiledComponents struct {
-	Props     []CompiledProp
-	Objects   []CompiledObject
-	Routes    []CompiledRoute
-	Bodies    []CompiledBody
-	Requests  []CompiledRequest
-	Responses []CompiledResponse
+	Props     map[string]CompiledProp
+	Objects   map[string]CompiledObject
+	Routes    map[string]CompiledRoute
+	Bodies    map[string]CompiledBody
+	Requests  map[string]CompiledRequest
+	Responses map[string]CompiledResponse
 }
 
 type CompiledComponentMetadata struct {
@@ -16,8 +16,13 @@ type CompiledComponentMetadata struct {
 	Name          string
 	ComponentId   string
 	IsRoot        bool
+	ParentId      *string
 	Category      *string
 	Description   *string
+}
+
+func (ccm CompiledComponentMetadata) Id() string {
+	return ccm.ComponentId
 }
 
 type CompilationContext struct {

@@ -36,6 +36,7 @@ func AssembleComponentMetadata(
 		Name:          name,
 		ComponentId:   componentId,
 		IsRoot:        ctx.IsRoot,
+		ParentId:      ctx.ParentId,
 		Category:      metadata.Category,
 		Description:   metadata.Description,
 	}, nil

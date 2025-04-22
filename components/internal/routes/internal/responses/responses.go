@@ -11,7 +11,7 @@ type (
 
 type Response struct {
 	ComponentMetadata shared.ComponentMetadata
-	Name              string           `json:"name" toml:"name"`
-	StatusCode        uint             `json:"status_code" toml:"status_code"`
-	Body              body.MessageBody `json:"body" toml:"body"`
+	Name              string            `json:"name" toml:"name"`
+	StatusCode        uint              `json:"status_code" toml:"status_code"`
+	Body              *body.MessageBody `json:"body" toml:"body"`
 }
