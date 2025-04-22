@@ -13,16 +13,15 @@ func ParseResponses(rawResponses map[string]any) (*ParsedResponsesMap, error) {
 
 	for k, v := range rawResponses {
 		asMap, ok := v.(map[string]any)
+		asMap["name"] = k
 		if !ok {
 			return nil, fmt.Errorf("invalid response format for %s: %+v", k, v)
 		}
 
-		ctx := components.ComponentContext{
-			ComponentType: components.COMPONENT_TYPE_RESPONSE,
-			IsRoot:        false,
-			Name:          &k,
-		}
-		parsedRes, err := ParseResponse(asMap, ctx)
+		parsedRes, err := ParseResponse(
+			asMap,
+			false,
+		)
 		if err != nil {
 			return nil, fmt.Errorf("Parser.ParseResponse: %+v", err)
 		}
@@ -33,7 +32,7 @@ func ParseResponses(rawResponses map[string]any) (*ParsedResponsesMap, error) {
 	return &responses, nil
 }
 
-func ParseResponse(rawResponse map[string]any, ctx components.ComponentContext) (ParsedResponse, error) {
+func ParseResponse(rawResponse map[string]any, isRoot bool) (ParsedResponse, error) {
 	var statusCode *uint = nil
 	if rawStatusCode, ok := rawResponse[shared.KEY_STATUS_CODE]; ok {
 		asInt64, ok := rawStatusCode.(int64)
@@ -44,16 +43,16 @@ func ParseResponse(rawResponse map[string]any, ctx components.ComponentContext) 
 		statusCode = &asUint
 	}
 
-	metadata, err := shared.ParseComponentMetadata(rawResponse)
+	metadata, err := shared.ParseComponentMetadata(
+		rawResponse,
+		components.COMPONENT_TYPE_RESPONSE,
+		isRoot,
+	)
 	if err != nil {
 		return ParsedResponse{}, fmt.Errorf("Parser.ParseComponentMetadata: %+v", err)
 	}
 
-	bodyCtx := components.ComponentContext{
-		ComponentType: components.COMPONENT_TYPE_MESSAGE_BODY,
-		IsRoot:        false,
-	}
-	parsedBody, err := body.ParseMessageBody(rawResponse, bodyCtx)
+	parsedBody, err := body.ParseMessageBody(rawResponse, false)
 	if err != nil {
 		return ParsedResponse{}, fmt.Errorf("Parser.ParseMessageBody: %+v", err)
 	}
@@ -62,7 +61,11 @@ func ParseResponse(rawResponse map[string]any, ctx components.ComponentContext) 
 		Metadata:   metadata,
 		StatusCode: statusCode,
 		Body:       parsedBody,
-		Context:    ctx,
+		Context: shared.Context{
+			ComponentType: components.COMPONENT_TYPE_RESPONSE,
+			Name:          metadata.Name,
+			IsRoot:        isRoot,
+		},
 	}, nil
 }
 
@@ -70,7 +73,7 @@ type ParsedResponse struct {
 	Metadata   shared.ParsedComponentMetadata
 	StatusCode *uint
 	Body       *body.ParsedMessageBody
-	Context    components.ComponentContext
+	Context    shared.Context
 }
 
 type ParsedResponsesMap = map[string]ParsedResponse

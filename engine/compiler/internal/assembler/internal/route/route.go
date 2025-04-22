@@ -3,45 +3,42 @@ package route
 import (
 	"fmt"
 
-	"github.com/jaxfu/ape/components"
 	"github.com/jaxfu/ape/engine/compiler/internal/assembler/internal/shared"
 	"github.com/jaxfu/ape/engine/compiler/internal/parser"
+	compshared "github.com/jaxfu/ape/engine/compiler/internal/shared"
 )
 
-func AssembleRoute(parsedRoute parser.ParsedRoute) (components.Route, error) {
+func AssembleRoute(parsedRoute parser.ParsedRoute) (compshared.CompiledRoute, error) {
 	metadata, err := shared.AssembleComponentMetadata(
 		parsedRoute.ComponentMetadata,
 		parsedRoute.Context,
 	)
 	if err != nil {
-		return components.Route{}, fmt.Errorf("shared.AssembleComponentMetadata: %+v", err)
+		return compshared.CompiledRoute{}, fmt.Errorf("shared.AssembleComponentMetadata: %+v", err)
 	}
 
 	routeMetadata, err := assembleRouteMetadata(parsedRoute.RouteMetadata)
 	if err != nil {
-		return components.Route{}, fmt.Errorf("Assembler.AssembleRouteMetadata: %+v", err)
+		return compshared.CompiledRoute{}, fmt.Errorf("Assembler.AssembleRouteMetadata: %+v", err)
 	}
 
-	request := components.Request{}
+	request := compshared.CompiledRequest{}
 	if parsedRoute.Request != nil {
+		parsedRoute.Request.Context.ParentId = &metadata.ComponentId
+
 		var err error
-		parsedRoute.Request.Context = components.ComponentContext{
-			ComponentType: components.COMPONENT_TYPE_REQUEST,
-			IsRoot:        false,
-			ParentId:      &metadata.ComponentId,
-		}
 		request, err = AssembleRequest(*parsedRoute.Request)
 		if err != nil {
-			return components.Route{}, fmt.Errorf("Assembler.AssembleRequest: %+v", err)
+			return compshared.CompiledRoute{}, fmt.Errorf("Assembler.AssembleRequest: %+v", err)
 		}
 	}
 
 	responses, err := AssembleResponses(*parsedRoute.Responses, metadata.ComponentId)
 	if err != nil {
-		return components.Route{}, fmt.Errorf("Assembler.AssembleResponses: %+v", err)
+		return compshared.CompiledRoute{}, fmt.Errorf("Assembler.AssembleResponses: %+v", err)
 	}
 
-	return components.Route{
+	return compshared.CompiledRoute{
 		ComponentMetadata: metadata,
 		RouteMetadata:     routeMetadata,
 		Request:           request,
@@ -49,10 +46,10 @@ func AssembleRoute(parsedRoute parser.ParsedRoute) (components.Route, error) {
 	}, nil
 }
 
-func assembleRouteMetadata(metadata parser.ParsedRouteMetadata) (components.RouteMetadata, error) {
+func assembleRouteMetadata(metadata parser.ParsedRouteMetadata) (compshared.CompiledRouteMetadata, error) {
 	url := ""
 	if metadata.Url == "" {
-		return components.RouteMetadata{}, fmt.Errorf("no url given")
+		return compshared.CompiledRouteMetadata{}, fmt.Errorf("no url given")
 	}
 	url = metadata.Url
 
@@ -61,7 +58,7 @@ func assembleRouteMetadata(metadata parser.ParsedRouteMetadata) (components.Rout
 		method = *metadata.Method
 	}
 
-	return components.RouteMetadata{
+	return compshared.CompiledRouteMetadata{
 		Url:    url,
 		Method: method,
 	}, nil

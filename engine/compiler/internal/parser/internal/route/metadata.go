@@ -3,7 +3,6 @@ package route
 import (
 	"fmt"
 
-	"github.com/jaxfu/ape/components"
 	"github.com/jaxfu/ape/engine/compiler/internal/parser/internal/shared"
 )
 
@@ -27,6 +26,6 @@ func parseRouteMetadata(fields map[string]any) (ParsedRouteMetadata, error) {
 }
 
 type ParsedRouteMetadata struct {
-	Url    string                 `json:"url,omitempty" toml:"url,omitempty"`
-	Method *components.HttpMethod `json:"method,omitempty" toml:"method,omitempty"`
+	Url    string  `json:"url,omitempty" toml:"url,omitempty"`
+	Method *string `json:"method,omitempty" toml:"method,omitempty"`
 }

@@ -8,15 +8,16 @@ import (
 	"github.com/jaxfu/ape/engine/compiler/internal/assembler/internal/body"
 	"github.com/jaxfu/ape/engine/compiler/internal/assembler/internal/shared"
 	"github.com/jaxfu/ape/engine/compiler/internal/parser"
+	compshared "github.com/jaxfu/ape/engine/compiler/internal/shared"
 )
 
-func AssembleRequest(parsedReq parser.ParsedRequest) (components.Request, error) {
+func AssembleRequest(parsedReq parser.ParsedRequest) (compshared.CompiledRequest, error) {
 	metadata, err := shared.AssembleComponentMetadata(
 		parser.ParsedComponentMetadata{},
 		parsedReq.Context,
 	)
 	if err != nil {
-		return components.Request{},
+		return compshared.CompiledRequest{},
 			fmt.Errorf(
 				"Assembler.AssembleComponentMetadata: %+v",
 				err,
@@ -28,21 +29,17 @@ func AssembleRequest(parsedReq parser.ParsedRequest) (components.Request, error)
 		maps.Copy(headers, *parsedReq.Headers)
 	}
 
-	var messageBody *components.MessageBody = nil
+	var messageBody *compshared.CompiledBody = nil
 	if parsedReq.Body != nil {
-		parsedReq.Body.Context = components.ComponentContext{
-			ComponentType: components.COMPONENT_TYPE_MESSAGE_BODY,
-			IsRoot:        false,
-			ParentId:      &metadata.ComponentId,
-		}
+		parsedReq.Body.Context.ParentId = &metadata.ComponentId
 		body, err := body.AssembleMessageBody(*parsedReq.Body)
 		if err != nil {
-			return components.Request{}, fmt.Errorf("Assembler.AssembleMessageBody: %+v", err)
+			return compshared.CompiledRequest{}, fmt.Errorf("Assembler.AssembleMessageBody: %+v", err)
 		}
 		messageBody = &body
 	}
 
-	return components.Request{
+	return compshared.CompiledRequest{
 		ComponentMetadata: metadata,
 		Headers:           headers,
 		Body:              messageBody,

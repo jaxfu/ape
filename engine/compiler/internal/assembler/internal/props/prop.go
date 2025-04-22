@@ -17,7 +17,6 @@ func AssembleProp(parsedProp parser.ParsedProp) (compShared.CompiledProp, error)
 		)
 	}
 
-	// TODO: pass isSolo down
 	metadata, err := shared.AssembleComponentMetadata(
 		parsedProp.ComponentMetadata,
 		parsedProp.Context,

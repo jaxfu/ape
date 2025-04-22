@@ -8,7 +8,7 @@ import (
 	"github.com/jaxfu/ape/engine/compiler/internal/parser/internal/shared"
 )
 
-func ParseRequest(routeFields map[string]any, ctx components.ComponentContext) (*ParsedRequest, error) {
+func ParseRequest(routeFields map[string]any, isRoot bool) (*ParsedRequest, error) {
 	request, ok := routeFields[shared.KEY_REQUEST]
 	if !ok {
 		return nil, fmt.Errorf("no request object found")
@@ -18,26 +18,26 @@ func ParseRequest(routeFields map[string]any, ctx components.ComponentContext) (
 		return nil, fmt.Errorf("invalid request format")
 	}
 
-	metadata, err := shared.ParseComponentMetadata(reqMap)
+	metadata, err := shared.ParseComponentMetadata(reqMap, components.COMPONENT_TYPE_REQUEST, isRoot)
 	if err != nil {
 		return nil, fmt.Errorf("Parser.ParseComponentMetadata:  %+v", err)
 	}
-	ctx.Name = metadata.Name
 
 	headers, err := parseHeaders(reqMap)
 	if err != nil {
 		return nil, fmt.Errorf("Parser.parseHeaders: %+v", err)
 	}
 
-	bodyCtx := components.ComponentContext{
-		ComponentType: components.COMPONENT_TYPE_MESSAGE_BODY,
-		IsRoot:        false,
-	}
-	body, err := body.ParseMessageBody(reqMap, bodyCtx)
+	body, err := body.ParseMessageBody(reqMap, false)
 	if err != nil {
 		return nil, fmt.Errorf("Parser.ParseMessageBody: %+v", err)
 	}
 
+	ctx := shared.Context{
+		ComponentType: components.COMPONENT_TYPE_REQUEST,
+		Name:          metadata.Name,
+		IsRoot:        isRoot,
+	}
 	return &ParsedRequest{
 		ComponentMetadata: metadata,
 		Headers:           headers,
@@ -72,7 +72,7 @@ type ParsedRequest struct {
 	ComponentMetadata shared.ParsedComponentMetadata
 	Headers           *ParsedHeadersMap
 	Body              *body.ParsedMessageBody
-	Context           components.ComponentContext
+	Context           shared.Context
 }
 
 type ParsedHeadersMap = map[string]string

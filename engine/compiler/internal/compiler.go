@@ -3,7 +3,6 @@ package internal
 import (
 	"fmt"
 
-	"github.com/jaxfu/ape/components"
 	"github.com/jaxfu/ape/engine/compiler/internal/assembler"
 	"github.com/jaxfu/ape/engine/compiler/internal/parser"
 	"github.com/jaxfu/ape/engine/compiler/internal/preprocessor"
@@ -31,22 +30,18 @@ func (c Compiler) File(path string, bytes []byte) (shared.CompiledComponents, er
 	}
 
 	// parse
-	ctx := components.ComponentContext{
-		ComponentType: components.COMPONENT_TYPE_ROUTE,
-		IsRoot:        true,
-	}
-	parsed, err := parser.NewParser().ParseRoute(scanned, ctx)
+	parsed, err := parser.NewParser().ParseRoute(scanned, true)
 	if err != nil {
 		return shared.CompiledComponents{}, fmt.Errorf("Parser.ParseRoute: %+v", err)
 	}
 
 	// assemble
-	comp, err := assembler.NewAssembler().AssembleRoute(parsed)
+	assembled, err := assembler.NewAssembler().AssembleRoute(parsed)
 	if err != nil {
 		return shared.CompiledComponents{}, fmt.Errorf("Assembler.AssembleRoute: %+v", err)
 	}
 
 	return shared.CompiledComponents{
-		Routes: []components.Route{comp},
+		Routes: []shared.CompiledRoute{assembled},
 	}, nil
 }

@@ -2,6 +2,9 @@ package shared
 
 import (
 	"fmt"
+
+	"github.com/jaxfu/ape/components"
+	"github.com/jaxfu/ape/engine/compiler/internal/shared"
 )
 
 const (
@@ -18,24 +21,41 @@ const (
 	KEY_STATUS_CODE  string = "status_code"
 )
 
-func ParseComponentMetadata(fields map[string]any) (ParsedComponentMetadata, error) {
+// TODO: validate name at parsing (if required)
+func ParseComponentMetadata(fields map[string]any, compType components.ComponentType, isRoot bool) (ParsedComponentMetadata, error) {
 	metadata := ParsedComponentMetadata{}
 
-	mapName, exists, err := GetStringFromMap(fields, KEY_NAME)
+	// check if name required
+	mapName, exists, err := GetStringFromMap(
+		fields,
+		KEY_NAME,
+	)
 	if exists {
 		if err != nil {
 			return ParsedComponentMetadata{}, fmt.Errorf("error parsing %s: %+v", KEY_NAME, err)
 		}
-
 		metadata.Name = &mapName
+	} else if isRoot {
+		return ParsedComponentMetadata{}, fmt.Errorf("name missing")
+	} else if _, ok := typesNameRequired[compType]; ok {
+		return ParsedComponentMetadata{}, fmt.Errorf("name missing, required for type %s", compType)
+	} else {
+		typeName := typeIdChildrenNames[compType]
+		metadata.Name = &typeName
 	}
 
-	category, _, err := GetStringFromMap(fields, KEY_CATEGORY)
+	category, _, err := GetStringFromMap(
+		fields,
+		KEY_CATEGORY,
+	)
 	if err == nil {
 		metadata.Category = &category
 	}
 
-	description, _, err := GetStringFromMap(fields, KEY_DESCRIPTION)
+	description, _, err := GetStringFromMap(
+		fields,
+		KEY_DESCRIPTION,
+	)
 	if err == nil {
 		metadata.Description = &description
 	}
@@ -43,16 +63,27 @@ func ParseComponentMetadata(fields map[string]any) (ParsedComponentMetadata, err
 	return metadata, nil
 }
 
-func GetStringFromMap(mp map[string]any, key string) (string, bool, error) {
-	if val, ok := mp[key]; ok {
-		if str, ok := val.(string); ok {
-			return str, true, nil
-		}
+var typeIdNames = map[components.ComponentType]string{
+	components.COMPONENT_TYPE_PROP:         "props",
+	components.COMPONENT_TYPE_OBJECT:       "objects",
+	components.COMPONENT_TYPE_ROUTE:        "routes",
+	components.COMPONENT_TYPE_MESSAGE_BODY: "bodies",
+	components.COMPONENT_TYPE_REQUEST:      "requests",
+	components.COMPONENT_TYPE_RESPONSE:     "responses",
+}
 
-		return "", true, fmt.Errorf("invalid type for %s: %+v", key, val)
-	}
+var typeIdChildrenNames = map[components.ComponentType]string{
+	components.COMPONENT_TYPE_PROP:         "prop",
+	components.COMPONENT_TYPE_OBJECT:       "object",
+	components.COMPONENT_TYPE_ROUTE:        "route",
+	components.COMPONENT_TYPE_MESSAGE_BODY: "body",
+	components.COMPONENT_TYPE_REQUEST:      "request",
+	components.COMPONENT_TYPE_RESPONSE:     "response",
+}
 
-	return "", false, fmt.Errorf("missing %s", key)
+var typesNameRequired = map[components.ComponentType]*any{
+	components.COMPONENT_TYPE_PROP:     nil,
+	components.COMPONENT_TYPE_RESPONSE: nil,
 }
 
 type ParsedComponentMetadata struct {
@@ -60,3 +91,4 @@ type ParsedComponentMetadata struct {
 	Category    *string `json:"category,omitempty" toml:"category,omitempty"`
 	Description *string `json:"description,omitempty" toml:"description,omitempty"`
 }
+type Context = shared.CompilationContext

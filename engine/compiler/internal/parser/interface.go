@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"github.com/jaxfu/ape/components"
 	"github.com/jaxfu/ape/engine/compiler/internal/parser/internal"
 	"github.com/jaxfu/ape/engine/compiler/internal/parser/internal/body"
 	"github.com/jaxfu/ape/engine/compiler/internal/parser/internal/object"
@@ -12,9 +11,9 @@ import (
 )
 
 type Parser interface {
-	ParseProp(scanner.ScannedComponent, components.ComponentContext) (ParsedProp, error)
-	ParseObject(scanner.ScannedComponent, components.ComponentContext) (ParsedObject, error)
-	ParseRoute(scanner.ScannedComponent, components.ComponentContext) (ParsedRoute, error)
+	ParseProp(scanner.ScannedComponent, bool) (ParsedProp, error)
+	ParseObject(scanner.ScannedComponent, bool) (ParsedObject, error)
+	ParseRoute(scanner.ScannedComponent, bool) (ParsedRoute, error)
 }
 
 func NewParser() Parser {

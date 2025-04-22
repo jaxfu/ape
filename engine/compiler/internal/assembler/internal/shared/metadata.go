@@ -3,47 +3,40 @@ package shared
 import (
 	"fmt"
 
-	"github.com/jaxfu/ape/components"
 	"github.com/jaxfu/ape/engine/compiler/internal/parser"
 	"github.com/jaxfu/ape/engine/compiler/internal/shared"
-	"github.com/jaxfu/ape/engine/pkg/idhandler"
 )
 
 func AssembleComponentMetadata(
-	parsedMetadata parser.ParsedComponentMetadata,
-	ctx components.ComponentContext,
+	metadata parser.ParsedComponentMetadata,
+	ctx shared.CompilationContext,
 ) (shared.CompiledComponentMetadata, error) {
-	componentId, err := idhandler.NewIdHandler().Generate(
-		idhandler.GenerateIdParams{
-			ComponentContext: ctx,
-			Category:         parsedMetadata.Category,
+	componentId, err := GenerateComponentId(
+		GenerateIdParams{
+			ComponentType: ctx.ComponentType,
+			Name:          ctx.Name,
+			IsRoot:        ctx.IsRoot,
+			ParentId:      ctx.ParentId,
+			Category:      metadata.Category,
 		})
 	if err != nil {
 		return shared.CompiledComponentMetadata{},
 			fmt.Errorf("IdHandler.Generate: %+v", err)
 	}
 
-	var description *string = nil
-	if parsedMetadata.Description != nil {
-		if *parsedMetadata.Description != "" {
-			description = parsedMetadata.Description
-		}
-	}
-
 	name := ""
 	if ctx.Name == nil {
-		name = componentId.Display
+		name = componentId
 	} else {
 		name = *ctx.Name
 	}
-	metadata := shared.CompiledComponentMetadata{
+
+	return shared.CompiledComponentMetadata{
 		ComponentType: ctx.ComponentType,
 		Name:          name,
-		ComponentId:   componentId.Display,
+		ComponentId:   componentId,
 		IsRoot:        ctx.IsRoot,
-		Category:      parsedMetadata.Category,
-		Description:   description,
-	}
-
-	return metadata, nil
+		Category:      metadata.Category,
+		Description:   metadata.Description,
+	}, nil
 }

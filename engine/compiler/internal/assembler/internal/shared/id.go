@@ -1,4 +1,4 @@
-package internal
+package shared
 
 import (
 	"fmt"
@@ -7,32 +7,25 @@ import (
 	"github.com/jaxfu/ape/components"
 )
 
-func DefaultIdHandler() IdHandler {
-	return IdHandler{}
-}
-
-type IdHandler struct{}
-
-// TODO: return string
-func (idh IdHandler) Generate(params GenerateIdParams) (components.ComponentId, error) {
+func GenerateComponentId(params GenerateIdParams) (string, error) {
 	// if name required, need name
 	if _, ok := typesNameRequired[params.ComponentType]; ok {
 		if params.Name == nil || *params.Name == "" {
-			return components.ComponentId{}, fmt.Errorf("no name given for root component")
+			return "", fmt.Errorf("no name given for root component")
 		}
 	}
 
 	idParams := []string{}
 	if params.IsRoot {
 		if params.Name == nil || *params.Name == "" {
-			return components.ComponentId{}, fmt.Errorf("no name given for root component")
+			return "", fmt.Errorf("no name given for root component")
 		}
 		if params.Category != nil {
 			idParams = append(idParams, *params.Category)
 		}
 		typeName, ok := typeIdNames[params.ComponentType]
 		if !ok {
-			return components.ComponentId{}, fmt.Errorf("invalid type %s", params.ComponentType)
+			return "", fmt.Errorf("invalid type %s", params.ComponentType)
 		}
 
 		idParams = append(idParams, typeName)
@@ -40,12 +33,12 @@ func (idh IdHandler) Generate(params GenerateIdParams) (components.ComponentId, 
 
 	} else { // if not root
 		if params.ParentId == nil {
-			return components.ComponentId{}, fmt.Errorf("no parentId given for child")
+			return "", fmt.Errorf("no parentId given for child")
 		}
-		if params.ParentId.Display == "" {
-			return components.ComponentId{}, fmt.Errorf("empty parentId given for child %s", *params.Name)
+		if *params.ParentId == "" {
+			return "", fmt.Errorf("empty parentId given for child %s", *params.Name)
 		}
-		idParams = append(idParams, params.ParentId.Display)
+		idParams = append(idParams, *params.ParentId)
 
 		if params.Name != nil {
 			if *params.Name == "" {
@@ -60,14 +53,15 @@ func (idh IdHandler) Generate(params GenerateIdParams) (components.ComponentId, 
 		}
 	}
 
-	return components.ComponentId{
-		Display: strings.Join(idParams, "."),
-	}, nil
+	return strings.Join(idParams, "."), nil
 }
 
 type GenerateIdParams struct {
-	components.ComponentContext
-	Category *string
+	ComponentType components.ComponentType
+	Name          *string
+	IsRoot        bool
+	ParentId      *string
+	Category      *string
 }
 
 var typeIdNames = map[components.ComponentType]string{

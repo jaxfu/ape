@@ -8,14 +8,11 @@ import (
 	"github.com/jaxfu/ape/engine/compiler/internal/parser/internal/shared"
 )
 
-func ParseMessageBody(rawBodyMap map[string]any, ctx components.ComponentContext) (*ParsedMessageBody, error) {
-	metadata, err := shared.ParseComponentMetadata(rawBodyMap)
+func ParseMessageBody(rawBodyMap map[string]any, isRoot bool) (*ParsedMessageBody, error) {
+	metadata, err := shared.ParseComponentMetadata(rawBodyMap, components.COMPONENT_TYPE_MESSAGE_BODY, isRoot)
 	if err != nil {
 		return nil, fmt.Errorf("Paresr.ParseComponentMetadata: %+v", err)
 	}
-
-	ctx.IsRoot = false
-	ctx.ComponentType = components.COMPONENT_TYPE_MESSAGE_BODY
 
 	rawBody, ok := rawBodyMap[shared.KEY_MESSAGE_BODY]
 	if !ok {
@@ -27,7 +24,11 @@ func ParseMessageBody(rawBodyMap map[string]any, ctx components.ComponentContext
 			Metadata: metadata,
 			BodyType: components.MESSAGE_BODY_TYPE_REF,
 			Ref:      &str,
-			Context:  ctx,
+			Context: shared.Context{
+				ComponentType: components.COMPONENT_TYPE_MESSAGE_BODY,
+				Name:          metadata.Name,
+				IsRoot:        isRoot,
+			},
 		}, nil
 	}
 
@@ -41,9 +42,14 @@ func ParseMessageBody(rawBodyMap map[string]any, ctx components.ComponentContext
 	}
 
 	return &ParsedMessageBody{
+		Metadata: metadata,
 		BodyType: components.MESSAGE_BODY_TYPE_PROPS,
 		Props:    &parsedProps,
-		Context:  ctx,
+		Context: shared.Context{
+			ComponentType: components.COMPONENT_TYPE_MESSAGE_BODY,
+			Name:          metadata.Name,
+			IsRoot:        isRoot,
+		},
 	}, nil
 }
 
@@ -52,5 +58,5 @@ type ParsedMessageBody struct {
 	BodyType components.MessageBodyType
 	Ref      *string
 	Props    *prop.ParsedProps
-	Context  components.ComponentContext
+	Context  shared.Context
 }

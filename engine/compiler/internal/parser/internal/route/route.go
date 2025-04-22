@@ -8,23 +8,18 @@ import (
 	"github.com/jaxfu/ape/engine/compiler/internal/scanner"
 )
 
-func ParseRoute(scannedComp scanner.ScannedComponent, ctx components.ComponentContext) (ParsedRoute, error) {
-	metadata, err := shared.ParseComponentMetadata(scannedComp.Fields)
+func ParseRoute(scannedComp scanner.ScannedComponent, isRoot bool) (ParsedRoute, error) {
+	metadata, err := shared.ParseComponentMetadata(scannedComp.Fields, components.COMPONENT_TYPE_ROUTE, isRoot)
 	if err != nil {
 		return ParsedRoute{}, fmt.Errorf("Parser.parseComponentMetadata: %+v", err)
 	}
-	ctx.Name = metadata.Name
 
 	routeMetadata, err := parseRouteMetadata(scannedComp.Fields)
 	if err != nil {
 		return ParsedRoute{}, fmt.Errorf("Parser.parseRouteMetadata: %+v", err)
 	}
 
-	requestCtx := components.ComponentContext{
-		ComponentType: components.COMPONENT_TYPE_REQUEST,
-		IsRoot:        false,
-	}
-	request, err := ParseRequest(scannedComp.Fields, requestCtx)
+	request, err := ParseRequest(scannedComp.Fields, false)
 	if err != nil {
 		return ParsedRoute{}, fmt.Errorf("Parser.ParseRequest: %+v", err)
 	}
@@ -48,7 +43,11 @@ func ParseRoute(scannedComp scanner.ScannedComponent, ctx components.ComponentCo
 		RouteMetadata:     routeMetadata,
 		Request:           request,
 		Responses:         responses,
-		Context:           ctx,
+		Context: shared.Context{
+			ComponentType: components.COMPONENT_TYPE_ROUTE,
+			Name:          metadata.Name,
+			IsRoot:        isRoot,
+		},
 	}, nil
 }
 
@@ -57,5 +56,5 @@ type ParsedRoute struct {
 	RouteMetadata     ParsedRouteMetadata
 	Responses         *ParsedResponsesMap
 	Request           *ParsedRequest
-	Context           components.ComponentContext
+	Context           shared.Context
 }

@@ -3,18 +3,20 @@ package route
 import (
 	"fmt"
 
-	"github.com/jaxfu/ape/components"
 	"github.com/jaxfu/ape/engine/compiler/internal/assembler/internal/body"
 	"github.com/jaxfu/ape/engine/compiler/internal/assembler/internal/shared"
 	"github.com/jaxfu/ape/engine/compiler/internal/parser"
+	compshared "github.com/jaxfu/ape/engine/compiler/internal/shared"
 )
 
 // TODO: assemble responses
-func AssembleResponses(parsedReq parser.ParsedResponses, routeId components.ComponentId) (components.ResponsesMap, error) {
-	responses := components.ResponsesMap{}
+func AssembleResponses(parsedRes parser.ParsedResponses, routeId string) (compshared.CompiledResponses, error) {
+	responses := compshared.CompiledResponses{}
 
-	for k, v := range parsedReq {
-		parentId := components.ComponentId{Display: fmt.Sprintf("%s.responses", routeId.Display)}
+	for k, v := range parsedRes {
+		parentId := fmt.Sprintf(
+			"%s.responses", routeId,
+		)
 		v.Context.ParentId = &parentId
 		response, err := AssembleResponse(v)
 		if err != nil {
@@ -27,22 +29,21 @@ func AssembleResponses(parsedReq parser.ParsedResponses, routeId components.Comp
 	return responses, nil
 }
 
-func AssembleResponse(parsedRes parser.ParsedResponse) (components.Response, error) {
+func AssembleResponse(parsedRes parser.ParsedResponse) (compshared.CompiledResponse, error) {
 	metadata, err := shared.AssembleComponentMetadata(parsedRes.Metadata, parsedRes.Context)
 	if err != nil {
-		return components.Response{}, fmt.Errorf("Assembler.AssembleComponentMetadata: %+v", err)
+		return compshared.CompiledResponse{}, fmt.Errorf("Assembler.AssembleComponentMetadata: %+v", err)
 	}
 
 	parsedRes.Body.Context.ParentId = &metadata.ComponentId
 	body, err := body.AssembleMessageBody(*parsedRes.Body)
 	if err != nil {
-		return components.Response{}, fmt.Errorf("Assembler.AssembleMessageBody: %+v", err)
+		return compshared.CompiledResponse{}, fmt.Errorf("Assembler.AssembleMessageBody: %+v", err)
 	}
 
-	return components.Response{
+	return compshared.CompiledResponse{
 		ComponentMetadata: metadata,
-		Name:              *parsedRes.Context.Name,
 		StatusCode:        *parsedRes.StatusCode,
-		Body:              body,
+		Body:              &body,
 	}, nil
 }

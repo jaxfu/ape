@@ -3,35 +3,35 @@ package object
 import (
 	"fmt"
 
-	"github.com/jaxfu/ape/components"
 	"github.com/jaxfu/ape/engine/compiler/internal/assembler/internal/props"
 	asmshared "github.com/jaxfu/ape/engine/compiler/internal/assembler/internal/shared"
 	"github.com/jaxfu/ape/engine/compiler/internal/parser"
+	"github.com/jaxfu/ape/engine/compiler/internal/shared"
 )
 
-func AssembleObject(parsedObj parser.ParsedObject) (components.Object, error) {
+func AssembleObject(parsedObj parser.ParsedObject) (shared.CompiledObject, error) {
 	metadata, err := asmshared.AssembleComponentMetadata(
 		parsedObj.ComponentMetadata,
 		parsedObj.Context,
 	)
 	if err != nil {
-		return components.Object{}, fmt.Errorf("shared.AssembleComponentMetadata: %+v", err)
+		return shared.CompiledObject{}, fmt.Errorf("shared.AssembleComponentMetadata: %+v", err)
 	}
 
-	propsMap := components.PropsMap{}
+	propsMap := shared.CompiledProps{}
 	for k, v := range parsedObj.Props {
 		v.Context.ParentId = &metadata.ComponentId
 
 		prop, err := props.AssembleProp(v)
 		if err != nil {
-			return components.Object{},
+			return shared.CompiledObject{},
 				fmt.Errorf("Assemler.AssembleProp: %+v", err)
 		}
 
 		propsMap[k] = prop
 	}
 
-	return components.Object{
+	return shared.CompiledObject{
 		ComponentMetadata: metadata,
 		Props:             propsMap,
 	}, nil

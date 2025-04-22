@@ -8,12 +8,11 @@ import (
 	"github.com/jaxfu/ape/engine/compiler/internal/scanner"
 )
 
-func ParseProp(scannedComp scanner.ScannedComponent, ctx components.ComponentContext) (ParsedProp, error) {
-	metadata, err := shared.ParseComponentMetadata(scannedComp.Fields)
+func ParseProp(scannedComp scanner.ScannedComponent, isRoot bool) (ParsedProp, error) {
+	metadata, err := shared.ParseComponentMetadata(scannedComp.Fields, components.COMPONENT_TYPE_PROP, isRoot)
 	if err != nil {
 		return ParsedProp{}, fmt.Errorf("Parser.parseComponentMetadata: %+v", err)
 	}
-	ctx.Name = metadata.Name
 
 	propTypeVal, _, err := shared.GetStringFromMap(scannedComp.Fields, shared.KEY_TYPE)
 	if err != nil {
@@ -46,6 +45,10 @@ func ParseProp(scannedComp scanner.ScannedComponent, ctx components.ComponentCon
 			IsArray:  isArr,
 		},
 		Constraints: scannedComp.Fields,
-		Context:     ctx,
+		Context: shared.Context{
+			ComponentType: components.COMPONENT_TYPE_PROP,
+			Name:          metadata.Name,
+			IsRoot:        isRoot,
+		},
 	}, nil
 }

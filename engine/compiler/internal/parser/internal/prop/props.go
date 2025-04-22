@@ -22,11 +22,7 @@ func ParseProps(scannedProps map[string]any) (ParsedProps, error) {
 
 			parsedProp, err := ParseProp(
 				rawProp,
-				components.ComponentContext{
-					IsRoot:        false,
-					ComponentType: components.COMPONENT_TYPE_PROP,
-					Name:          &k,
-				},
+				false,
 			)
 			if err != nil {
 				return nil, fmt.Errorf("Parser.ParseProp: %+v", err)

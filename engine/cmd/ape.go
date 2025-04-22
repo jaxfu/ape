@@ -32,7 +32,7 @@ func main() {
 	// read file
 	filehandler := filehandler.NewFileHandler()
 	rawFile, err := filehandler.ReadFile(
-		fmt.Sprintf("%s/routes/TestRoute.toml", rootDir),
+		fmt.Sprintf("%s/routes/CreateTodo.toml", rootDir),
 	)
 	if err != nil {
 		log.Fatalf("FileHandler.ReadFile: %+v", err)
@@ -42,8 +42,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("error compiling file %s: %+v", rawFile.Path(), err)
 	}
-	route := compiled.Routes[0]
-	dev.PrettyPrint(route)
+	dev.PrettyPrint(compiled.Routes[0])
 
 	// str := store.NewStore()
 	// if err := str.Components.Add(route); err != nil {
