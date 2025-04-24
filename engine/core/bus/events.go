@@ -2,11 +2,16 @@ package bus
 
 type Event struct {
 	EventType EventType
-	Component any
+	Component Component
 }
 
-type EventType = string
-
-const (
-	EVENT_CREATE_COMPONENT EventType = "CREATE"
+type (
+	EventType           = string
+	EventTypesInterface struct {
+		CREATE EventType
+	}
 )
+
+var EventTypes = EventTypesInterface{
+	CREATE: "CREATE",
+}

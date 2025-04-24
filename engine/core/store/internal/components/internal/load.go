@@ -7,7 +7,10 @@ import (
 	"github.com/jaxfu/ape/components"
 )
 
-func (cs *ComponentStore) Load(id components.ComponentId) (Component, error) {
+func (cs *ComponentStore) Load(id components.ComponentId) (
+	components.Component,
+	error,
+) {
 	cs.Mutex.Lock()
 	found, ok := cs.Components[strings.ToLower(id)]
 	if !ok {

@@ -3,9 +3,10 @@ package store
 import (
 	"fmt"
 
+	"github.com/jaxfu/ape/components"
 	"github.com/jaxfu/ape/engine/core/bus"
 	"github.com/jaxfu/ape/engine/core/store/internal/categories"
-	"github.com/jaxfu/ape/engine/core/store/internal/components"
+	internalcomps "github.com/jaxfu/ape/engine/core/store/internal/components"
 )
 
 type Store struct {
@@ -14,14 +15,18 @@ type Store struct {
 	Events     <-chan bus.Event
 }
 
+type Manifest struct {
+	Components map[string]*components.Component
+}
+
 type (
-	ComponentStore = components.ComponentStore
+	ComponentStore = internalcomps.ComponentStore
 	CategoryStore  = categories.CategoryStore
 )
 
 func NewStore(chin <-chan bus.Event) *Store {
 	return &Store{
-		Components: components.NewComponentStore(),
+		Components: internalcomps.NewComponentStore(),
 		Categories: categories.NewCategoryStore(),
 		Events:     chin,
 	}
@@ -29,6 +34,11 @@ func NewStore(chin <-chan bus.Event) *Store {
 
 func (s *Store) Start() {
 	for event := range s.Events {
-		fmt.Printf("store: %+v\n", event)
+		fmt.Printf("store event recieved: %+v\n", event.EventType)
+		fmt.Printf("%+v\n", event.Component)
 	}
+}
+
+func (s *Store) CreateComponent(event bus.Event) {
+	// validate
 }

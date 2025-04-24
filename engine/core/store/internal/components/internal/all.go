@@ -23,7 +23,7 @@ func (cs *ComponentStore) All() (components.AllComponents, error) {
 			return comps, fmt.Errorf("ComponentStore.DeepCopy for %s: %+v", k, err)
 		}
 
-		switch v.GetMetadata().ComponentType {
+		switch v.Metadata().ComponentType {
 		case components.COMPONENT_TYPE_PROP:
 			cast, err := cast[components.Prop](cpy)
 			if err != nil {

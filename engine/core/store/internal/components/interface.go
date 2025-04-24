@@ -6,8 +6,8 @@ import (
 )
 
 type ComponentStore interface {
-	Store(Component) error
-	Load(components.ComponentId) (Component, error)
+	Store(components.Component) error
+	Load(components.ComponentId) (components.Component, error)
 	Exists(components.ComponentId) bool
 	All() (components.AllComponents, error)
 }
@@ -15,5 +15,3 @@ type ComponentStore interface {
 func NewComponentStore() ComponentStore {
 	return internal.NewComponentStore()
 }
-
-type Component = internal.Component

@@ -21,6 +21,7 @@ type (
 
 type ComponentType = string
 
+// TODO: use map
 const (
 	COMPONENT_TYPE_OBJECT       ComponentType = "OBJECT"
 	COMPONENT_TYPE_PROP         ComponentType = "PROP"

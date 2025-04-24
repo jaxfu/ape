@@ -15,24 +15,20 @@ func NewComponentStore() *ComponentStore {
 	}
 }
 
-type ComponentsMap = map[components.ComponentId]Component
+type ComponentsMap = map[components.ComponentId]components.Component
 
 type ComponentStore struct {
 	Mutex      *sync.Mutex
 	Components ComponentsMap
 }
 
-type Component interface {
-	GetMetadata() components.ComponentMetadata
-}
-
-func (cs *ComponentStore) Store(comp Component) error {
-	id := strings.ToLower(comp.GetMetadata().ComponentId)
+func (cs *ComponentStore) Store(comp components.Component) error {
+	id := strings.ToLower(comp.Metadata().ComponentId)
 
 	cs.Mutex.Lock()
 	component, err := DeepCopy(&comp)
 	if err != nil {
-		return fmt.Errorf("ComponentStore.DeepCopy for %s: %+v", comp.GetMetadata().ComponentId, err)
+		return fmt.Errorf("ComponentStore.DeepCopy for %s: %+v", comp.Metadata().ComponentId, err)
 	}
 	cs.Components[id] = component
 	cs.Mutex.Unlock()

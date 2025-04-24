@@ -21,10 +21,6 @@ func (a *Api) CreateComponent(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("starting")
 	defer fmt.Println("ending")
 
-	// a.Bus.Events <- bus.Event{
-	// 	Id: "CREATE",
-	// }
-
 	// Decode the request body into the struct
 	var req components.Object
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -33,6 +29,11 @@ func (a *Api) CreateComponent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// dev.PrettyPrint(req)
+
+	a.Bus.Events <- bus.Event{
+		EventType: bus.EventTypes.CREATE,
+		Component: req,
+	}
 
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte("success"))
