@@ -2,11 +2,12 @@ package route
 
 import (
 	"fmt"
+	"maps"
+
 	"github.com/jaxfu/ape/compiler/internal/assembler/internal/body"
 	"github.com/jaxfu/ape/compiler/internal/assembler/internal/shared"
 	"github.com/jaxfu/ape/compiler/internal/parser"
 	compshared "github.com/jaxfu/ape/compiler/internal/shared"
-	"maps"
 
 	"github.com/jaxfu/ape/components"
 )
@@ -40,8 +41,8 @@ func AssembleRequest(parsedReq parser.ParsedRequest) (compshared.CompiledRequest
 	}
 
 	return compshared.CompiledRequest{
-		ComponentMetadata: metadata,
-		Headers:           headers,
-		Body:              messageBody,
+		CompiledComponentMetadata: metadata,
+		Headers:                   headers,
+		Body:                      messageBody,
 	}, nil
 }

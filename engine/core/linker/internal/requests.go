@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+
 	"github.com/jaxfu/ape/compiler"
 
 	"github.com/jaxfu/ape/components"
@@ -28,7 +29,7 @@ func (l *Linker) linkRequests(routes map[string]compiler.CompiledRequest) (
 }
 
 func (l *Linker) linkRequest(request compiler.CompiledRequest) (components.Request, error) {
-	meta, err := l.LinkComponent(request.ComponentMetadata)
+	meta, err := l.LinkComponent(request.CompiledComponentMetadata)
 	if err != nil {
 		return components.Request{}, fmt.Errorf("Linker.LinkComponent: %+v", err)
 	}
@@ -45,6 +46,6 @@ func (l *Linker) linkRequest(request compiler.CompiledRequest) (components.Reque
 	return components.Request{
 		ComponentMetadata: meta,
 		Headers:           request.Headers,
-		Body:              body,
+		Body:              *body,
 	}, nil
 }

@@ -21,9 +21,9 @@ func (a *Api) CreateComponent(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("starting")
 	defer fmt.Println("ending")
 
-	a.Bus.Events <- bus.Event{
-		Id: "CREATE",
-	}
+	// a.Bus.Events <- bus.Event{
+	// 	Id: "CREATE",
+	// }
 
 	// Decode the request body into the struct
 	var req components.Object

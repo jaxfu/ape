@@ -2,6 +2,7 @@ package body
 
 import (
 	"fmt"
+
 	"github.com/jaxfu/ape/compiler/internal/assembler/internal/props"
 	"github.com/jaxfu/ape/compiler/internal/assembler/internal/shared"
 	"github.com/jaxfu/ape/compiler/internal/parser"
@@ -42,9 +43,9 @@ func AssembleMessageBody(body parser.ParsedMessageBody) (compshared.CompiledBody
 		}
 
 		return compshared.CompiledBody{
-			ComponentMetadata: metadata,
-			BodyType:          components.MESSAGE_BODY_TYPE_PROPS,
-			Props:             props,
+			CompiledComponentMetadata: metadata,
+			BodyType:                  components.MESSAGE_BODY_TYPE_PROPS,
+			Props:                     props,
 		}, nil
 	}
 

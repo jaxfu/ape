@@ -2,6 +2,10 @@ package shared
 
 import "github.com/jaxfu/ape/components"
 
+type CompiledComponent interface {
+	Metadata() CompiledComponentMetadata
+}
+
 type CompiledComponents struct {
 	Props     map[string]CompiledProp
 	Objects   map[string]CompiledObject
@@ -21,8 +25,8 @@ type CompiledComponentMetadata struct {
 	Description   *string
 }
 
-func (ccm CompiledComponentMetadata) Id() string {
-	return ccm.ComponentId
+func (meta CompiledComponentMetadata) Metadata() CompiledComponentMetadata {
+	return meta
 }
 
 type CompilationContext struct {

@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+
 	"github.com/jaxfu/ape/compiler"
 
 	"github.com/jaxfu/ape/components"
@@ -15,7 +16,7 @@ func (l *Linker) linkProps(props map[string]compiler.CompiledProp) (
 
 	if len(props) > 0 {
 		for k, v := range props {
-			meta, err := l.LinkComponent(v.ComponentMetadata)
+			meta, err := l.LinkComponent(v.CompiledComponentMetadata)
 			if err != nil {
 				return nil, fmt.Errorf("Linker.LinkComponent: %+v", err)
 			}

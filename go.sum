@@ -66,8 +66,6 @@ github.com/pingcap/failpoint v0.0.0-20240528011301-b51a646c7c86 h1:tdMsjOqUR7YXH
 github.com/pingcap/failpoint v0.0.0-20240528011301-b51a646c7c86/go.mod h1:exzhVYca3WRtd6gclGNErRWb1qEgff3LYta0LvRmON4=
 github.com/pingcap/log v1.1.0 h1:ELiPxACz7vdo1qAvvaWJg1NrYFoY6gqAh/+Uo6aXdD8=
 github.com/pingcap/log v1.1.0/go.mod h1:DWQW5jICDR7UJh4HtxXSM20Churx4CQL0fwL/SoOSA4=
-github.com/pingcap/tidb/pkg/parser v0.0.0-20250423160341-30cdbab99941 h1:Y3GSHzCLc03A82b7Drl1B7UTT3vdR5HKseP3AGqURXo=
-github.com/pingcap/tidb/pkg/parser v0.0.0-20250423160341-30cdbab99941/go.mod h1:+8feuexTKcXHZF/dkDfvCwEyBAmgb4paFc3/WeYV2eE=
 github.com/pingcap/tidb/pkg/parser v0.0.0-20250424142402-57a8f744a241 h1:WTNrS3+Ha7tCNGyhAxZmrHHs7LtYalF5G+zfV97G2Ts=
 github.com/pingcap/tidb/pkg/parser v0.0.0-20250424142402-57a8f744a241/go.mod h1:+8feuexTKcXHZF/dkDfvCwEyBAmgb4paFc3/WeYV2eE=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=

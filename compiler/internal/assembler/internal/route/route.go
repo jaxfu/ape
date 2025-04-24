@@ -2,6 +2,7 @@ package route
 
 import (
 	"fmt"
+
 	"github.com/jaxfu/ape/compiler/internal/assembler/internal/shared"
 	"github.com/jaxfu/ape/compiler/internal/parser"
 	compshared "github.com/jaxfu/ape/compiler/internal/shared"
@@ -38,10 +39,10 @@ func AssembleRoute(parsedRoute parser.ParsedRoute) (compshared.CompiledRoute, er
 	}
 
 	return compshared.CompiledRoute{
-		ComponentMetadata: metadata,
-		RouteMetadata:     routeMetadata,
-		Request:           request,
-		Responses:         responses,
+		CompiledComponentMetadata: metadata,
+		RouteMetadata:             routeMetadata,
+		Request:                   request,
+		Responses:                 responses,
 	}, nil
 }
 

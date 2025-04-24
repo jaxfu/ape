@@ -2,6 +2,7 @@ package props
 
 import (
 	"fmt"
+
 	"github.com/jaxfu/ape/compiler/internal/assembler/internal/props/constraints"
 	"github.com/jaxfu/ape/compiler/internal/assembler/internal/shared"
 	"github.com/jaxfu/ape/compiler/internal/parser"
@@ -36,7 +37,7 @@ func AssembleProp(parsedProp parser.ParsedProp) (compShared.CompiledProp, error)
 	isArr := parsedProp.PropMetadata.IsArray != nil && *parsedProp.PropMetadata.IsArray
 
 	return compShared.CompiledProp{
-		ComponentMetadata: metadata,
+		CompiledComponentMetadata: metadata,
 		PropMetadata: components.PropMetadata{
 			PropType: parsedProp.PropMetadata.PropType,
 			IsArray:  isArr,

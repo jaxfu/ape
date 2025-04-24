@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+
 	"github.com/jaxfu/ape/compiler"
 
 	"github.com/jaxfu/ape/components"
@@ -12,7 +13,7 @@ func (l *Linker) linkObjects(objects map[string]compiler.CompiledObject) (map[co
 
 	if len(objects) > 0 {
 		for k, v := range objects {
-			meta, err := l.LinkComponent(v.ComponentMetadata)
+			meta, err := l.LinkComponent(v.CompiledComponentMetadata)
 			if err != nil {
 				return nil, fmt.Errorf("Linker.LinkComponent: %+v", err)
 			}

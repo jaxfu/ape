@@ -26,17 +26,3 @@ func (bus *Bus) Start() {
 		bus.Dispatches.Store <- event
 	}
 }
-
-type Dispatches struct {
-	Store chan Event
-}
-
-func NewChannel[T any](bufsize int) chan T {
-	var newchan chan T
-	if bufsize < 1 {
-		newchan = make(chan T)
-	} else {
-		newchan = make(chan T, bufsize)
-	}
-	return newchan
-}

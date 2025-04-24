@@ -2,24 +2,22 @@ package shared
 
 import "github.com/jaxfu/ape/components"
 
-type (
-	CompiledProp struct {
-		ComponentMetadata CompiledComponentMetadata
-		PropMetadata      components.PropMetadata
-		Constraints       components.PropConstraints
-	}
-)
+type CompiledProp struct {
+	CompiledComponentMetadata
+	PropMetadata components.PropMetadata
+	Constraints  components.PropConstraints
+}
 
 type CompiledObject struct {
-	ComponentMetadata CompiledComponentMetadata
-	Props             map[string]CompiledProp
+	CompiledComponentMetadata
+	Props map[string]CompiledProp
 }
 
 type CompiledBody struct {
-	ComponentMetadata CompiledComponentMetadata
-	BodyType          components.MessageBodyType
-	Ref               components.ReferenceTag
-	Props             map[string]CompiledProp
+	CompiledComponentMetadata
+	BodyType components.MessageBodyType
+	Ref      components.ReferenceTag
+	Props    map[string]CompiledProp
 }
 
 type CompiledRouteMetadata struct {
@@ -27,22 +25,22 @@ type CompiledRouteMetadata struct {
 	Method components.HttpMethod `json:"method,omitempty" toml:"method,omitempty"`
 }
 type CompiledRoute struct {
-	ComponentMetadata CompiledComponentMetadata
-	RouteMetadata     CompiledRouteMetadata
-	Request           CompiledRequest
-	Responses         CompiledResponses
+	CompiledComponentMetadata
+	RouteMetadata CompiledRouteMetadata
+	Request       CompiledRequest
+	Responses     CompiledResponses
 }
 
 type CompiledRequest struct {
-	ComponentMetadata CompiledComponentMetadata
-	Headers           components.HeadersMap
-	Body              *CompiledBody
+	CompiledComponentMetadata
+	Headers components.HeadersMap
+	Body    *CompiledBody
 }
 
 type CompiledResponse struct {
-	ComponentMetadata CompiledComponentMetadata
-	StatusCode        uint          `json:"status_code" toml:"status_code"`
-	Body              *CompiledBody `json:"body" toml:"body"`
+	CompiledComponentMetadata
+	StatusCode uint          `json:"status_code" toml:"status_code"`
+	Body       *CompiledBody `json:"body" toml:"body"`
 }
 
 type CompiledResponses = map[string]CompiledResponse

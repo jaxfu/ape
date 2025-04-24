@@ -9,7 +9,6 @@ import (
 	"syscall"
 
 	corepkg "github.com/jaxfu/ape/engine/core"
-	"github.com/jaxfu/ape/engine/core/bus"
 	"github.com/jaxfu/ape/engine/pkg/dev"
 	"github.com/jaxfu/ape/engine/pkg/extras"
 )
@@ -17,13 +16,6 @@ import (
 const (
 	TEST_ROOT_DIR string = "../example"
 )
-
-func handleEvents(bus *bus.Bus) {
-	for event := range bus.Events {
-		fmt.Println("event: ")
-		fmt.Println(event)
-	}
-}
 
 func main() {
 	fmt.Println(extras.SPLASH)
@@ -45,8 +37,6 @@ func main() {
 		serverClosedChan <- true
 	}()
 
-	go handleEvents(core.Bus)
-
 	select {
 	case sig := <-sigChan:
 		fmt.Printf("\nReceived shutdown signal: %s, shutting down...\n", sig)
@@ -57,35 +47,4 @@ func main() {
 
 	<-serverClosedChan
 	dev.Shutdown()
-
-	// rootDir, err := filepath.Abs(TEST_ROOT_DIR)
-	// if err != nil {
-	// 	log.Printf("illegal filepath '%s': %+v\n", TEST_ROOT_DIR, err)
-	// }
-	//
-	// // read file
-	// filehandler := filehandler.NewFileHandler()
-	// rawFile, err := filehandler.ReadFile(
-	// 	fmt.Sprintf("%s/objects/Todo.toml", rootDir),
-	// )
-	// if err != nil {
-	// 	log.Fatalf("FileHandler.ReadFile: %+v", err)
-	// }
-	//
-	// compiled, err := compiler.NewCompiler().File(
-	// 	rawFile.Path(),
-	// 	rawFile.Bytes(),
-	// )
-	// if err != nil {
-	// 	log.Fatalf("error compiling file %s: %+v", rawFile.Path(), err)
-	// }
-	// // dev.PrettyPrint(compiled)
-	//
-	// str := store.NewStore()
-	// lnkr := linker.NewLinker(str)
-	// ac, err := lnkr.LinkAll(compiled)
-	// if err != nil {
-	// 	log.Fatalf("Linker.LinkAll: %+v", err)
-	// }
-	// dev.PrettyPrint(ac)
 }

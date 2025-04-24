@@ -44,7 +44,7 @@ func (c Compiler) File(path string, bytes []byte) (shared.CompiledComponents, er
 	return shared.CompiledComponents{
 		Props: map[string]shared.CompiledProp{},
 		Objects: map[string]shared.CompiledObject{
-			assembled.ComponentMetadata.Name: assembled,
+			assembled.CompiledComponentMetadata.Name: assembled,
 		},
 		Routes:    map[string]shared.CompiledRoute{},
 		Bodies:    map[string]shared.CompiledBody{},

@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+
 	"github.com/jaxfu/ape/compiler"
 
 	"github.com/jaxfu/ape/components"
@@ -28,7 +29,7 @@ func (l *Linker) linkResponses(responses map[string]compiler.CompiledResponse) (
 }
 
 func (l *Linker) linkResponse(response compiler.CompiledResponse) (components.Response, error) {
-	meta, err := l.LinkComponent(response.ComponentMetadata)
+	meta, err := l.LinkComponent(response.CompiledComponentMetadata)
 	if err != nil {
 		return components.Response{}, fmt.Errorf("Linker.LinkComponent: %+v", err)
 	}

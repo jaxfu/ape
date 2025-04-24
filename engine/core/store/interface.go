@@ -9,10 +9,15 @@ import (
 )
 
 type Store struct {
-	Components components.ComponentStore
-	Categories categories.CategoryStore
+	Components ComponentStore
+	Categories CategoryStore
 	Events     <-chan bus.Event
 }
+
+type (
+	ComponentStore = components.ComponentStore
+	CategoryStore  = categories.CategoryStore
+)
 
 func NewStore(chin <-chan bus.Event) *Store {
 	return &Store{

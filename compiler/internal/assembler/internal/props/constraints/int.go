@@ -6,7 +6,10 @@ import (
 	"github.com/jaxfu/ape/components"
 )
 
-func assembleIntConstraints(fields map[string]any) (components.PropConstraints, error) {
+func assembleIntConstraints(fields map[string]any) (
+	components.PropConstraints,
+	error,
+) {
 	constraints := components.PropConstraintsInt{}
 
 	size, exists, err := extractFromMap[int64](SIZE, fields)

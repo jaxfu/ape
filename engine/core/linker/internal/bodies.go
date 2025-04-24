@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+
 	"github.com/jaxfu/ape/compiler"
 
 	"github.com/jaxfu/ape/components"
@@ -24,7 +25,7 @@ func (l *Linker) linkBodies(objects map[string]compiler.CompiledBody) (map[compo
 }
 
 func (l *Linker) linkBody(body compiler.CompiledBody) (components.MessageBody, error) {
-	meta, err := l.LinkComponent(body.ComponentMetadata)
+	meta, err := l.LinkComponent(body.CompiledComponentMetadata)
 	if err != nil {
 		return components.MessageBody{}, fmt.Errorf("Linker.LinkComponent: %+v", err)
 	}

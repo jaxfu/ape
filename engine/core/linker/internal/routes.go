@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+
 	"github.com/jaxfu/ape/compiler"
 
 	"github.com/jaxfu/ape/components"
@@ -15,7 +16,7 @@ func (l *Linker) linkRoutes(routes map[string]compiler.CompiledRoute) (
 
 	if len(routes) > 0 {
 		for k, v := range routes {
-			meta, err := l.LinkComponent(v.ComponentMetadata)
+			meta, err := l.LinkComponent(v.CompiledComponentMetadata)
 			if err != nil {
 				return nil, fmt.Errorf("Linker.LinkComponent: %+v", err)
 			}

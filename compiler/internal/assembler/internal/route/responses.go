@@ -2,6 +2,7 @@ package route
 
 import (
 	"fmt"
+
 	"github.com/jaxfu/ape/compiler/internal/assembler/internal/body"
 	"github.com/jaxfu/ape/compiler/internal/assembler/internal/shared"
 	"github.com/jaxfu/ape/compiler/internal/parser"
@@ -41,8 +42,8 @@ func AssembleResponse(parsedRes parser.ParsedResponse) (compshared.CompiledRespo
 	}
 
 	return compshared.CompiledResponse{
-		ComponentMetadata: metadata,
-		StatusCode:        *parsedRes.StatusCode,
-		Body:              &body,
+		CompiledComponentMetadata: metadata,
+		StatusCode:                *parsedRes.StatusCode,
+		Body:                      &body,
 	}, nil
 }

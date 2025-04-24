@@ -2,6 +2,7 @@ package object
 
 import (
 	"fmt"
+
 	"github.com/jaxfu/ape/compiler/internal/assembler/internal/props"
 	asmshared "github.com/jaxfu/ape/compiler/internal/assembler/internal/shared"
 	"github.com/jaxfu/ape/compiler/internal/parser"
@@ -31,7 +32,7 @@ func AssembleObject(parsedObj parser.ParsedObject) (shared.CompiledObject, error
 	}
 
 	return shared.CompiledObject{
-		ComponentMetadata: metadata,
-		Props:             propsMap,
+		CompiledComponentMetadata: metadata,
+		Props:                     propsMap,
 	}, nil
 }

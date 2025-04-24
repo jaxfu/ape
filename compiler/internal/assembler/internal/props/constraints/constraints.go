@@ -12,19 +12,25 @@ const (
 	MAX  string = "max"
 )
 
-func AssembleConstraints(propType components.PropType, fields map[string]any) (components.PropConstraints, error) {
+func AssembleConstraints(
+	propType components.PropType,
+	fields map[string]any,
+) (
+	components.PropConstraints,
+	error,
+) {
 	switch propType {
-	case components.PROP_TYPE_REF:
+	case components.PropTypes.REF:
 		return assembleRefConstraints(fields)
-	case components.PROP_TYPE_INT:
+	case components.PropTypes.INT:
 		return assembleIntConstraints(fields)
-	case components.PROP_TYPE_UINT:
+	case components.PropTypes.UINT:
 		return assembleUintConstraints(fields)
-	case components.PROP_TYPE_FLOAT:
+	case components.PropTypes.FLOAT:
 		return assembleFloatConstraints(fields)
-	case components.PROP_TYPE_TEXT:
+	case components.PropTypes.TEXT:
 		return assembleTextConstraints(fields)
-	case components.PROP_TYPE_BLOB:
+	case components.PropTypes.BLOB:
 		return assembleBlobConstraints(fields)
 	}
 
