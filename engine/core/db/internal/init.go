@@ -3,6 +3,8 @@ package internal
 import (
 	"database/sql"
 	"os"
+
+	_ "modernc.org/sqlite"
 )
 
 func initDb(dbPath, initSqlPath string) (*sql.DB, error) {

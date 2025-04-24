@@ -2,9 +2,9 @@ package internal
 
 import (
 	"fmt"
+	"github.com/jaxfu/ape/compiler"
 
 	"github.com/jaxfu/ape/components"
-	"github.com/jaxfu/ape/engine/compiler"
 )
 
 func (l *Linker) linkResponses(responses map[string]compiler.CompiledResponse) (

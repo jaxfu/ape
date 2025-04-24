@@ -2,12 +2,11 @@ package internal
 
 import (
 	"fmt"
+	"github.com/jaxfu/ape/compiler"
 
 	"github.com/jaxfu/ape/components"
-	"github.com/jaxfu/ape/engine/compiler"
 )
 
-// TODO: wip link route
 func (l *Linker) linkRoutes(routes map[string]compiler.CompiledRoute) (
 	map[components.ComponentId]components.Route,
 	error,

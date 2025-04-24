@@ -1,8 +1,8 @@
 package linker
 
 import (
+	"github.com/jaxfu/ape/compiler"
 	"github.com/jaxfu/ape/components"
-	"github.com/jaxfu/ape/engine/compiler"
 	"github.com/jaxfu/ape/engine/core/linker/internal"
 	"github.com/jaxfu/ape/engine/core/store"
 )

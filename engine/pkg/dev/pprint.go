@@ -6,7 +6,11 @@ import (
 )
 
 func PrettyPrint(a any) {
-	m, err := json.MarshalIndent(a, "", "\t")
+	m, err := json.MarshalIndent(
+		a,
+		"",
+		"  ",
+	)
 	if err != nil {
 		fmt.Printf("PrettyPrint: %+v", err)
 	}

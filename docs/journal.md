@@ -1,6 +1,11 @@
+### 24.4.25
+
+- init Client
+
 ### 23.4.25
 
 - made engine/core/store threadsafe
+- Linker working for ComponentId
 
 ### 22.4.25
 
