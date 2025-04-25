@@ -2,14 +2,16 @@ package shared
 
 import (
 	"fmt"
+
 	"github.com/jaxfu/ape/compiler/internal/parser"
 	"github.com/jaxfu/ape/compiler/internal/shared"
+	"github.com/jaxfu/ape/components"
 )
 
 func AssembleComponentMetadata(
 	metadata parser.ParsedComponentMetadata,
 	ctx shared.CompilationContext,
-) (shared.CompiledComponentMetadata, error) {
+) (components.ComponentMetadata, error) {
 	componentId, err := GenerateComponentId(
 		GenerateIdParams{
 			ComponentType: ctx.ComponentType,
@@ -19,7 +21,7 @@ func AssembleComponentMetadata(
 			Category:      metadata.Category,
 		})
 	if err != nil {
-		return shared.CompiledComponentMetadata{},
+		return components.ComponentMetadata{},
 			fmt.Errorf("IdHandler.Generate: %+v", err)
 	}
 
@@ -30,7 +32,7 @@ func AssembleComponentMetadata(
 		name = *ctx.Name
 	}
 
-	return shared.CompiledComponentMetadata{
+	return components.ComponentMetadata{
 		ComponentType: ctx.ComponentType,
 		Name:          name,
 		ComponentId:   componentId,

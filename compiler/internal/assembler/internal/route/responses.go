@@ -6,12 +6,18 @@ import (
 	"github.com/jaxfu/ape/compiler/internal/assembler/internal/body"
 	"github.com/jaxfu/ape/compiler/internal/assembler/internal/shared"
 	"github.com/jaxfu/ape/compiler/internal/parser"
-	compshared "github.com/jaxfu/ape/compiler/internal/shared"
+	"github.com/jaxfu/ape/components"
 )
 
 // TODO: assemble responses
-func AssembleResponses(parsedRes parser.ParsedResponses, routeId string) (compshared.CompiledResponses, error) {
-	responses := compshared.CompiledResponses{}
+func AssembleResponses(
+	parsedRes parser.ParsedResponses,
+	routeId string,
+) (
+	components.ResponsesMap,
+	error,
+) {
+	responses := components.ResponsesMap{}
 
 	for k, v := range parsedRes {
 		parentId := fmt.Sprintf(
@@ -29,21 +35,24 @@ func AssembleResponses(parsedRes parser.ParsedResponses, routeId string) (compsh
 	return responses, nil
 }
 
-func AssembleResponse(parsedRes parser.ParsedResponse) (compshared.CompiledResponse, error) {
+func AssembleResponse(parsedRes parser.ParsedResponse) (
+	components.Response,
+	error,
+) {
 	metadata, err := shared.AssembleComponentMetadata(parsedRes.Metadata, parsedRes.Context)
 	if err != nil {
-		return compshared.CompiledResponse{}, fmt.Errorf("Assembler.AssembleComponentMetadata: %+v", err)
+		return components.Response{}, fmt.Errorf("Assembler.AssembleComponentMetadata: %+v", err)
 	}
 
 	parsedRes.Body.Context.ParentId = &metadata.ComponentId
 	body, err := body.AssembleMessageBody(*parsedRes.Body)
 	if err != nil {
-		return compshared.CompiledResponse{}, fmt.Errorf("Assembler.AssembleMessageBody: %+v", err)
+		return components.Response{}, fmt.Errorf("Assembler.AssembleMessageBody: %+v", err)
 	}
 
-	return compshared.CompiledResponse{
-		CompiledComponentMetadata: metadata,
-		StatusCode:                *parsedRes.StatusCode,
-		Body:                      &body,
+	return components.Response{
+		ComponentMetadata: metadata,
+		StatusCode:        *parsedRes.StatusCode,
+		Body:              &body,
 	}, nil
 }

@@ -21,7 +21,6 @@ func (v Validator) ValidateComponent(comp components.Component) error {
 	return nil
 }
 
-// TODO: wip validate specific
 func (v Validator) validateComponentSpecific(comp components.Component) error {
 	switch c := comp.(type) {
 	case components.Prop:

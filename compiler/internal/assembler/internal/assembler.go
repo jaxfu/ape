@@ -5,7 +5,7 @@ import (
 	"github.com/jaxfu/ape/compiler/internal/assembler/internal/props"
 	"github.com/jaxfu/ape/compiler/internal/assembler/internal/route"
 	"github.com/jaxfu/ape/compiler/internal/parser"
-	"github.com/jaxfu/ape/compiler/internal/shared"
+	"github.com/jaxfu/ape/components"
 )
 
 type Assembler struct{}
@@ -14,14 +14,14 @@ func DefaultAssembler() *Assembler {
 	return &Assembler{}
 }
 
-func (asm *Assembler) AssembleProp(parsedProp parser.ParsedProp) (shared.CompiledProp, error) {
+func (asm *Assembler) AssembleProp(parsedProp parser.ParsedProp) (components.Prop, error) {
 	return props.AssembleProp(parsedProp)
 }
 
-func (asm *Assembler) AssembleObject(parsedObj parser.ParsedObject) (shared.CompiledObject, error) {
+func (asm *Assembler) AssembleObject(parsedObj parser.ParsedObject) (components.Object, error) {
 	return object.AssembleObject(parsedObj)
 }
 
-func (asm *Assembler) AssembleRoute(parsedRoute parser.ParsedRoute) (shared.CompiledRoute, error) {
+func (asm *Assembler) AssembleRoute(parsedRoute parser.ParsedRoute) (components.Route, error) {
 	return route.AssembleRoute(parsedRoute)
 }

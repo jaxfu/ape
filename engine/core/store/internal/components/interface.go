@@ -9,7 +9,7 @@ type ComponentStore interface {
 	Store(components.Component) error
 	Load(components.ComponentId) (components.Component, error)
 	Exists(components.ComponentId) bool
-	All() (components.AllComponents, error)
+	All() (components.Components, error)
 }
 
 func NewComponentStore() ComponentStore {

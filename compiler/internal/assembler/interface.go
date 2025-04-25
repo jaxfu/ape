@@ -3,13 +3,13 @@ package assembler
 import (
 	"github.com/jaxfu/ape/compiler/internal/assembler/internal"
 	"github.com/jaxfu/ape/compiler/internal/parser"
-	"github.com/jaxfu/ape/compiler/internal/shared"
+	"github.com/jaxfu/ape/components"
 )
 
 type Assembler interface {
-	AssembleProp(parser.ParsedProp) (shared.CompiledProp, error)
-	AssembleObject(parser.ParsedObject) (shared.CompiledObject, error)
-	AssembleRoute(parser.ParsedRoute) (shared.CompiledRoute, error)
+	AssembleProp(parser.ParsedProp) (components.Prop, error)
+	AssembleObject(parser.ParsedObject) (components.Object, error)
+	AssembleRoute(parser.ParsedRoute) (components.Route, error)
 }
 
 func NewAssembler() Assembler {

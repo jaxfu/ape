@@ -31,15 +31,7 @@ const (
 	COMPONENT_TYPE_MESSAGE_BODY ComponentType = "MESSAGE_BODY"
 )
 
-type AllComponents struct {
-	Ids           map[ComponentId]Component
-	Props         map[ComponentId]Prop
-	Objects       map[ComponentId]Object
-	Routes        map[ComponentId]Route
-	Requests      map[ComponentId]Request
-	Response      map[ComponentId]Response
-	MessageBodies map[ComponentId]MessageBody
-}
+type Components = map[ComponentId]Component
 
 type Component interface {
 	Metadata() ComponentMetadata

@@ -8,7 +8,6 @@ import (
 
 	"github.com/jaxfu/ape/engine/core/bus"
 	"github.com/jaxfu/ape/engine/core/db"
-	"github.com/jaxfu/ape/engine/core/linker"
 	"github.com/jaxfu/ape/engine/core/server"
 	"github.com/jaxfu/ape/engine/core/store"
 )
@@ -23,7 +22,6 @@ const (
 
 type Core struct {
 	Store  *store.Store
-	Linker linker.Linker
 	Server server.Server
 	Db     *sql.DB
 	Bus    *bus.Bus
@@ -55,12 +53,9 @@ func InitCore() (*Core, error) {
 	store := store.NewStore(bus.Dispatches.Store)
 	go store.Start()
 
-	linker := linker.NewLinker(store)
-
 	return &Core{
 		Store:  store,
 		Server: server,
-		Linker: linker,
 		Db:     db.Conn(),
 		Bus:    bus,
 	}, nil

@@ -4,14 +4,12 @@ go 1.24.2
 
 require (
 	github.com/jaxfu/ape v0.0.0
-	github.com/jaxfu/ape/compiler v0.0.0
 	modernc.org/sqlite v1.37.0
 )
 
 require (
 	cel.dev/expr v0.23.1 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/BurntSushi/toml v1.5.0 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/cubicdaiya/gonp v1.0.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect

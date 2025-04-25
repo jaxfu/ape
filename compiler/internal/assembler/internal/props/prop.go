@@ -6,14 +6,13 @@ import (
 	"github.com/jaxfu/ape/compiler/internal/assembler/internal/props/constraints"
 	"github.com/jaxfu/ape/compiler/internal/assembler/internal/shared"
 	"github.com/jaxfu/ape/compiler/internal/parser"
-	compShared "github.com/jaxfu/ape/compiler/internal/shared"
 
 	"github.com/jaxfu/ape/components"
 )
 
-func AssembleProp(parsedProp parser.ParsedProp) (compShared.CompiledProp, error) {
+func AssembleProp(parsedProp parser.ParsedProp) (components.Prop, error) {
 	if parsedProp.PropMetadata.PropType == "" {
-		return compShared.CompiledProp{}, fmt.Errorf(
+		return components.Prop{}, fmt.Errorf(
 			"no prop type given",
 		)
 	}
@@ -23,7 +22,7 @@ func AssembleProp(parsedProp parser.ParsedProp) (compShared.CompiledProp, error)
 		parsedProp.Context,
 	)
 	if err != nil {
-		return compShared.CompiledProp{}, fmt.Errorf("Assembler.AssembleComponentMetadata: %+v", err)
+		return components.Prop{}, fmt.Errorf("Assembler.AssembleComponentMetadata: %+v", err)
 	}
 
 	constraints, err := constraints.AssembleConstraints(
@@ -31,17 +30,34 @@ func AssembleProp(parsedProp parser.ParsedProp) (compShared.CompiledProp, error)
 		parsedProp.Constraints,
 	)
 	if err != nil {
-		return compShared.CompiledProp{}, fmt.Errorf("Assembler.AssembleOpts: %+v", err)
+		return components.Prop{}, fmt.Errorf("Assembler.AssembleOpts: %+v", err)
 	}
 
 	isArr := parsedProp.PropMetadata.IsArray != nil && *parsedProp.PropMetadata.IsArray
 
-	return compShared.CompiledProp{
-		CompiledComponentMetadata: metadata,
+	return components.Prop{
+		ComponentMetadata: metadata,
 		PropMetadata: components.PropMetadata{
 			PropType: parsedProp.PropMetadata.PropType,
 			IsArray:  isArr,
 		},
 		Constraints: constraints,
 	}, nil
+}
+
+func AssembleProps(props parser.ParsedProps, parentId *string) (components.PropsMap, error) {
+	propsMap := components.PropsMap{}
+	for k, v := range props {
+		v.Context.ParentId = parentId
+
+		prop, err := AssembleProp(v)
+		if err != nil {
+			return nil,
+				fmt.Errorf("Assembler.AssembleProp: %+v", err)
+		}
+
+		propsMap[k] = prop
+	}
+
+	return propsMap, nil
 }
