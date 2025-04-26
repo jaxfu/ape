@@ -1,8 +1,9 @@
 ### Todo
 
+- redesign store, no longer need mutex
 - core/server
   - get and set
-- sync core/store with db
+- sync core/store with db on load
 - api versioning
 - OpenApi translator
   - Will need YAML parser

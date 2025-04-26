@@ -6,8 +6,8 @@ import (
 	"log"
 	"path/filepath"
 
-	"github.com/jaxfu/ape/engine/core/bus"
 	"github.com/jaxfu/ape/engine/core/db"
+	"github.com/jaxfu/ape/engine/core/events"
 	"github.com/jaxfu/ape/engine/core/server"
 	"github.com/jaxfu/ape/engine/core/store"
 )
@@ -21,20 +21,26 @@ const (
 )
 
 type Core struct {
-	Store  *store.Store
-	Server server.Server
-	Db     *sql.DB
-	Bus    *bus.Bus
+	Store          *store.Store
+	Server         server.Server
+	Db             *sql.DB
+	Bus            events.Bus
+	EventProcessor events.EventProcessor
 }
 
 func InitCore() (*Core, error) {
-	db, err := db.NewDb(DB_NAME, INIT_DB_SQL)
+	db, err := db.NewDb(
+		DB_NAME,
+		INIT_DB_SQL,
+	)
 	if err != nil {
 		log.Fatalf("error opening db at %s: %+v\n", DB_NAME, err)
 	}
 
-	bus := bus.NewBus()
-	go bus.Start()
+	store := store.NewStore()
+	bus := events.Bus{
+		Events: make(chan events.Event, 5),
+	}
 
 	clientDir, err := filepath.Abs(CLIENT_DIR)
 	if err != nil {
@@ -44,19 +50,25 @@ func InitCore() (*Core, error) {
 		BASE_URL,
 		PORT,
 		clientDir,
-		bus,
+		&bus,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("server.NewServer: %+v", err)
 	}
 
-	store := store.NewStore(bus.Dispatches.Store)
-	go store.Start()
-
 	return &Core{
-		Store:  store,
-		Server: server,
-		Db:     db.Conn(),
-		Bus:    bus,
+		Store:          store,
+		Server:         server,
+		Db:             db.Conn(),
+		Bus:            bus,
+		EventProcessor: events.NewEventProcessor(bus.Events, store),
 	}, nil
+}
+
+func (c *Core) Start() {
+	go c.EventProcessor.Start()
+
+	shutdownChan := make(chan bool)
+	<-shutdownChan
+	fmt.Println("Core Shutdown")
 }

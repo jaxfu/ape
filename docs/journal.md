@@ -1,3 +1,7 @@
+### 26.4.25
+
+- ape/engine/core EventBus
+
 ### 25.4.25
 
 - ape/engine/core/validator

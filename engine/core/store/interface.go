@@ -4,41 +4,40 @@ import (
 	"fmt"
 
 	"github.com/jaxfu/ape/components"
-	"github.com/jaxfu/ape/engine/core/bus"
 	"github.com/jaxfu/ape/engine/core/store/internal/categories"
-	internalcomps "github.com/jaxfu/ape/engine/core/store/internal/components"
+	storecomps "github.com/jaxfu/ape/engine/core/store/internal/components"
+	"github.com/jaxfu/ape/engine/core/validator"
 )
 
 type Store struct {
 	Components ComponentStore
 	Categories CategoryStore
-	Events     <-chan bus.Event
-}
-
-type Manifest struct {
-	Components map[string]*components.Component
 }
 
 type (
-	ComponentStore = internalcomps.ComponentStore
+	ComponentStore = storecomps.ComponentStore
 	CategoryStore  = categories.CategoryStore
 )
 
-func NewStore(chin <-chan bus.Event) *Store {
-	return &Store{
-		Components: internalcomps.NewComponentStore(),
+func NewStore() *Store {
+	store := Store{
+		Components: storecomps.NewComponentStore(),
 		Categories: categories.NewCategoryStore(),
-		Events:     chin,
 	}
+
+	return &store
 }
 
-func (s *Store) Start() {
-	for event := range s.Events {
-		fmt.Printf("store event recieved: %+v\n", event.EventType)
-		fmt.Printf("%+v\n", event.Component)
-	}
-}
-
-func (s *Store) CreateComponent(event bus.Event) {
+func (s *Store) CreateComponent(comp components.Component) error {
 	// validate
+	if err := validator.NewValidator().ValidateComponent(comp); err != nil {
+		return fmt.Errorf("error validating: %+v", err)
+	}
+
+	if err := s.Components.Store(comp); err != nil {
+		return fmt.Errorf("ComponentStore.Store: %+v", err)
+	}
+
+	fmt.Println("component stored")
+	return nil
 }

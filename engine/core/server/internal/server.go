@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/jaxfu/ape/engine/core/bus"
+	"github.com/jaxfu/ape/engine/core/events"
 	"github.com/jaxfu/ape/engine/core/server/api"
 )
 
@@ -28,7 +28,7 @@ func NewServer(
 	url string,
 	port uint,
 	clientDirFp string,
-	bus *bus.Bus,
+	bus *events.Bus,
 ) (*Server, error) {
 	return &Server{
 		Config: ServerConfig{
@@ -49,63 +49,15 @@ func (s *Server) Start(ctx context.Context) error {
 		logRequest(createComp),
 	)
 
-	// objectHandler := http.HandlerFunc(func(
-	// 	w http.ResponseWriter,
-	// 	r *http.Request,
-	// ) {
-	// 	data, err := io.ReadAll(r.Body)
-	// 	if err != nil {
-	// 		fmt.Printf("io.ReadAll: %+v\n", err)
-	// 	}
-	// 	defer r.Body.Close()
-	//
-	// 	switch r.Method {
-	// 	case "POST":
-	// 		req := components.Object{}
-	// 		if err := json.Unmarshal(data, &req); err != nil {
-	// 			fmt.Printf("error unmarshalling: %+v\n", err)
-	// 			w.WriteHeader(http.StatusInternalServerError)
-	// 			return
-	// 		}
-	//
-	// 		w.WriteHeader(http.StatusCreated)
-	// 		return
-	//
-	// 	case "GET":
-	// 		// objs, err := s.Store.GetObjects()
-	// 		// if err != nil {
-	// 		// 	fmt.Printf("Store.GetObject: %+v\n", err)
-	// 		// 	w.WriteHeader(http.StatusInternalServerError)
-	// 		// 	return
-	// 		// }
-	//
-	// 		// fmt.Printf("%+v\n", objs)
-	//
-	// 		// marshalled, err := json.Marshal(objs)
-	// 		// if err != nil {
-	// 		// 	fmt.Printf("json.Marshal: %+v\n", err)
-	// 		// 	w.WriteHeader(http.StatusInternalServerError)
-	// 		// 	return
-	// 		// }
-	// 		//
-	// 		// w.Write(marshalled)
-	// 		return
-	//
-	// 	case "OPTIONS":
-	// 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
-	// 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
-	// 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Refresh-Token")
-	// 		w.Header().Set("Access-Control-Expose-Headers", "Authorization, X-Refresh-Token")
-	// 		w.Header().Set("Access-Control-Allow-Credentials", "true")
-	// 		w.WriteHeader(http.StatusNoContent)
-	//
-	// 	default:
-	// 		fmt.Printf("unsupported method '%s'\n", r.Method)
-	// 		w.WriteHeader(http.StatusBadRequest)
-	// 		return
-	// 	}
+	// CORS
+	// router.HandleFunc("OPTIONS", func(w http.ResponseWriter, r *http.Request) {
+	// 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+	// 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
+	// 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Refresh-Token")
+	// 	w.Header().Set("Access-Control-Expose-Headers", "Authorization, X-Refresh-Token")
+	// 	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	// 	w.WriteHeader(http.StatusNoContent)
 	// })
-	// router.Handle("GET /api/object", handleCors(logRequest(objectHandler)))
 
 	// mainHandler := http.HandlerFunc(func(
 	// 	w http.ResponseWriter,

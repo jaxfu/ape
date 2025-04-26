@@ -37,6 +37,8 @@ func main() {
 		serverClosedChan <- true
 	}()
 
+	core.Start()
+
 	select {
 	case sig := <-sigChan:
 		fmt.Printf("\nReceived shutdown signal: %s, shutting down...\n", sig)

@@ -6,21 +6,20 @@ import (
 	"net/http"
 
 	"github.com/jaxfu/ape/components"
-	"github.com/jaxfu/ape/engine/core/bus"
+	"github.com/jaxfu/ape/engine/core/events"
 )
 
-func DefaultApi(bus *bus.Bus) *Api {
-	return &Api{Bus: bus}
+func DefaultApi(bus *events.Bus) *Api {
+	return &Api{
+		Bus: bus,
+	}
 }
 
 type Api struct {
-	Bus *bus.Bus
+	Bus *events.Bus
 }
 
 func (a *Api) CreateComponent(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("starting")
-	defer fmt.Println("ending")
-
 	// Decode the request body into the struct
 	var req components.Object
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -30,8 +29,8 @@ func (a *Api) CreateComponent(w http.ResponseWriter, r *http.Request) {
 	}
 	// dev.PrettyPrint(req)
 
-	a.Bus.Events <- bus.Event{
-		EventType: bus.EventTypes.CREATE,
+	a.Bus.Events <- events.Event{
+		EventType: events.EventTypes.CREATE,
 		Component: req,
 	}
 
