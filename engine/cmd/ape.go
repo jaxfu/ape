@@ -24,7 +24,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("error starting server: %+v", err)
 	}
-	defer core.Db.Close()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

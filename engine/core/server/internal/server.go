@@ -12,22 +12,19 @@ import (
 
 // TODO: wip server get/set routes
 type Server struct {
-	Config     ServerConfig
-	FileServer http.Handler
-	Api        api.Api
+	Config ServerConfig
+	Api    api.Api
 }
 
 type ServerConfig struct {
-	FullUrl   string
-	BaseUrl   string
-	Port      uint
-	ClientDir string
+	FullUrl string
+	BaseUrl string
+	Port    uint
 }
 
 func NewServer(
 	url string,
 	port uint,
-	clientDirFp string,
 	bus *events.Bus,
 ) (*Server, error) {
 	return &Server{
@@ -36,8 +33,7 @@ func NewServer(
 			BaseUrl: url,
 			Port:    port,
 		},
-		FileServer: http.FileServer(http.Dir(clientDirFp)),
-		Api:        api.NewApi(bus),
+		Api: api.NewApi(bus),
 	}, nil
 }
 

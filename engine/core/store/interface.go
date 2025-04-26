@@ -2,41 +2,47 @@ package store
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/jaxfu/ape/components"
-	"github.com/jaxfu/ape/engine/core/store/internal/categories"
-	storecomps "github.com/jaxfu/ape/engine/core/store/internal/components"
+	"github.com/jaxfu/ape/engine/core/store/internal/db"
 	"github.com/jaxfu/ape/engine/core/validator"
 )
 
 type Store struct {
-	Components ComponentStore
-	Categories CategoryStore
+	Components map[components.ComponentId]components.Component
+	Categories map[components.CategoryId]struct{}
+	Db         db.Db
 }
 
-type (
-	ComponentStore = storecomps.ComponentStore
-	CategoryStore  = categories.CategoryStore
-)
-
-func NewStore() *Store {
-	store := Store{
-		Components: storecomps.NewComponentStore(),
-		Categories: categories.NewCategoryStore(),
+func NewStore(dbName, initFp string) *Store {
+	db, err := db.NewDb(
+		dbName,
+		initFp,
+	)
+	if err != nil {
+		log.Fatalf("error opening db at %s: %+v\n", dbName, err)
 	}
 
-	return &store
+	return &Store{
+		Components: map[components.ComponentId]components.Component{},
+		Categories: map[components.CategoryId]struct{}{},
+		Db:         db,
+	}
 }
 
 func (s *Store) CreateComponent(comp components.Component) error {
-	// validate
 	if err := validator.NewValidator().ValidateComponent(comp); err != nil {
 		return fmt.Errorf("error validating: %+v", err)
 	}
-
-	if err := s.Components.Store(comp); err != nil {
-		return fmt.Errorf("ComponentStore.Store: %+v", err)
+	if _, ok := s.Components[comp.Metadata().ComponentId]; ok {
+		return fmt.Errorf("component with id %s already exists", comp.Metadata().ComponentId)
 	}
+	s.Components[comp.Metadata().ComponentId] = comp
+
+	// TODO: wip
+	// store in db
+	// send success msg back through channel
 
 	fmt.Println("component stored")
 	return nil

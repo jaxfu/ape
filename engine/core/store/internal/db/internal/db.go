@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/jaxfu/ape/engine/core/db/generated"
+	"github.com/jaxfu/ape/engine/core/store/internal/db/generated"
 )
 
 func DefaultDb(dbPath, initSqlPath string) (*Db, error) {

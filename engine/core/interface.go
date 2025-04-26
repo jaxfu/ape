@@ -1,12 +1,10 @@
 package core
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"path/filepath"
 
-	"github.com/jaxfu/ape/engine/core/db"
 	"github.com/jaxfu/ape/engine/core/events"
 	"github.com/jaxfu/ape/engine/core/server"
 	"github.com/jaxfu/ape/engine/core/store"
@@ -14,42 +12,31 @@ import (
 
 const (
 	DB_NAME     string = "ape.db"
-	INIT_DB_SQL string = "core/db/sql/schemas.sql"
+	INIT_DB_SQL string = "core/store/internal/db/sql/schemas.sql"
 	BASE_URL    string = "localhost"
 	PORT        uint   = 5000
-	CLIENT_DIR  string = "clients/web/dist"
 )
 
 type Core struct {
 	Store          *store.Store
 	Server         server.Server
-	Db             *sql.DB
 	Bus            events.Bus
 	EventProcessor events.EventProcessor
 }
 
 func InitCore() (*Core, error) {
-	db, err := db.NewDb(
-		DB_NAME,
-		INIT_DB_SQL,
-	)
+	initFp, err := filepath.Abs(INIT_DB_SQL)
 	if err != nil {
-		log.Fatalf("error opening db at %s: %+v\n", DB_NAME, err)
+		log.Printf("illegal filepath '%s': %+v\n", initFp, err)
 	}
-
-	store := store.NewStore()
+	store := store.NewStore(DB_NAME, initFp)
 	bus := events.Bus{
 		Events: make(chan events.Event, 5),
 	}
 
-	clientDir, err := filepath.Abs(CLIENT_DIR)
-	if err != nil {
-		log.Printf("illegal filepath '%s': %+v\n", clientDir, err)
-	}
 	server, err := server.NewServer(
 		BASE_URL,
 		PORT,
-		clientDir,
 		&bus,
 	)
 	if err != nil {
@@ -59,7 +46,6 @@ func InitCore() (*Core, error) {
 	return &Core{
 		Store:          store,
 		Server:         server,
-		Db:             db.Conn(),
 		Bus:            bus,
 		EventProcessor: events.NewEventProcessor(bus.Events, store),
 	}, nil

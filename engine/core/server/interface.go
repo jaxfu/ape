@@ -11,6 +11,6 @@ type Server interface {
 	Start(ctx context.Context) error
 }
 
-func NewServer(url string, port uint, clientDirFp string, bus *events.Bus) (Server, error) {
-	return internal.NewServer(url, port, clientDirFp, bus)
+func NewServer(url string, port uint, bus *events.Bus) (Server, error) {
+	return internal.NewServer(url, port, bus)
 }

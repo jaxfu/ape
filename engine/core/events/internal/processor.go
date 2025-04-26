@@ -32,7 +32,7 @@ func (eh *EventProcessor) Start() {
 }
 
 func (eh *EventProcessor) createComponent(comp components.Component) error {
-	if err := eh.Store.Components.Store(comp); err != nil {
+	if err := eh.Store.CreateComponent(comp); err != nil {
 		return fmt.Errorf("error storing component: %+v", err)
 	}
 
