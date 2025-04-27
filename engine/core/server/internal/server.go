@@ -10,7 +10,6 @@ import (
 	"github.com/jaxfu/ape/engine/core/server/api"
 )
 
-// TODO: wip server get/set routes
 type Server struct {
 	Config ServerConfig
 	Api    api.Api
@@ -39,29 +38,18 @@ func NewServer(
 
 func (s *Server) Start(ctx context.Context) error {
 	router := http.ServeMux{}
+
 	createComp := http.HandlerFunc(s.Api.CreateComponent)
 	router.Handle(
 		"POST /api/components",
 		logRequest(createComp),
 	)
 
-	// CORS
-	// router.HandleFunc("OPTIONS", func(w http.ResponseWriter, r *http.Request) {
-	// 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
-	// 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
-	// 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Refresh-Token")
-	// 	w.Header().Set("Access-Control-Expose-Headers", "Authorization, X-Refresh-Token")
-	// 	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	// 	w.WriteHeader(http.StatusNoContent)
-	// })
-
-	// mainHandler := http.HandlerFunc(func(
-	// 	w http.ResponseWriter,
-	// 	r *http.Request,
-	// ) {
-	// 	s.FileServer.ServeHTTP(w, r)
-	// })
-	// router.Handle("/", handleCors(logRequest(mainHandler)))
+	getComps := http.HandlerFunc(s.Api.GetComponents)
+	router.Handle(
+		"GET /api/components",
+		logRequest(handleCors(getComps)),
+	)
 
 	router.Handle("/api/health", handleCors(logRequest(healthCheck())))
 	server := http.Server{
@@ -82,7 +70,7 @@ func (s *Server) Start(ctx context.Context) error {
 		context.Background(),
 		5*time.Second,
 	)
-	defer cancel()
+	cancel()
 
 	return server.Shutdown(shutdownCtx)
 }

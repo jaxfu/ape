@@ -9,7 +9,6 @@ import (
 	"syscall"
 
 	corepkg "github.com/jaxfu/ape/engine/core"
-	"github.com/jaxfu/ape/engine/pkg/dev"
 	"github.com/jaxfu/ape/engine/pkg/extras"
 )
 
@@ -25,27 +24,20 @@ func main() {
 		log.Fatalf("error starting server: %+v", err)
 	}
 
+	coreClosedChan := make(chan bool)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
-	shutdownErr := make(chan error, 1)
-	serverClosedChan := make(chan bool)
 	go func() {
-		shutdownErr <- core.Server.Start(ctx)
-		serverClosedChan <- true
+		core.Start(ctx)
+		coreClosedChan <- true
 	}()
 
-	core.Start()
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+	sig := <-sigChan
+	fmt.Printf("\nReceived shutdown signal: %s, shutting down...\n", sig)
+	cancel()
 
-	select {
-	case sig := <-sigChan:
-		fmt.Printf("\nReceived shutdown signal: %s, shutting down...\n", sig)
-		cancel()
-	case err := <-shutdownErr:
-		fmt.Printf("\nServer error, stopping: %v\n", err)
-	}
-
-	<-serverClosedChan
-	dev.Shutdown()
+	<-coreClosedChan
+	fmt.Println("Bye!")
 }

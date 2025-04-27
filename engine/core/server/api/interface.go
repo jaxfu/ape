@@ -9,6 +9,7 @@ import (
 
 type Api interface {
 	CreateComponent(w http.ResponseWriter, r *http.Request)
+	GetComponents(w http.ResponseWriter, r *http.Request)
 }
 
 func NewApi(bus *events.Bus) Api {

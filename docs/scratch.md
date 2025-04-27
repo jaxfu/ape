@@ -1,8 +1,8 @@
 ### Todo
 
-- redesign store, no longer need mutex
-- core/server
-  - get and set
+- client
+  - render components
+  - form for creating
 - sync core/store with db on load
 - api versioning
 - OpenApi translator

@@ -1,5 +1,0 @@
-/object:
-
-- GET:
-  - ReqBody:
-    -

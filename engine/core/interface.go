@@ -1,9 +1,11 @@
 package core
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"path/filepath"
+	"sync"
 
 	"github.com/jaxfu/ape/engine/core/events"
 	"github.com/jaxfu/ape/engine/core/server"
@@ -51,10 +53,28 @@ func InitCore() (*Core, error) {
 	}, nil
 }
 
-func (c *Core) Start() {
-	go c.EventProcessor.Start()
+func (c *Core) Start(ctx context.Context) {
+	var wg sync.WaitGroup
+	wg.Add(2)
 
-	shutdownChan := make(chan bool)
-	<-shutdownChan
+	go func() {
+		defer wg.Done()
+		c.Server.Start(ctx)
+		fmt.Println("server stopped")
+	}()
+	go func() {
+		defer wg.Done()
+		c.EventProcessor.Start(ctx)
+		fmt.Println("event processor stopped")
+	}()
+
+	<-ctx.Done()
+	fmt.Println("Shutting down core...")
+	wg.Wait()
+	c.cleanup()
 	fmt.Println("Core Shutdown")
+}
+
+func (c *Core) cleanup() {
+	c.Store.Db.Conn().Close()
 }

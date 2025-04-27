@@ -1,13 +1,13 @@
 package components
 
 type ComponentMetadata struct {
-	ComponentType ComponentType
-	ComponentId   ComponentId
-	Name          string
-	IsRoot        bool
-	ParentId      *ComponentId
-	Category      *CategoryId
-	Description   *string
+	ComponentType ComponentType `json:"component_type"`
+	ComponentId   ComponentId   `json:"component_id"`
+	Name          string        `json:"name"`
+	IsRoot        bool          `json:"is_root"`
+	ParentId      *ComponentId  `json:"parent_id,omitempty"`
+	Category      *CategoryId   `json:"category,omitempty"`
+	Description   *string       `json:"description,omitempty"`
 }
 
 func (meta ComponentMetadata) Metadata() ComponentMetadata {

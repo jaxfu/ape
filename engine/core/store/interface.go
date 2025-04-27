@@ -1,6 +1,7 @@
 package store
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -40,9 +41,13 @@ func (s *Store) CreateComponent(comp components.Component) error {
 	}
 	s.Components[comp.Metadata().ComponentId] = comp
 
-	// TODO: wip
-	// store in db
-	// send success msg back through channel
+	marshalled, err := json.Marshal(comp)
+	if err != nil {
+		return fmt.Errorf("json.Marshal: %+v", err)
+	}
+	if err := s.Db.InsertComponent(comp.Metadata().ComponentId, marshalled); err != nil {
+		return fmt.Errorf("Db.InsertComponent: %+v", err)
+	}
 
 	fmt.Println("component stored")
 	return nil
