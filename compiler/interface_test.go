@@ -12,6 +12,8 @@ const (
 	TEST_DIR = "../example"
 )
 
+var compiler = NewCompiler()
+
 func TestCompiler(t *testing.T) {
 	path, err := filepath.Abs(fmt.Sprintf("%s/props/Username.toml", TEST_DIR))
 	if err != nil {
@@ -25,7 +27,7 @@ func TestCompiler(t *testing.T) {
 		return
 	}
 
-	comps, err := NewCompiler().File(path, bytes)
+	comps, err := compiler.File(path, bytes)
 	if err != nil {
 		t.Errorf("error compiling file %s: %+v", path, err)
 		return

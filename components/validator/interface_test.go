@@ -13,7 +13,7 @@ var invalidObj components.Object = components.Object{
 
 var validObj components.Object = components.Object{
 	ComponentMetadata: components.ComponentMetadata{
-		ComponentType: components.COMPONENT_TYPE_OBJECT,
+		ComponentType: components.ComponentTypes.OBJECT,
 		ComponentId:   "objects.TEST",
 		Name:          "TEST",
 		IsRoot:        true,

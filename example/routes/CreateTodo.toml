@@ -1,3 +1,4 @@
+component_type = "route"
 name = "Create"
 category = "Todos"
 description = "user submits new Todo"

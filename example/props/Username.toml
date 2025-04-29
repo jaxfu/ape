@@ -1,3 +1,4 @@
+component_type = "prop"
 name = "Username"
 category = "Users"
 description = "alphanumeric unique user identifier"

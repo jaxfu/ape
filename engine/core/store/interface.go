@@ -6,8 +6,8 @@ import (
 	"log"
 
 	"github.com/jaxfu/ape/components"
+	"github.com/jaxfu/ape/components/validator"
 	"github.com/jaxfu/ape/engine/core/store/internal/db"
-	"github.com/jaxfu/ape/engine/core/validator"
 )
 
 type Store struct {

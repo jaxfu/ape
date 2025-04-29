@@ -1,3 +1,4 @@
+component_type = "object"
 name = "Notification"
 category = "System"
 description = "content for User notification messages"

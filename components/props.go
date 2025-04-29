@@ -18,6 +18,7 @@ type PropMetadata struct {
 type PropsMap map[string]Prop
 
 // TODO: make generic for check key in enum maps
+// OR make generic enum interface
 func ParsePropType(s string) (PropType, error) {
 	t, ok := propTypesKeysMap[strings.ToLower(s)]
 	if !ok || len(t) < 1 {

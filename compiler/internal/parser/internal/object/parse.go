@@ -10,7 +10,7 @@ import (
 )
 
 func ParseObject(scannedComp scanner.ScannedComponent, isRoot bool) (ParsedObject, error) {
-	metadata, err := shared.ParseComponentMetadata(scannedComp.Fields, components.COMPONENT_TYPE_OBJECT, isRoot)
+	metadata, err := shared.ParseComponentMetadata(scannedComp.Fields, components.ComponentTypes.OBJECT, isRoot)
 	if err != nil {
 		return ParsedObject{}, fmt.Errorf("Parser.parseComponentMetadata: %+v", err)
 	}
@@ -33,7 +33,7 @@ func ParseObject(scannedComp scanner.ScannedComponent, isRoot bool) (ParsedObjec
 		ComponentMetadata: metadata,
 		Props:             parsedProps,
 		Context: shared.Context{
-			ComponentType: components.COMPONENT_TYPE_OBJECT,
+			ComponentType: components.ComponentTypes.OBJECT,
 			Name:          metadata.Name,
 			IsRoot:        isRoot,
 		},

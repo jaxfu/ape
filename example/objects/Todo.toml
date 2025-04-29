@@ -1,3 +1,4 @@
+component_type = "object"
 name = "Todo"
 category = "Todos"
 description = "main todo object created by users"

@@ -45,7 +45,7 @@ func ParseResponse(rawResponse map[string]any, isRoot bool) (ParsedResponse, err
 
 	metadata, err := shared.ParseComponentMetadata(
 		rawResponse,
-		components.COMPONENT_TYPE_RESPONSE,
+		components.ComponentTypes.RESPONSE,
 		isRoot,
 	)
 	if err != nil {
@@ -62,7 +62,7 @@ func ParseResponse(rawResponse map[string]any, isRoot bool) (ParsedResponse, err
 		StatusCode: statusCode,
 		Body:       parsedBody,
 		Context: shared.Context{
-			ComponentType: components.COMPONENT_TYPE_RESPONSE,
+			ComponentType: components.ComponentTypes.RESPONSE,
 			Name:          metadata.Name,
 			IsRoot:        isRoot,
 		},

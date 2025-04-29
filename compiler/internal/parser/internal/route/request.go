@@ -18,7 +18,7 @@ func ParseRequest(routeFields map[string]any, isRoot bool) (*ParsedRequest, erro
 		return nil, fmt.Errorf("invalid request format")
 	}
 
-	metadata, err := shared.ParseComponentMetadata(reqMap, components.COMPONENT_TYPE_REQUEST, isRoot)
+	metadata, err := shared.ParseComponentMetadata(reqMap, components.ComponentTypes.REQUEST, isRoot)
 	if err != nil {
 		return nil, fmt.Errorf("Parser.ParseComponentMetadata:  %+v", err)
 	}
@@ -34,7 +34,7 @@ func ParseRequest(routeFields map[string]any, isRoot bool) (*ParsedRequest, erro
 	}
 
 	ctx := shared.Context{
-		ComponentType: components.COMPONENT_TYPE_REQUEST,
+		ComponentType: components.ComponentTypes.REQUEST,
 		Name:          metadata.Name,
 		IsRoot:        isRoot,
 	}

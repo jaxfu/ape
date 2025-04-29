@@ -109,3 +109,8 @@ type PropConstraintsBlob struct {
 	MinSize *uint `json:"min_size,omitempty"`
 	MaxSize *uint `json:"max_size,omitempty"`
 }
+
+// Bool
+type PropConstraintsBool struct {
+	PropConstraintsMetadata
+}

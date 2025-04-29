@@ -2,7 +2,7 @@ package validator
 
 import (
 	"github.com/jaxfu/ape/components"
-	"github.com/jaxfu/ape/engine/core/validator/internal"
+	"github.com/jaxfu/ape/components/validator/internal"
 )
 
 type Validator interface {

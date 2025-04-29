@@ -16,7 +16,7 @@ func ParseProps(scannedProps map[string]any) (ParsedProps, error) {
 			fields[shared.KEY_NAME] = k
 
 			rawProp := scanner.ScannedComponent{
-				ComponentType: components.COMPONENT_TYPE_PROP,
+				ComponentType: components.ComponentTypes.PROP,
 				Fields:        fields,
 			}
 

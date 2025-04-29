@@ -10,7 +10,7 @@ import (
 )
 
 func ParseMessageBody(rawBodyMap map[string]any, isRoot bool) (*ParsedMessageBody, error) {
-	metadata, err := shared.ParseComponentMetadata(rawBodyMap, components.COMPONENT_TYPE_MESSAGE_BODY, isRoot)
+	metadata, err := shared.ParseComponentMetadata(rawBodyMap, components.ComponentTypes.MESSAGE_BODY, isRoot)
 	if err != nil {
 		return nil, fmt.Errorf("Parser.ParseComponentMetadata: %+v", err)
 	}
@@ -26,7 +26,7 @@ func ParseMessageBody(rawBodyMap map[string]any, isRoot bool) (*ParsedMessageBod
 			BodyType: components.MESSAGE_BODY_TYPE_REF,
 			Ref:      &str,
 			Context: shared.Context{
-				ComponentType: components.COMPONENT_TYPE_MESSAGE_BODY,
+				ComponentType: components.ComponentTypes.MESSAGE_BODY,
 				Name:          metadata.Name,
 				IsRoot:        isRoot,
 			},
@@ -47,7 +47,7 @@ func ParseMessageBody(rawBodyMap map[string]any, isRoot bool) (*ParsedMessageBod
 		BodyType: components.MESSAGE_BODY_TYPE_PROPS,
 		Props:    &parsedProps,
 		Context: shared.Context{
-			ComponentType: components.COMPONENT_TYPE_MESSAGE_BODY,
+			ComponentType: components.ComponentTypes.MESSAGE_BODY,
 			Name:          metadata.Name,
 			IsRoot:        isRoot,
 		},

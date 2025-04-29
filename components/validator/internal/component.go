@@ -59,28 +59,28 @@ func validateComponentType(comp components.Component) error {
 
 	switch comp.(type) {
 	case components.Prop:
-		if meta.ComponentType != components.COMPONENT_TYPE_PROP {
-			return fmt.Errorf("incorrect type for %s: want %s, got %s", meta.ComponentId, components.COMPONENT_TYPE_PROP, meta.ComponentType)
+		if meta.ComponentType != components.ComponentTypes.PROP {
+			return fmt.Errorf("incorrect type for %s: want %s, got %s", meta.ComponentId, components.ComponentTypes.PROP, meta.ComponentType)
 		}
 	case components.Object:
-		if meta.ComponentType != components.COMPONENT_TYPE_OBJECT {
-			return fmt.Errorf("incorrect type for %s: want %s, got %s", meta.ComponentId, components.COMPONENT_TYPE_OBJECT, meta.ComponentType)
+		if meta.ComponentType != components.ComponentTypes.OBJECT {
+			return fmt.Errorf("incorrect type for %s: want %s, got %s", meta.ComponentId, components.ComponentTypes.OBJECT, meta.ComponentType)
 		}
 	case components.Route:
-		if meta.ComponentType != components.COMPONENT_TYPE_ROUTE {
-			return fmt.Errorf("incorrect type for %s: want %s, got %s", meta.ComponentId, components.COMPONENT_TYPE_ROUTE, meta.ComponentType)
+		if meta.ComponentType != components.ComponentTypes.ROUTE {
+			return fmt.Errorf("incorrect type for %s: want %s, got %s", meta.ComponentId, components.ComponentTypes.ROUTE, meta.ComponentType)
 		}
 	case components.MessageBody:
-		if meta.ComponentType != components.COMPONENT_TYPE_MESSAGE_BODY {
-			return fmt.Errorf("incorrect type for %s: want %s, got %s", meta.ComponentId, components.COMPONENT_TYPE_MESSAGE_BODY, meta.ComponentType)
+		if meta.ComponentType != components.ComponentTypes.MESSAGE_BODY {
+			return fmt.Errorf("incorrect type for %s: want %s, got %s", meta.ComponentId, components.ComponentTypes.MESSAGE_BODY, meta.ComponentType)
 		}
 	case components.Request:
-		if meta.ComponentType != components.COMPONENT_TYPE_REQUEST {
-			return fmt.Errorf("incorrect type for %s: want %s, got %s", meta.ComponentId, components.COMPONENT_TYPE_REQUEST, meta.ComponentType)
+		if meta.ComponentType != components.ComponentTypes.REQUEST {
+			return fmt.Errorf("incorrect type for %s: want %s, got %s", meta.ComponentId, components.ComponentTypes.REQUEST, meta.ComponentType)
 		}
 	case components.Response:
-		if meta.ComponentType != components.COMPONENT_TYPE_RESPONSE {
-			return fmt.Errorf("incorrect type for %s: want %s, got %s", meta.ComponentId, components.COMPONENT_TYPE_RESPONSE, meta.ComponentType)
+		if meta.ComponentType != components.ComponentTypes.RESPONSE {
+			return fmt.Errorf("incorrect type for %s: want %s, got %s", meta.ComponentId, components.ComponentTypes.RESPONSE, meta.ComponentType)
 		}
 	default:
 		return fmt.Errorf("unrecognized component type")

@@ -1,5 +1,10 @@
 package components
 
+import (
+	"fmt"
+	"strings"
+)
+
 type ComponentMetadata struct {
 	ComponentType ComponentType `json:"component_type"`
 	ComponentId   ComponentId   `json:"component_id"`
@@ -17,21 +22,30 @@ func (meta ComponentMetadata) Metadata() ComponentMetadata {
 type (
 	ComponentId = string
 	CategoryId  = string
+	Components  = map[ComponentId]Component
 )
 
 type ComponentType = string
 
-// TODO: use map
-const (
-	COMPONENT_TYPE_OBJECT       ComponentType = "OBJECT"
-	COMPONENT_TYPE_PROP         ComponentType = "PROP"
-	COMPONENT_TYPE_ROUTE        ComponentType = "ROUTE"
-	COMPONENT_TYPE_REQUEST      ComponentType = "REQUEST"
-	COMPONENT_TYPE_RESPONSE     ComponentType = "RESPONSE"
-	COMPONENT_TYPE_MESSAGE_BODY ComponentType = "MESSAGE_BODY"
-)
+type ComponentTypesInterface struct {
+	PROP         ComponentType
+	OBJECT       ComponentType
+	ROUTE        ComponentType
+	REQUEST      ComponentType
+	RESPONSE     ComponentType
+	MESSAGE_BODY ComponentType
+	UNDEFINED    ComponentType
+}
 
-type Components = map[ComponentId]Component
+var ComponentTypes = ComponentTypesInterface{
+	PROP:         "PROP",
+	OBJECT:       "OBJECT",
+	ROUTE:        "ROUTE",
+	REQUEST:      "REQUEST",
+	RESPONSE:     "RESPONSE",
+	MESSAGE_BODY: "MESSAGE_BODY",
+	UNDEFINED:    "UNDEFINED",
+}
 
 type Component interface {
 	Metadata() ComponentMetadata
@@ -46,4 +60,66 @@ func ComponentSwitch(comp Component) {
 	case Request:
 	case Response:
 	}
+}
+
+func GenerateComponentId(meta ComponentMetadata) (ComponentId, error) {
+	if meta.ComponentType == "" {
+		return "", fmt.Errorf("no component type given")
+	}
+
+	idParams := []string{}
+	if meta.IsRoot {
+		if strings.TrimSpace(meta.Name) == "" {
+			return "", fmt.Errorf("no name given for root component")
+		}
+
+		if meta.Category != nil {
+			idParams = append(idParams, *meta.Category)
+		}
+
+		typeName, ok := typePluralNames[meta.ComponentType]
+		if !ok {
+			return "", fmt.Errorf("invalid type %s", meta.ComponentType)
+		}
+
+		idParams = append(idParams, typeName)
+		idParams = append(idParams, meta.Name)
+
+	} else { // if not root
+		if meta.ParentId == nil {
+			return "", fmt.Errorf("no parentId given for child")
+		}
+		if strings.ToLower(*meta.ParentId) == "" {
+			return "", fmt.Errorf("no parentId given for child")
+		}
+
+		idParams = append(idParams, *meta.ParentId)
+
+		if meta.Name == "" {
+			name := typeNames[meta.ComponentType]
+			idParams = append(idParams, name)
+		} else {
+			idParams = append(idParams, meta.Name)
+		}
+	}
+
+	return strings.Join(idParams, "."), nil
+}
+
+var typeNames = map[ComponentType]string{
+	ComponentTypes.PROP:         "prop",
+	ComponentTypes.OBJECT:       "object",
+	ComponentTypes.ROUTE:        "route",
+	ComponentTypes.MESSAGE_BODY: "body",
+	ComponentTypes.REQUEST:      "request",
+	ComponentTypes.RESPONSE:     "response",
+}
+
+var typePluralNames = map[ComponentType]string{
+	ComponentTypes.PROP:         "props",
+	ComponentTypes.OBJECT:       "objects",
+	ComponentTypes.ROUTE:        "routes",
+	ComponentTypes.MESSAGE_BODY: "bodies",
+	ComponentTypes.REQUEST:      "requests",
+	ComponentTypes.RESPONSE:     "responses",
 }

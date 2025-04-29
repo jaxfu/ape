@@ -1,5 +1,7 @@
 ### Todo
 
+- compile project dir
+- handle refs
 - client
   - render components
   - form for creating
@@ -48,3 +50,12 @@
 ### Hierarchy (bottom-up)
 
 `Props`->`Objects`->`Routes`->`Actions`
+
+### Compilation
+
+1. Create each component individually (with no regards to relationships)
+
+   - Much easier to understand compilation methods this way
+   - Separate relationship data
+
+2. Recursively walk and link/add ids

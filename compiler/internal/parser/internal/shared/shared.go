@@ -64,26 +64,26 @@ func ParseComponentMetadata(fields map[string]any, compType components.Component
 }
 
 var typeIdNames = map[components.ComponentType]string{
-	components.COMPONENT_TYPE_PROP:         "props",
-	components.COMPONENT_TYPE_OBJECT:       "objects",
-	components.COMPONENT_TYPE_ROUTE:        "routes",
-	components.COMPONENT_TYPE_MESSAGE_BODY: "bodies",
-	components.COMPONENT_TYPE_REQUEST:      "requests",
-	components.COMPONENT_TYPE_RESPONSE:     "responses",
+	components.ComponentTypes.PROP:         "props",
+	components.ComponentTypes.OBJECT:       "objects",
+	components.ComponentTypes.ROUTE:        "routes",
+	components.ComponentTypes.MESSAGE_BODY: "bodies",
+	components.ComponentTypes.REQUEST:      "requests",
+	components.ComponentTypes.RESPONSE:     "responses",
 }
 
 var typeIdChildrenNames = map[components.ComponentType]string{
-	components.COMPONENT_TYPE_PROP:         "prop",
-	components.COMPONENT_TYPE_OBJECT:       "object",
-	components.COMPONENT_TYPE_ROUTE:        "route",
-	components.COMPONENT_TYPE_MESSAGE_BODY: "body",
-	components.COMPONENT_TYPE_REQUEST:      "request",
-	components.COMPONENT_TYPE_RESPONSE:     "response",
+	components.ComponentTypes.PROP:         "prop",
+	components.ComponentTypes.OBJECT:       "object",
+	components.ComponentTypes.ROUTE:        "route",
+	components.ComponentTypes.MESSAGE_BODY: "body",
+	components.ComponentTypes.REQUEST:      "request",
+	components.ComponentTypes.RESPONSE:     "response",
 }
 
 var typesNameRequired = map[components.ComponentType]*any{
-	components.COMPONENT_TYPE_PROP:     nil,
-	components.COMPONENT_TYPE_RESPONSE: nil,
+	components.ComponentTypes.PROP:     nil,
+	components.ComponentTypes.RESPONSE: nil,
 }
 
 type ParsedComponentMetadata struct {

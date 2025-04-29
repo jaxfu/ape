@@ -23,9 +23,9 @@ type RawFileMetadata struct {
 }
 type RawComponent struct {
 	ComponentType components.ComponentType `json:"component_type" toml:"component_type"`
-	IsFromFile   bool            `json:"is_file" toml:"is_file"`
-	FileMetadata RawFileMetadata `json:"metadata" toml:"metadata"`
-	Bytes        []byte          `json:"bytes" toml:"bytes"`
+	IsFromFile    bool                     `json:"is_file" toml:"is_file"`
+	FileMetadata  RawFileMetadata          `json:"metadata" toml:"metadata"`
+	Bytes         []byte                   `json:"bytes" toml:"bytes"`
 }
 
 func (pr Preprocessor) File(path string, bytes []byte) (RawComponent, error) {
@@ -40,9 +40,9 @@ func (pr Preprocessor) File(path string, bytes []byte) (RawComponent, error) {
 
 	// TODO: better way to get types from files
 	compTypesMap := map[string]components.ComponentType{
-		"props":   components.COMPONENT_TYPE_PROP,
-		"objects": components.COMPONENT_TYPE_OBJECT,
-		"routes":  components.COMPONENT_TYPE_ROUTE,
+		"props":   components.ComponentTypes.PROP,
+		"objects": components.ComponentTypes.OBJECT,
+		"routes":  components.ComponentTypes.ROUTE,
 	}
 
 	cType := ""

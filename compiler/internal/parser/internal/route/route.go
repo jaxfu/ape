@@ -9,7 +9,7 @@ import (
 )
 
 func ParseRoute(scannedComp scanner.ScannedComponent, isRoot bool) (ParsedRoute, error) {
-	metadata, err := shared.ParseComponentMetadata(scannedComp.Fields, components.COMPONENT_TYPE_ROUTE, isRoot)
+	metadata, err := shared.ParseComponentMetadata(scannedComp.Fields, components.ComponentTypes.ROUTE, isRoot)
 	if err != nil {
 		return ParsedRoute{}, fmt.Errorf("Parser.parseComponentMetadata: %+v", err)
 	}
@@ -44,7 +44,7 @@ func ParseRoute(scannedComp scanner.ScannedComponent, isRoot bool) (ParsedRoute,
 		Request:           request,
 		Responses:         responses,
 		Context: shared.Context{
-			ComponentType: components.COMPONENT_TYPE_ROUTE,
+			ComponentType: components.ComponentTypes.ROUTE,
 			Name:          metadata.Name,
 			IsRoot:        isRoot,
 		},
