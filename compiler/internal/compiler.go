@@ -1,14 +1,15 @@
 package internal
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 
-	"github.com/jaxfu/ape/compiler/internal/assembler"
-	"github.com/jaxfu/ape/compiler/internal/parser"
-	"github.com/jaxfu/ape/compiler/internal/preprocessor"
-	"github.com/jaxfu/ape/compiler/internal/scanner"
+	"github.com/jaxfu/ape/compiler/internal/lexer"
 	"github.com/jaxfu/ape/components"
 )
+
+const PREALLOC = 1024
 
 type Compiler struct{}
 
@@ -16,34 +17,28 @@ func DefaultCompiler() Compiler {
 	return Compiler{}
 }
 
-func (c Compiler) File(path string, bytes []byte) (components.Components, error) {
-	// preprocess
-	rawComp, err := preprocessor.NewPreprocessor().File(path, bytes)
+// just filepath and read file?
+// would allow to use compiler as cli
+func (c Compiler) File(path string, bytes []byte) (
+	[]components.Component,
+	error,
+) {
+	file, err := os.Open(path)
 	if err != nil {
-		return components.Components{}, fmt.Errorf("Preprocessor.File: %+v", err)
+		return nil, fmt.Errorf("error opening file '%s': %+v", path, err)
 	}
+	defer file.Close()
+	buf := bufio.NewReader(file)
 
-	// scan
-	scanned, err := scanner.NewScanner().ScanComponent(rawComp)
+	lexer := lexer.NewLexer()
+	_, err = lexer.Lex(buf, PREALLOC)
 	if err != nil {
-		return components.Components{}, fmt.Errorf("Scanner.ScanComponent: %+v", err)
+		return nil, fmt.Errorf(
+			"error lexing file '%s': %+v",
+			path,
+			err,
+		)
 	}
 
-	// parse
-	parsed, err := parser.NewParser().ParseObject(scanned, true)
-	if err != nil {
-		return components.Components{}, fmt.Errorf("Parser.ParseRoute: %+v", err)
-	}
-
-	// assemble
-	assembled, err := assembler.NewAssembler().AssembleObject(parsed)
-	if err != nil {
-		return components.Components{}, fmt.Errorf("Assembler.AssembleRoute: %+v", err)
-	}
-
-	ac := components.Components{
-		assembled.ComponentId: assembled,
-	}
-
-	return ac, nil
+	return []components.Component{}, nil
 }

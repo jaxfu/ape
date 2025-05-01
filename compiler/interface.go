@@ -6,7 +6,7 @@ import (
 )
 
 type Compiler interface {
-	File(string, []byte) (components.Components, error)
+	File(string, []byte) ([]components.Component, error)
 }
 
 func NewCompiler() Compiler {

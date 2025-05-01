@@ -1,3 +1,92 @@
+### 8.7.25
+
+- began major refactor of entire project
+
+### 7.7.25
+
+- started ape/compiler/internal/assembler
+  - test added to compiler_test.go
+
+### 3.7.25
+
+- wip ape/compiler/parser steps rewrite
+  - depth and indentation check working
+
+### 30.6.25
+
+- wip ape/compiler/parser steps rewrite
+  - components working
+  - enum members working
+
+### 29.6.25
+
+- wip ape/compiler/parser steps rewrite
+  - comments working
+
+### 28.6.25
+
+- wip ape/compiler/parser steps rewrite
+
+### 22.6.25
+
+- ape/compiler/parser
+  - classify node working for comp, constraint, comment
+
+### 15.6.25
+
+- ape/compiler/lexer rewrite to handle crlf
+
+### 3.6.25
+
+- ape/compiler/lexer redesigned
+
+### 24.5.25
+
+- ape/compiler/parser working w/ comments & components
+
+### 19.5.25
+
+- rewrote lexer
+
+### 18.5.25
+
+- began redesign into two-phase parser
+
+### 8.5.25
+
+- ape/compiler/parser comments
+
+### 7.5.25
+
+- compile redesign started
+  - simpler lexical tokens
+
+### 6.5.25
+
+- ape/compiler/analyzer started
+
+### 5.5.25
+
+- ape/compiler/formatter completed
+
+### 4.5.25
+
+- added enum support to ape/compiler/parser
+
+### 3.5.25
+
+- ape/compiler/parser basic func
+
+### 2.5.25
+
+- ape/pkg/stack generic
+- start ape/compiler/parser recursive redesign
+
+### 1.5.25
+
+- start ape/compiler redesign
+  - lexer completed
+
 ### 30.4.25
 
 - OpenApi unmarshal Schemas -> Props

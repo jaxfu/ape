@@ -1,9 +1,10 @@
 ### Todo
 
-- props can be objects
+- ape/components redesign
+  - id generator for comps
+- step-wise parser
+  - handle enum keys that may be references
 - every element stored separately
-- use doubly linked lists for subcomponents
-
 - compile project dir
 - handle refs
 - client
@@ -17,7 +18,7 @@
 - typescript schema generator
 - cli
 - web client
-  - Objects
+  - objects
     - send
     - get
     - update
@@ -47,9 +48,7 @@
   - log output levels
   - logger choice
 - allow generators to be importable from generators pkg manager
-  - create public repo ala NPM
-- concurrent dir scanning (will need benchmark)
-- do basic validation (names, regex, etc) at parsing
+  - create public repo a la NPM
 
 ### Hierarchy (bottom-up)
 
@@ -58,8 +57,7 @@
 ### Compilation
 
 1. Create each component individually (with no regards to relationships)
-
    - Much easier to understand compilation methods this way
-   - Separate relationship data
+   - Separately store relationship data
 
 2. Recursively walk and link/add ids

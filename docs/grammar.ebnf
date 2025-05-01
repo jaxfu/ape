@@ -1,0 +1,17 @@
+Node             ::= ComponentDef | ConstraintDef | EnumDef | Comment
+ComponentDef     ::= [{Indent}] Ident "->" Type
+Type             ::= ComponentRef | "Collection[?]" | "Integer" | "Float" | "String" | "Bool" | "Blob" 
+Ident            ::= {Letter | IdentInternalSym}
+IdentInternalSym ::= '_' | '-'
+ConstraintDef    ::= "(Ident):" ConstraintVal
+ConstraintVal    ::= String | Number | Integer | Boolean
+EnumDef          ::= Ident [EnumVal]
+EnumVal          ::= ComponentRef | String | Number | Integer | Boolean
+ComponentRef     ::= ".(Ident)"
+Indent           ::= {Tab} | {Space}
+Number           ::= ['.'] Digit { Digit }
+Integer          ::= Digit { Digit }
+String           ::= { any character }
+Boolean          ::= 'true' | 'false'
+Letter           ::= A..Z | a..z | extended ascii
+Digit            ::= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
