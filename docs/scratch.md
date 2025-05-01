@@ -1,5 +1,9 @@
 ### Todo
 
+- props can be objects
+- every element stored separately
+- use doubly linked lists for subcomponents
+
 - compile project dir
 - handle refs
 - client

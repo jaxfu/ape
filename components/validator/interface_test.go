@@ -11,9 +11,11 @@ var invalidObj components.Object = components.Object{
 	Props:             components.PropsMap{},
 }
 
+var types = components.ComponentTypes.Types()
+
 var validObj components.Object = components.Object{
 	ComponentMetadata: components.ComponentMetadata{
-		ComponentType: components.ComponentTypes.OBJECT,
+		ComponentType: types.OBJECT,
 		ComponentId:   "objects.TEST",
 		Name:          "TEST",
 		IsRoot:        true,

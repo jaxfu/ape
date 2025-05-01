@@ -2,6 +2,7 @@ package object
 
 import (
 	"fmt"
+
 	prop2 "github.com/jaxfu/ape/compiler/internal/parser/internal/prop"
 	"github.com/jaxfu/ape/compiler/internal/parser/internal/shared"
 	"github.com/jaxfu/ape/compiler/internal/scanner"
@@ -10,7 +11,11 @@ import (
 )
 
 func ParseObject(scannedComp scanner.ScannedComponent, isRoot bool) (ParsedObject, error) {
-	metadata, err := shared.ParseComponentMetadata(scannedComp.Fields, components.ComponentTypes.OBJECT, isRoot)
+	metadata, err := shared.ParseComponentMetadata(
+		scannedComp.Fields,
+		components.ComponentTypes.Types().OBJECT,
+		isRoot,
+	)
 	if err != nil {
 		return ParsedObject{}, fmt.Errorf("Parser.parseComponentMetadata: %+v", err)
 	}
@@ -33,7 +38,7 @@ func ParseObject(scannedComp scanner.ScannedComponent, isRoot bool) (ParsedObjec
 		ComponentMetadata: metadata,
 		Props:             parsedProps,
 		Context: shared.Context{
-			ComponentType: components.ComponentTypes.OBJECT,
+			ComponentType: components.ComponentTypes.Types().OBJECT,
 			Name:          metadata.Name,
 			IsRoot:        isRoot,
 		},

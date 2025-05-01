@@ -1,36 +1,12 @@
 package shared
 
-import "strings"
+import (
+	"github.com/jaxfu/ape/pkg/enum"
+)
 
-type Enum[T ~string, S any] interface {
-	Match(string) T
-	Types() S
-}
-
-var SchemaTypes Enum[SchemaType, SchemaTypesInterface] = EnumSchemaTypes{
-	TypesInterface: Types,
-	MatchMap:       TypesMatchMap,
-}
-
-type EnumSchemaTypes struct {
-	TypesInterface SchemaTypesInterface
-	MatchMap       map[string]SchemaType
-}
-
-func (s EnumSchemaTypes) Types() SchemaTypesInterface {
-	return s.TypesInterface
-}
-
-func (s EnumSchemaTypes) Match(src string) SchemaType {
-	src = strings.ToLower(src)
-	src = strings.TrimSpace(src)
-
-	found, ok := s.MatchMap[src]
-	if !ok {
-		return s.Types().UNDEFINED
-	}
-
-	return found
+var SchemaTypes = enum.Enum[SchemaType, SchemaTypesInterface]{
+	TypeList: Types,
+	MatchMap: TypesMatchMap,
 }
 
 type (
@@ -63,3 +39,24 @@ var TypesMatchMap = map[string]SchemaType{
 	"array":   Types.ARRAY,
 	"object":  Types.OBJECT,
 }
+
+// type EnumSchemaTypes struct {
+// 	TypesInterface SchemaTypesInterface
+// 	MatchMap       map[string]SchemaType
+// }
+//
+// func (s EnumSchemaTypes) Types() SchemaTypesInterface {
+// 	return s.TypesInterface
+// }
+//
+// func (s EnumSchemaTypes) Match(src string) SchemaType {
+// 	src = strings.ToLower(src)
+// 	src = strings.TrimSpace(src)
+//
+// 	found, ok := s.MatchMap[src]
+// 	if !ok {
+// 		return s.Types().UNDEFINED
+// 	}
+//
+// 	return found
+// }

@@ -7,11 +7,10 @@ import (
 )
 
 func (v Validator) validateProp(prop components.Prop) error {
-	parsedType, err := components.ParsePropType(prop.PropMetadata.PropType)
-	if err != nil {
+	parsedType := components.PropTypes.Match(prop.PropMetadata.PropType)
+	if parsedType == components.PropTypes.Types().UNDEFINED {
 		return fmt.Errorf(
-			"error validating prop type: %+v",
-			err,
+			"invalid prop type",
 		)
 	}
 

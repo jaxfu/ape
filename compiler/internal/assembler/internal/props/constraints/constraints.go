@@ -12,6 +12,8 @@ const (
 	MAX  string = "max"
 )
 
+var propTypes = components.PropTypes.Types()
+
 func AssembleConstraints(
 	propType components.PropType,
 	fields map[string]any,
@@ -20,17 +22,17 @@ func AssembleConstraints(
 	error,
 ) {
 	switch propType {
-	case components.PropTypes.REF:
+	case propTypes.REF:
 		return assembleRefConstraints(fields)
-	case components.PropTypes.INT:
+	case propTypes.INT:
 		return assembleIntConstraints(fields)
-	case components.PropTypes.UINT:
+	case propTypes.UINT:
 		return assembleUintConstraints(fields)
-	case components.PropTypes.FLOAT:
+	case propTypes.FLOAT:
 		return assembleFloatConstraints(fields)
-	case components.PropTypes.TEXT:
+	case propTypes.TEXT:
 		return assembleTextConstraints(fields)
-	case components.PropTypes.BLOB:
+	case propTypes.BLOB:
 		return assembleBlobConstraints(fields)
 	}
 

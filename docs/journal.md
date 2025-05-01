@@ -1,3 +1,11 @@
+### 30.4.25
+
+- OpenApi unmarshal Schemas -> Props
+
+### 29.4.25
+
+- init OpenApi unmarshaller
+
 ### 28.4.25
 
 - GetComponents on client

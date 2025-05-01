@@ -7,6 +7,11 @@ import (
 	"github.com/jaxfu/ape/components"
 )
 
+var (
+	componentTypes = components.ComponentTypes.Types()
+	propTypes      = components.PropTypes.Types()
+)
+
 func Unmarshal(fp string) (components.Components, error) {
 	loader := openapi3.NewLoader()
 	doc, err := loader.LoadFromFile(fp)

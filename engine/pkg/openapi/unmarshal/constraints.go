@@ -75,7 +75,7 @@ func convertFloatConstraints(schema openapi3.Schema) components.PropConstraintsF
 
 	return components.PropConstraintsFloat{
 		PropConstraintsMetadata: components.PropConstraintsMetadata{
-			PropConstraintType: components.PropTypes.FLOAT,
+			PropConstraintType: propTypes.FLOAT,
 		},
 		Precision: precision,
 		Min:       schema.Min,

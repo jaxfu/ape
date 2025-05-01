@@ -3,6 +3,8 @@ package components
 import (
 	"fmt"
 	"strings"
+
+	"github.com/jaxfu/ape/pkg/enum"
 )
 
 type ComponentMetadata struct {
@@ -25,19 +27,25 @@ type (
 	Components  = map[ComponentId]Component
 )
 
-type ComponentType = string
+type (
+	ComponentType           = string
+	ComponentTypesInterface struct {
+		PROP         ComponentType
+		OBJECT       ComponentType
+		ROUTE        ComponentType
+		REQUEST      ComponentType
+		RESPONSE     ComponentType
+		MESSAGE_BODY ComponentType
+		UNDEFINED    ComponentType
+	}
+)
 
-type ComponentTypesInterface struct {
-	PROP         ComponentType
-	OBJECT       ComponentType
-	ROUTE        ComponentType
-	REQUEST      ComponentType
-	RESPONSE     ComponentType
-	MESSAGE_BODY ComponentType
-	UNDEFINED    ComponentType
+var ComponentTypes = enum.Enum[ComponentType, ComponentTypesInterface]{
+	TypeList: ComponentTypesImpl,
+	MatchMap: map[string]ComponentType{},
 }
 
-var ComponentTypes = ComponentTypesInterface{
+var ComponentTypesImpl = ComponentTypesInterface{
 	PROP:         "PROP",
 	OBJECT:       "OBJECT",
 	ROUTE:        "ROUTE",
@@ -107,19 +115,19 @@ func GenerateComponentId(meta ComponentMetadata) (ComponentId, error) {
 }
 
 var typeNames = map[ComponentType]string{
-	ComponentTypes.PROP:         "prop",
-	ComponentTypes.OBJECT:       "object",
-	ComponentTypes.ROUTE:        "route",
-	ComponentTypes.MESSAGE_BODY: "body",
-	ComponentTypes.REQUEST:      "request",
-	ComponentTypes.RESPONSE:     "response",
+	ComponentTypesImpl.PROP:         "prop",
+	ComponentTypesImpl.OBJECT:       "object",
+	ComponentTypesImpl.ROUTE:        "route",
+	ComponentTypesImpl.MESSAGE_BODY: "body",
+	ComponentTypesImpl.REQUEST:      "request",
+	ComponentTypesImpl.RESPONSE:     "response",
 }
 
 var typePluralNames = map[ComponentType]string{
-	ComponentTypes.PROP:         "props",
-	ComponentTypes.OBJECT:       "objects",
-	ComponentTypes.ROUTE:        "routes",
-	ComponentTypes.MESSAGE_BODY: "bodies",
-	ComponentTypes.REQUEST:      "requests",
-	ComponentTypes.RESPONSE:     "responses",
+	ComponentTypesImpl.PROP:         "props",
+	ComponentTypesImpl.OBJECT:       "objects",
+	ComponentTypesImpl.ROUTE:        "routes",
+	ComponentTypesImpl.MESSAGE_BODY: "bodies",
+	ComponentTypesImpl.REQUEST:      "requests",
+	ComponentTypesImpl.RESPONSE:     "responses",
 }

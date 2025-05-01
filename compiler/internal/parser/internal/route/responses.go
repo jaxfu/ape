@@ -2,6 +2,7 @@ package route
 
 import (
 	"fmt"
+
 	"github.com/jaxfu/ape/compiler/internal/parser/internal/body"
 	"github.com/jaxfu/ape/compiler/internal/parser/internal/shared"
 
@@ -45,7 +46,7 @@ func ParseResponse(rawResponse map[string]any, isRoot bool) (ParsedResponse, err
 
 	metadata, err := shared.ParseComponentMetadata(
 		rawResponse,
-		components.ComponentTypes.RESPONSE,
+		components.ComponentTypes.Types().RESPONSE,
 		isRoot,
 	)
 	if err != nil {
@@ -62,7 +63,7 @@ func ParseResponse(rawResponse map[string]any, isRoot bool) (ParsedResponse, err
 		StatusCode: statusCode,
 		Body:       parsedBody,
 		Context: shared.Context{
-			ComponentType: components.ComponentTypes.RESPONSE,
+			ComponentType: components.ComponentTypes.Types().RESPONSE,
 			Name:          metadata.Name,
 			IsRoot:        isRoot,
 		},

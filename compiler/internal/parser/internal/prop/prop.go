@@ -10,7 +10,11 @@ import (
 )
 
 func ParseProp(scannedComp scanner.ScannedComponent, isRoot bool) (ParsedProp, error) {
-	metadata, err := shared.ParseComponentMetadata(scannedComp.Fields, components.ComponentTypes.PROP, isRoot)
+	metadata, err := shared.ParseComponentMetadata(
+		scannedComp.Fields,
+		components.ComponentTypes.Types().PROP,
+		isRoot,
+	)
 	if err != nil {
 		return ParsedProp{}, fmt.Errorf("Parser.parseComponentMetadata: %+v", err)
 	}
@@ -19,8 +23,8 @@ func ParseProp(scannedComp scanner.ScannedComponent, isRoot bool) (ParsedProp, e
 	if err != nil {
 		return ParsedProp{}, fmt.Errorf("error finding %s: %+v", shared.KEY_TYPE, err)
 	}
-	propType, err := components.ParsePropType(propTypeVal)
-	if err != nil {
+	propType := components.PropTypes.Match(propTypeVal)
+	if propType == components.PropTypes.Types().UNDEFINED {
 		return ParsedProp{}, fmt.Errorf("parsePropType: %+v", err)
 	}
 
@@ -47,7 +51,7 @@ func ParseProp(scannedComp scanner.ScannedComponent, isRoot bool) (ParsedProp, e
 		},
 		Constraints: scannedComp.Fields,
 		Context: shared.Context{
-			ComponentType: components.ComponentTypes.PROP,
+			ComponentType: components.ComponentTypes.Types().PROP,
 			Name:          metadata.Name,
 			IsRoot:        isRoot,
 		},

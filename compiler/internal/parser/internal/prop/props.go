@@ -2,6 +2,7 @@ package prop
 
 import (
 	"fmt"
+
 	"github.com/jaxfu/ape/compiler/internal/parser/internal/shared"
 	"github.com/jaxfu/ape/compiler/internal/scanner"
 
@@ -16,7 +17,7 @@ func ParseProps(scannedProps map[string]any) (ParsedProps, error) {
 			fields[shared.KEY_NAME] = k
 
 			rawProp := scanner.ScannedComponent{
-				ComponentType: components.ComponentTypes.PROP,
+				ComponentType: components.ComponentTypes.Types().PROP,
 				Fields:        fields,
 			}
 

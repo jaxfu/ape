@@ -39,10 +39,11 @@ func (pr Preprocessor) File(path string, bytes []byte) (RawComponent, error) {
 	}
 
 	// TODO: better way to get types from files
+	componentTypes := components.ComponentTypes.Types()
 	compTypesMap := map[string]components.ComponentType{
-		"props":   components.ComponentTypes.PROP,
-		"objects": components.ComponentTypes.OBJECT,
-		"routes":  components.ComponentTypes.ROUTE,
+		"props":   componentTypes.PROP,
+		"objects": componentTypes.OBJECT,
+		"routes":  componentTypes.ROUTE,
 	}
 
 	cType := ""

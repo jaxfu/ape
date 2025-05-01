@@ -6,8 +6,9 @@ import (
 
 var (
 	parentId = "objects.Todo"
+	types    = ComponentTypesImpl
 	meta     = ComponentMetadata{
-		ComponentType: ComponentTypes.PROP,
+		ComponentType: types.PROP,
 		Name:          "Username",
 		IsRoot:        false,
 		ParentId:      &parentId,

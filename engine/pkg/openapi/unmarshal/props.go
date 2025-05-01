@@ -13,7 +13,7 @@ func convertProp(
 ) (components.Component, error) {
 	prop := components.Prop{
 		ComponentMetadata: components.ComponentMetadata{
-			ComponentType: components.ComponentTypes.PROP,
+			ComponentType: componentTypes.PROP,
 			Name:          name,
 		},
 	}
@@ -23,23 +23,23 @@ func convertProp(
 	case schemaTypes.INTEGER:
 		constraints := convertIntegerConstraints(schema)
 		if constraints.ConstraintType() == components.PropConstraintTypes.UINT {
-			prop.PropMetadata.PropType = components.PropTypes.UINT
+			prop.PropMetadata.PropType = propTypes.UINT
 		} else {
-			prop.PropMetadata.PropType = components.PropTypes.INT
+			prop.PropMetadata.PropType = propTypes.INT
 		}
 		prop.Constraints = constraints
 
 	case schemaTypes.NUMBER:
 		constraints := convertFloatConstraints(schema)
-		prop.PropMetadata.PropType = components.PropTypes.FLOAT
+		prop.PropMetadata.PropType = propTypes.FLOAT
 		prop.Constraints = constraints
 
 	case schemaTypes.STRING:
 		constraints := convertTextConstraints(schema)
 		if constraints.ConstraintType() == components.PropConstraintTypes.BLOB {
-			prop.PropMetadata.PropType = components.PropTypes.BLOB
+			prop.PropMetadata.PropType = propTypes.BLOB
 		} else {
-			prop.PropMetadata.PropType = components.PropTypes.TEXT
+			prop.PropMetadata.PropType = propTypes.TEXT
 		}
 		prop.Constraints = constraints
 
@@ -50,7 +50,7 @@ func convertProp(
 			},
 		}
 		prop.Constraints = constraints
-		prop.PropMetadata.PropType = components.PropTypes.BOOL
+		prop.PropMetadata.PropType = propTypes.BOOL
 	}
 
 	return prop, nil

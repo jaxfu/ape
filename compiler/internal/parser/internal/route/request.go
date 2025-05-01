@@ -2,6 +2,7 @@ package route
 
 import (
 	"fmt"
+
 	"github.com/jaxfu/ape/compiler/internal/parser/internal/body"
 	"github.com/jaxfu/ape/compiler/internal/parser/internal/shared"
 
@@ -18,7 +19,11 @@ func ParseRequest(routeFields map[string]any, isRoot bool) (*ParsedRequest, erro
 		return nil, fmt.Errorf("invalid request format")
 	}
 
-	metadata, err := shared.ParseComponentMetadata(reqMap, components.ComponentTypes.REQUEST, isRoot)
+	metadata, err := shared.ParseComponentMetadata(
+		reqMap,
+		components.ComponentTypes.Types().REQUEST,
+		isRoot,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("Parser.ParseComponentMetadata:  %+v", err)
 	}
@@ -34,7 +39,7 @@ func ParseRequest(routeFields map[string]any, isRoot bool) (*ParsedRequest, erro
 	}
 
 	ctx := shared.Context{
-		ComponentType: components.ComponentTypes.REQUEST,
+		ComponentType: components.ComponentTypes.Types().REQUEST,
 		Name:          metadata.Name,
 		IsRoot:        isRoot,
 	}

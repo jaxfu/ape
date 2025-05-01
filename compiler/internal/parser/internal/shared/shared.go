@@ -2,6 +2,7 @@ package shared
 
 import (
 	"fmt"
+
 	"github.com/jaxfu/ape/compiler/internal/shared"
 
 	"github.com/jaxfu/ape/components"
@@ -63,27 +64,29 @@ func ParseComponentMetadata(fields map[string]any, compType components.Component
 	return metadata, nil
 }
 
+var componentTypes = components.ComponentTypes.Types()
+
 var typeIdNames = map[components.ComponentType]string{
-	components.ComponentTypes.PROP:         "props",
-	components.ComponentTypes.OBJECT:       "objects",
-	components.ComponentTypes.ROUTE:        "routes",
-	components.ComponentTypes.MESSAGE_BODY: "bodies",
-	components.ComponentTypes.REQUEST:      "requests",
-	components.ComponentTypes.RESPONSE:     "responses",
+	componentTypes.PROP:         "props",
+	componentTypes.OBJECT:       "objects",
+	componentTypes.ROUTE:        "routes",
+	componentTypes.MESSAGE_BODY: "bodies",
+	componentTypes.REQUEST:      "requests",
+	componentTypes.RESPONSE:     "responses",
 }
 
 var typeIdChildrenNames = map[components.ComponentType]string{
-	components.ComponentTypes.PROP:         "prop",
-	components.ComponentTypes.OBJECT:       "object",
-	components.ComponentTypes.ROUTE:        "route",
-	components.ComponentTypes.MESSAGE_BODY: "body",
-	components.ComponentTypes.REQUEST:      "request",
-	components.ComponentTypes.RESPONSE:     "response",
+	componentTypes.PROP:         "prop",
+	componentTypes.OBJECT:       "object",
+	componentTypes.ROUTE:        "route",
+	componentTypes.MESSAGE_BODY: "body",
+	componentTypes.REQUEST:      "request",
+	componentTypes.RESPONSE:     "response",
 }
 
 var typesNameRequired = map[components.ComponentType]*any{
-	components.ComponentTypes.PROP:     nil,
-	components.ComponentTypes.RESPONSE: nil,
+	componentTypes.PROP:     nil,
+	componentTypes.RESPONSE: nil,
 }
 
 type ParsedComponentMetadata struct {

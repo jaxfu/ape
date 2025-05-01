@@ -2,6 +2,7 @@ package route
 
 import (
 	"fmt"
+
 	"github.com/jaxfu/ape/compiler/internal/parser/internal/shared"
 	"github.com/jaxfu/ape/compiler/internal/scanner"
 
@@ -9,7 +10,11 @@ import (
 )
 
 func ParseRoute(scannedComp scanner.ScannedComponent, isRoot bool) (ParsedRoute, error) {
-	metadata, err := shared.ParseComponentMetadata(scannedComp.Fields, components.ComponentTypes.ROUTE, isRoot)
+	metadata, err := shared.ParseComponentMetadata(
+		scannedComp.Fields,
+		components.ComponentTypes.Types().ROUTE,
+		isRoot,
+	)
 	if err != nil {
 		return ParsedRoute{}, fmt.Errorf("Parser.parseComponentMetadata: %+v", err)
 	}
@@ -44,7 +49,7 @@ func ParseRoute(scannedComp scanner.ScannedComponent, isRoot bool) (ParsedRoute,
 		Request:           request,
 		Responses:         responses,
 		Context: shared.Context{
-			ComponentType: components.ComponentTypes.ROUTE,
+			ComponentType: components.ComponentTypes.Types().ROUTE,
 			Name:          metadata.Name,
 			IsRoot:        isRoot,
 		},
