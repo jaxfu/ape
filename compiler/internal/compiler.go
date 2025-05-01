@@ -3,10 +3,6 @@ package internal
 import (
 	"fmt"
 
-	"github.com/jaxfu/ape/compiler/internal/assembler"
-	"github.com/jaxfu/ape/compiler/internal/parser"
-	"github.com/jaxfu/ape/compiler/internal/preprocessor"
-	"github.com/jaxfu/ape/compiler/internal/scanner"
 	"github.com/jaxfu/ape/components"
 )
 
@@ -16,34 +12,27 @@ func DefaultCompiler() Compiler {
 	return Compiler{}
 }
 
-func (c Compiler) File(path string, bytes []byte) (components.Components, error) {
-	// preprocess
-	rawComp, err := preprocessor.NewPreprocessor().File(path, bytes)
+var componentTypes = components.ComponentTypes.Types()
+
+// just filepath and read file?
+// would allow to use compiler as cli
+func (c Compiler) File(path string, bytes []byte) (
+	components.Components,
+	error,
+) {
+	// lines := getLines(string(bytes))
+	// comps := getSourceMapComponents(lines)
+	// dev.PrettyPrint(comps)
+
+	_, err := Lex(string(bytes))
 	if err != nil {
-		return components.Components{}, fmt.Errorf("Preprocessor.File: %+v", err)
+		return nil, fmt.Errorf(
+			"error lexing file '%s': %+v",
+			path,
+			err,
+		)
 	}
+	// dev.PrettyPrint(tokens)
 
-	// scan
-	scanned, err := scanner.NewScanner().ScanComponent(rawComp)
-	if err != nil {
-		return components.Components{}, fmt.Errorf("Scanner.ScanComponent: %+v", err)
-	}
-
-	// parse
-	parsed, err := parser.NewParser().ParseObject(scanned, true)
-	if err != nil {
-		return components.Components{}, fmt.Errorf("Parser.ParseRoute: %+v", err)
-	}
-
-	// assemble
-	assembled, err := assembler.NewAssembler().AssembleObject(parsed)
-	if err != nil {
-		return components.Components{}, fmt.Errorf("Assembler.AssembleRoute: %+v", err)
-	}
-
-	ac := components.Components{
-		assembled.ComponentId: assembled,
-	}
-
-	return ac, nil
+	return components.Components{}, nil
 }

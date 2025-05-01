@@ -1,7 +1,6 @@
 package compiler
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -9,13 +8,16 @@ import (
 )
 
 const (
-	TEST_DIR = "../example"
+	TEST_DIR = "test"
 )
 
 var compiler = NewCompiler()
 
 func TestCompiler(t *testing.T) {
-	path, err := filepath.Abs(fmt.Sprintf("%s/props/Username.toml", TEST_DIR))
+	path, err := filepath.Abs(fmt.Sprintf(
+		"%s/test.ape",
+		TEST_DIR,
+	))
 	if err != nil {
 		t.Errorf("error casting to absolute path: %+v", err)
 		return
@@ -27,16 +29,35 @@ func TestCompiler(t *testing.T) {
 		return
 	}
 
-	comps, err := compiler.File(path, bytes)
+	_, err = compiler.File(path, bytes)
 	if err != nil {
 		t.Errorf("error compiling file %s: %+v", path, err)
 		return
 	}
+}
 
-	marshalled, err := json.MarshalIndent(comps, "", "  ")
-	if err != nil {
-		t.Errorf("json.MarshalIndent: %+v", err)
-		return
+func BenchmarkCompiler(b *testing.B) {
+	for b.Loop() {
+		path, err := filepath.Abs(fmt.Sprintf(
+			"%s/test.ape",
+			TEST_DIR,
+		))
+		if err != nil {
+			b.Errorf("error casting to absolute path: %+v", err)
+			return
+		}
+
+		bytes, err := os.ReadFile(path)
+		if err != nil {
+			b.Errorf("error reading file %s: %+v", path, err)
+			return
+		}
+
+		_, err = compiler.File(path, bytes)
+		if err != nil {
+			b.Errorf("error compiling file %s: %+v", path, err)
+			return
+		}
+
 	}
-	t.Logf("%+v\n", string(marshalled))
 }

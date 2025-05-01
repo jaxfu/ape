@@ -1,3 +1,8 @@
+### 1.5.25
+
+- started ape/compiler redesign
+  - lexer completed
+
 ### 30.4.25
 
 - OpenApi unmarshal Schemas -> Props

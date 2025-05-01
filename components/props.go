@@ -19,16 +19,17 @@ type PropsMap map[string]Prop
 type (
 	PropType           = string
 	PropTypesInterface struct {
-		UNDEFINED PropType `json:"undefined"`
-		INT       PropType `json:"int"`
-		UINT      PropType `json:"uint"`
-		FLOAT     PropType `json:"float"`
-		TEXT      PropType `json:"text"`
-		BOOL      PropType `json:"bool"`
-		BLOB      PropType `json:"blob"`
-		MAP       PropType `json:"map"`
-		REF       PropType `json:"ref"`
-		COMPONENT PropType `json:""`
+		UNDEFINED  PropType `json:"undefined"`
+		INT        PropType `json:"int"`
+		UINT       PropType `json:"uint"`
+		FLOAT      PropType `json:"float"`
+		TEXT       PropType `json:"text"`
+		BOOL       PropType `json:"bool"`
+		BLOB       PropType `json:"blob"`
+		MAP        PropType `json:"map"`
+		REF        PropType `json:"ref"`
+		COMPONENT  PropType `json:"component"`
+		COLLECTION PropType `json:"collection"`
 	}
 )
 

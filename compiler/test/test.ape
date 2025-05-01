@@ -1,0 +1,15 @@
+Username -> Text
+min_length: 3
+max_length: 16
+
+Todo -> Collection
+description: main todo object created by users
+
+| score -> Uint
+max: 100
+
+| user_info -> Collection
+description: user information for Todo
+|| username -> Username
+
+| is_completed -> Bool

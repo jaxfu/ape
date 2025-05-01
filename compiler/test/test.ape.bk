@@ -1,0 +1,21 @@
+Username -> Text
+min_length: 3
+max_length: 16
+
+Todo -> Collection
+category: Todos
+description: main todo object created by users
+@ score -> Uint
+max: 100
+@ user_info -> Collection
+
+
+- message
+type: text
+min_length: 16
+max_length: 256
+regex: as
+alnum: true
+alpha: false
+num: true
+

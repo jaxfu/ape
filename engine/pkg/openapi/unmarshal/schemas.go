@@ -63,7 +63,7 @@ var schemaRouter = map[shared.SchemaType]func(string, openapi3.Schema, shared.Sc
 	shared.SchemaTypes.Types().NUMBER:  convertProp,
 	shared.SchemaTypes.Types().STRING:  convertProp,
 	shared.SchemaTypes.Types().BOOLEAN: convertProp,
-	// TODO: wip array + object schemas
+	// TODO: array + object schemas
 	shared.SchemaTypes.Types().ARRAY: convertArray,
 	// shared.SchemaTypes.Types().OBJECT: convertProp,
 }

@@ -32,6 +32,7 @@ type (
 	ComponentTypesInterface struct {
 		PROP         ComponentType
 		OBJECT       ComponentType
+		COLLECTION   ComponentType
 		ROUTE        ComponentType
 		REQUEST      ComponentType
 		RESPONSE     ComponentType
@@ -48,6 +49,7 @@ var ComponentTypes = enum.Enum[ComponentType, ComponentTypesInterface]{
 var ComponentTypesImpl = ComponentTypesInterface{
 	PROP:         "PROP",
 	OBJECT:       "OBJECT",
+	COLLECTION:   "COLLECTION",
 	ROUTE:        "ROUTE",
 	REQUEST:      "REQUEST",
 	RESPONSE:     "RESPONSE",
