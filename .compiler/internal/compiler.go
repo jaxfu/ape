@@ -1,15 +1,10 @@
 package internal
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 
-	"github.com/jaxfu/ape/compiler/internal/lexer"
 	"github.com/jaxfu/ape/components"
 )
-
-const PREALLOC = 1024
 
 type Compiler struct{}
 
@@ -23,15 +18,11 @@ func (c Compiler) File(path string, bytes []byte) (
 	components.Components,
 	error,
 ) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, fmt.Errorf("error opening file '%s': %+v", path, err)
-	}
-	defer file.Close()
-	buf := bufio.NewReader(file)
+	// lines := getLines(string(bytes))
+	// comps := getSourceMapComponents(lines)
+	// dev.PrettyPrint(comps)
 
-	lexer := lexer.NewLexer()
-	_, err = lexer.Lex(buf, PREALLOC)
+	_, err := Lex(string(bytes))
 	if err != nil {
 		return nil, fmt.Errorf(
 			"error lexing file '%s': %+v",
@@ -39,6 +30,7 @@ func (c Compiler) File(path string, bytes []byte) (
 			err,
 		)
 	}
+	// dev.PrettyPrint(tokens)
 
 	return components.Components{}, nil
 }

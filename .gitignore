@@ -6,3 +6,5 @@ ape.db
 test_data/
 build_and_run.sh
 *.sh
+TEST_FMT.ape
+.vscode/
