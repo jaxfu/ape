@@ -12,7 +12,6 @@ import (
 	"github.com/jaxfu/ape/compiler/internal/shared"
 )
 
-// TODO: parse w/ steps
 func Parse(tokens []shared.Token, prealloc uint) (
 	shared.Ast,
 	[]error,

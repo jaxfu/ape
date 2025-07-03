@@ -1,7 +1,7 @@
 ### 3.7.25
 
-- wip ape/compiler/parser steps rewrite
-  - depth and indentation check working
+- ape/compiler/parser rewrite completed
+- wip ape/compiler/assembler
 
 ### 30.6.25
 
