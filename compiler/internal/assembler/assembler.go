@@ -1,6 +1,8 @@
 package assembler
 
 import (
+	"errors"
+
 	"github.com/jaxfu/ape/compiler/internal/shared"
 	"github.com/jaxfu/ape/components"
 )
@@ -31,7 +33,20 @@ func Assemble(ast shared.Ast) ([]components.Component, []error) {
 }
 
 func assembleComponent(node shared.Node) (components.Component, error) {
-	comp := components.Object{}
+	// type assert
+	cast, ok := node.(shared.ComponentNode)
+	if !ok {
+		return components.Object{}, errors.New("unexpected node type")
+	}
 
-	return comp, nil
+	name := cast.Name
+
+	return components.Object{
+		ComponentMetadata: components.ComponentMetadata{
+			ComponentType: components.ComponentTypesImpl.OBJECT,
+			ComponentId:   "",
+			Name:          name,
+			IsRoot:        cast.Meta().Depth == 0,
+		},
+	}, nil
 }

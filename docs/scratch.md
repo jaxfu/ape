@@ -1,18 +1,15 @@
 ### Todo
 
-- step-wise parser
-  - handle enum keys that may be references
-- every element stored separately
-- compile project dir
+- ape/Components/Component redesign
+- validate component names
 - handle refs
 - client
   - render components
   - form for creating
 - sync core/store with db on load
+- compile project dir
 - api versioning
 - OpenApi translator
-  - Will need YAML parser
-- custom output type for compiler
 - typescript schema generator
 - cli
 - web client
@@ -23,13 +20,11 @@
   - forms for building and editing
   - group by category and components
 - url registry similar to Category
-- Object composition?
 - error handling for Reader (unkown dirs, file formats, etc)
 - tests
   - package
   - api
 - compression file format
-- each component should have logging level outputs
 - generators
   - protobuf
   - openapi
@@ -37,7 +32,6 @@
     - typescript
     - golang
 - lsp
-- validate component names
 - schema validators (easy extensions and built-in)
 
 ### Decisions
@@ -47,6 +41,8 @@
   - logger choice
 - allow generators to be importable from generators pkg manager
   - create public repo a la NPM
+- custom output type for compiler
+- Object composition
 
 ### Hierarchy (bottom-up)
 
