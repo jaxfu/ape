@@ -21,6 +21,7 @@ func Parse(tokens []shared.Token, prealloc uint) (
 	ast := make(shared.Ast, 0, prealloc)
 	errors := make([]error, 0, prealloc/4)
 	indentType := INDENT_UNKOWN
+	counter := NodeCounter{}
 
 	for {
 		var step, next Step = stepEntry, stepEntry
@@ -36,8 +37,8 @@ func Parse(tokens []shared.Token, prealloc uint) (
 			step = next
 			indentType = nb.IndentType
 		}
-		// cast and append node
-		node, err := nb.cast()
+		// process, append node
+		node, err := nb.process(&counter)
 		if err != nil {
 			fmt.Printf("error casting node: %+v\n", nb)
 		}

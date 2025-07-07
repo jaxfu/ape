@@ -6,7 +6,7 @@ const (
 	COMPTYPE_UNDEFINED ComponentType = "COMPTYPE_UNDEFINED"
 )
 
-// component interface to be used by component processors
+// pointer bag
 type Component struct {
 	Metadata ComponentMetadata
 	Standard *ComponentStandard
@@ -15,26 +15,24 @@ type Component struct {
 type ComponentMetadata struct {
 	Type        ComponentType
 	ComponentId string
-	Children    []*Component
+	Children    map[string]*Component
 	Parent      *Component
-}
-
-type ComponentType string
-
-func NewComponent() Component {
-	return Component{
-		Metadata: NewComponentMetada(),
-		Standard: nil,
-	}
-}
-
-func NewComponentMetada() ComponentMetadata {
-	return ComponentMetadata{
-		Children: make([]*Component, 0, 16),
-		Parent:   nil,
-	}
 }
 
 type ComponentStandard struct {
 	Constraints []Constraint
+}
+
+type ComponentType string
+
+func NewComponent(id string, ctype ComponentType) Component {
+	return Component{
+		Metadata: ComponentMetadata{
+			Type:        ctype,
+			ComponentId: id,
+			Children:    map[string]*Component{},
+			Parent:      nil,
+		},
+		Standard: nil,
+	}
 }

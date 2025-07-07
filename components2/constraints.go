@@ -9,13 +9,16 @@ const (
 	VALTYPE_UNDEFINED ValueType = "VALTYPE_UNDEFINED"
 )
 
+// bag
 type Constraint struct {
-	Key   string
-	Value ConstraintValue
-}
-
-type ConstraintValue interface {
-	Type() ValueType
+	Key       string
+	RawValue  string
+	ValType   ValueType
+	ValString string
+	ValInt    int
+	ValUint   uint
+	ValFloat  float64
+	ValBool   bool
 }
 
 type ValueType string

@@ -1,14 +1,5 @@
 package shared
 
-type (
-	Ast      = []Node
-	Position struct {
-		Line uint
-		Col  uint
-	}
-	NodeType = string
-)
-
 const (
 	NODETYPE_COMPONENT   = "NT_COMPONENT"
 	NODETYPE_COMMENT     = "NT_COMMENT"
@@ -19,12 +10,21 @@ const (
 	NODETYPE_UNDEFINED   = "NT_UNDEFINED"
 )
 
+type Ast = []Node
+
+type Position struct {
+	Line uint
+	Col  uint
+}
+
+type NodeType = string
+
 type Node interface {
 	Meta() NodeMetadata
 }
 
 type NodeMetadata struct {
-	ID       string
+	Id       string
 	Type     NodeType
 	Position Position
 	Depth    uint
@@ -36,11 +36,6 @@ type ComponentNode struct {
 	ComponentType string
 	IsOptional    bool
 	IsReference   bool
-	Children      []*Node
-}
-
-func (cn ComponentNode) Meta() NodeMetadata {
-	return cn.Metadata
 }
 
 type ConstraintNode struct {
@@ -49,17 +44,9 @@ type ConstraintNode struct {
 	Value    string
 }
 
-func (cn ConstraintNode) Meta() NodeMetadata {
-	return cn.Metadata
-}
-
 type CommentNode struct {
 	Metadata NodeMetadata
 	Content  string
-}
-
-func (cn CommentNode) Meta() NodeMetadata {
-	return cn.Metadata
 }
 
 type EnumMemberNode struct {
@@ -67,6 +54,18 @@ type EnumMemberNode struct {
 	Key         string
 	IsReference bool
 	Alias       string
+}
+
+func (cn ComponentNode) Meta() NodeMetadata {
+	return cn.Metadata
+}
+
+func (cn ConstraintNode) Meta() NodeMetadata {
+	return cn.Metadata
+}
+
+func (cn CommentNode) Meta() NodeMetadata {
+	return cn.Metadata
 }
 
 func (en EnumMemberNode) Meta() NodeMetadata {
