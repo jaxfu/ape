@@ -1,5 +1,6 @@
 ### Todo
 
+- ape/components redesign
 - step-wise parser
   - handle enum keys that may be references
 - every element stored separately
