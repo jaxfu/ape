@@ -1,4 +1,4 @@
-package components2
+package components
 
 type BaseType string
 

@@ -1,4 +1,7 @@
-### 6.7.25
+### 7.7.25
+
+- started ape/compiler/internal/assembler
+  - test added to compiler_test.go
 
 ### 3.7.25
 

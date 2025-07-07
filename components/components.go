@@ -1,135 +1,100 @@
 package components
 
-import (
-	"fmt"
-	"strings"
-
-	"github.com/jaxfu/ape/pkg/enum"
+const (
+	COMPTYPE_STANDARD  ComponentType = "STANDARD"
+	COMPTYPE_REFERENCE ComponentType = "REFERENCE"
+	COMPTYPE_ENUM      ComponentType = "ENUM"
+	COMPTYPE_ARRAY     ComponentType = "ARRAY"
+	COMPTYPE_UNDEFINED ComponentType = "UNDEFINED"
 )
+
+// switch ctype {
+// case COMPTYPE_STANDARD:
+// case COMPTYPE_REFERENCE:
+// case COMPTYPE_ENUM:
+// case COMPTYPE_ARRAY:
+// case COMPTYPE_UNDEFINED:
+// }
+
+type ComponentMap map[string]Component
+
+type Component any
+
+type ComponentType string
+
+type ComponentTypesConstraint interface {
+	ComponentStandard |
+		ComponentReference |
+		ComponentEnum |
+		ComponentArray
+}
+
+// switch comp.(type) {
+// case ComponentStandard:
+// case ComponentReference:
+// case ComponentEnum:
+// case ComponentArray:
+// }
 
 type ComponentMetadata struct {
-	ComponentType ComponentType `json:"component_type"`
-	ComponentId   ComponentId   `json:"component_id"`
-	Name          string        `json:"name"`
-	IsRoot        bool          `json:"is_root"`
-	ParentId      *ComponentId  `json:"parent_id,omitempty"`
-	Category      *CategoryId   `json:"category,omitempty"`
-	Description   *string       `json:"description,omitempty"`
+	Type        ComponentType
+	ComponentId string
+	ParentId    string
 }
 
-func (meta ComponentMetadata) Metadata() ComponentMetadata {
-	return meta
+type ComponentStandard struct {
+	Metadata    ComponentMetadata
+	Constraints map[string]Constraint
 }
 
-type (
-	ComponentId = string
-	CategoryId  = string
-	Components  = map[ComponentId]Component
-)
-
-type (
-	ComponentType           = string
-	ComponentTypesInterface struct {
-		PROP         ComponentType
-		OBJECT       ComponentType
-		COLLECTION   ComponentType
-		ROUTE        ComponentType
-		REQUEST      ComponentType
-		RESPONSE     ComponentType
-		MESSAGE_BODY ComponentType
-		UNDEFINED    ComponentType
-	}
-)
-
-var ComponentTypes = enum.Enum[ComponentType, ComponentTypesInterface]{
-	TypeList: ComponentTypesImpl,
-	MatchMap: map[string]ComponentType{},
+type ComponentReference struct {
+	Metadata ComponentMetadata
 }
 
-var ComponentTypesImpl = ComponentTypesInterface{
-	PROP:         "PROP",
-	OBJECT:       "OBJECT",
-	COLLECTION:   "COLLECTION",
-	ROUTE:        "ROUTE",
-	REQUEST:      "REQUEST",
-	RESPONSE:     "RESPONSE",
-	MESSAGE_BODY: "MESSAGE_BODY",
-	UNDEFINED:    "UNDEFINED",
+type EnumMember struct {
+	EnumId string
+	Key    string
 }
 
-type Component interface {
-	Metadata() ComponentMetadata
+type ComponentEnum struct {
+	Metadata ComponentMetadata
+	Members  map[string]EnumMember
 }
 
-func ComponentSwitch(comp Component) {
-	switch comp.(type) {
-	case Prop:
-	case Object:
-	case Route:
-	case MessageBody:
-	case Request:
-	case Response:
-	}
+type ComponentArray struct {
+	Metadata ComponentMetadata
 }
 
-func GenerateComponentId(meta ComponentMetadata) (ComponentId, error) {
-	if meta.ComponentType == "" {
-		return "", fmt.Errorf("no component type given")
+func NewComponent[T ComponentTypesConstraint](
+	ctype ComponentType,
+	id, parentId string,
+) Component {
+	meta := ComponentMetadata{
+		Type:        ctype,
+		ComponentId: id,
+		ParentId:    parentId,
 	}
 
-	idParams := []string{}
-	if meta.IsRoot {
-		if strings.TrimSpace(meta.Name) == "" {
-			return "", fmt.Errorf("no name given for root component")
+	switch ctype {
+	case COMPTYPE_STANDARD:
+		return ComponentStandard{
+			Metadata:    meta,
+			Constraints: map[string]Constraint{},
 		}
-
-		if meta.Category != nil {
-			idParams = append(idParams, *meta.Category)
+	case COMPTYPE_REFERENCE:
+		return ComponentReference{
+			Metadata: meta,
 		}
-
-		typeName, ok := typePluralNames[meta.ComponentType]
-		if !ok {
-			return "", fmt.Errorf("invalid type %s", meta.ComponentType)
+	case COMPTYPE_ENUM:
+		return ComponentEnum{
+			Metadata: meta,
+			Members:  map[string]EnumMember{},
 		}
-
-		idParams = append(idParams, typeName)
-		idParams = append(idParams, meta.Name)
-
-	} else { // if not root
-		if meta.ParentId == nil {
-			return "", fmt.Errorf("no parentId given for child")
+	case COMPTYPE_ARRAY:
+		return ComponentArray{
+			Metadata: meta,
 		}
-		if strings.ToLower(*meta.ParentId) == "" {
-			return "", fmt.Errorf("no parentId given for child")
-		}
-
-		idParams = append(idParams, *meta.ParentId)
-
-		if meta.Name == "" {
-			name := typeNames[meta.ComponentType]
-			idParams = append(idParams, name)
-		} else {
-			idParams = append(idParams, meta.Name)
-		}
+	default:
+		return nil
 	}
-
-	return strings.Join(idParams, "."), nil
-}
-
-var typeNames = map[ComponentType]string{
-	ComponentTypesImpl.PROP:         "prop",
-	ComponentTypesImpl.OBJECT:       "object",
-	ComponentTypesImpl.ROUTE:        "route",
-	ComponentTypesImpl.MESSAGE_BODY: "body",
-	ComponentTypesImpl.REQUEST:      "request",
-	ComponentTypesImpl.RESPONSE:     "response",
-}
-
-var typePluralNames = map[ComponentType]string{
-	ComponentTypesImpl.PROP:         "props",
-	ComponentTypesImpl.OBJECT:       "objects",
-	ComponentTypesImpl.ROUTE:        "routes",
-	ComponentTypesImpl.MESSAGE_BODY: "bodies",
-	ComponentTypesImpl.REQUEST:      "requests",
-	ComponentTypesImpl.RESPONSE:     "responses",
 }

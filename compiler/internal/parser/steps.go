@@ -3,8 +3,8 @@ package parser
 import (
 	"fmt"
 
-	"github.com/jaxfu/ape/compiler/internal/list"
 	"github.com/jaxfu/ape/compiler/internal/shared"
+	"github.com/jaxfu/golp/list"
 )
 
 const (

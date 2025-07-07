@@ -10,6 +10,16 @@ const (
 	NODETYPE_UNDEFINED   = "NT_UNDEFINED"
 )
 
+// switch node.Meta().Type {
+// case shared.NODETYPE_COMPONENT:
+// case shared.NODETYPE_COMMENT:
+// case shared.NODETYPE_CONSTRAINT:
+// case shared.NODETYPE_ENUM_MEMBER:
+// case shared.NODETYPE_ARRAY:
+// case shared.NODETYPE_EMPTYLINE:
+// case shared.NODETYPE_UNDEFINED:
+// }
+
 type Ast = []Node
 
 type Position struct {
@@ -30,44 +40,58 @@ type NodeMetadata struct {
 	Depth    uint
 }
 
-type ComponentNode struct {
-	Metadata      NodeMetadata
-	Name          string
-	ComponentType string
-	IsOptional    bool
-	IsReference   bool
+type NodeComponent struct {
+	Metadata    NodeMetadata
+	Name        string
+	Type        string
+	IsOptional  bool
+	IsReference bool
 }
 
-type ConstraintNode struct {
+type NodeConstraint struct {
 	Metadata NodeMetadata
 	Name     string
 	Value    string
 }
 
-type CommentNode struct {
+type NodeComment struct {
 	Metadata NodeMetadata
 	Content  string
 }
 
-type EnumMemberNode struct {
+type NodeEnumMember struct {
 	Metadata    NodeMetadata
 	Key         string
 	IsReference bool
 	Alias       string
 }
 
-func (cn ComponentNode) Meta() NodeMetadata {
+type NodeTypesConstraint interface {
+	NodeComponent |
+		NodeConstraint |
+		NodeComment |
+		NodeEnumMember
+}
+
+// switch node.(type) {
+// 	case NodeComponent:
+// 	case NodeConstraint:
+// 	case NodeComment:
+// 	case NodeEnumMember:
+// }
+
+func (cn NodeComponent) Meta() NodeMetadata {
 	return cn.Metadata
 }
 
-func (cn ConstraintNode) Meta() NodeMetadata {
+func (cn NodeConstraint) Meta() NodeMetadata {
 	return cn.Metadata
 }
 
-func (cn CommentNode) Meta() NodeMetadata {
+func (cn NodeComment) Meta() NodeMetadata {
 	return cn.Metadata
 }
 
-func (en EnumMemberNode) Meta() NodeMetadata {
+func (en NodeEnumMember) Meta() NodeMetadata {
 	return en.Metadata
 }

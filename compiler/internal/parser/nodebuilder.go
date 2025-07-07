@@ -88,20 +88,20 @@ func (nb NodeBuilder) process(counter *NodeCounter) (shared.Node, error) {
 
 	switch nb.Assigner {
 	case shared.SYMBOL_DECLARE_COMPONENT:
-		node = shared.ComponentNode{
+		node = shared.NodeComponent{
 			Metadata: shared.NodeMetadata{
 				Id:       newId(shared.NODETYPE_COMPONENT, counter),
 				Type:     shared.NODETYPE_COMPONENT,
 				Position: nb.Position,
 				Depth:    nb.Depth,
 			},
-			Name:          nb.Key.Content,
-			ComponentType: nb.Value.Content,
-			IsReference:   (nb.Value.PreSymbol == shared.SYMBOL_MARK_REFERENCE),
-			IsOptional:    (nb.Value.PostSymbol == shared.SYMBOL_MARK_OPTIONAL),
+			Name:        nb.Key.Content,
+			Type:        nb.Value.Content,
+			IsReference: (nb.Value.PreSymbol == shared.SYMBOL_MARK_REFERENCE),
+			IsOptional:  (nb.Value.PostSymbol == shared.SYMBOL_MARK_OPTIONAL),
 		}
 	case shared.SYMBOL_DECLARE_CONSTRAINT:
-		node = shared.ConstraintNode{
+		node = shared.NodeConstraint{
 			Metadata: shared.NodeMetadata{
 				Id:       newId(shared.NODETYPE_CONSTRAINT, counter),
 				Type:     shared.NODETYPE_CONSTRAINT,
@@ -113,7 +113,7 @@ func (nb NodeBuilder) process(counter *NodeCounter) (shared.Node, error) {
 		}
 	default:
 		if len(nb.CommentContent) > 0 {
-			node = shared.CommentNode{
+			node = shared.NodeComment{
 				Metadata: shared.NodeMetadata{
 					Id:       newId(shared.NODETYPE_COMMENT, counter),
 					Type:     shared.NODETYPE_COMMENT,
@@ -123,7 +123,7 @@ func (nb NodeBuilder) process(counter *NodeCounter) (shared.Node, error) {
 				Content: nb.CommentContent,
 			}
 		} else {
-			node = shared.EnumMemberNode{
+			node = shared.NodeEnumMember{
 				Metadata: shared.NodeMetadata{
 					Id:       newId(shared.NODETYPE_ENUM_MEMBER, counter),
 					Type:     shared.NODETYPE_ENUM_MEMBER,
