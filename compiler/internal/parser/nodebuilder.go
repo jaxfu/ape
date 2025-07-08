@@ -35,7 +35,7 @@ type NodeBuilder struct {
 
 type NodeCounter struct {
 	Components  uint
-	Constraints uint
+	Traits      uint
 	EnumMembers uint
 	Comments    uint
 }
@@ -56,7 +56,7 @@ type IndentType string
 
 func NewNodeBuilder(indType IndentType) NodeBuilder {
 	return NodeBuilder{
-		NodeType:      shared.NODETYPE_UNDEFINED,
+		NodeType:      shared.NODE_TYPE_UNDEFINED,
 		IndentType:    indType,
 		StringBuilder: &strings.Builder{},
 	}
@@ -66,16 +66,16 @@ func newId(ntype shared.NodeType, counter *NodeCounter) string {
 	out := ""
 
 	switch ntype {
-	case shared.NODETYPE_COMPONENT:
+	case shared.NODE_TYPE_COMPONENT:
 		counter.Components++
 		out = fmt.Sprintf("component_%d", counter.Components)
-	case shared.NODETYPE_CONSTRAINT:
-		counter.Constraints++
-		out = fmt.Sprintf("constraint_%d", counter.Constraints)
-	case shared.NODETYPE_ENUM_MEMBER:
+	case shared.NODE_TYPE_TRAIT:
+		counter.Traits++
+		out = fmt.Sprintf("trait_%d", counter.Traits)
+	case shared.NODE_TYPE_ENUM_MEMBER:
 		counter.EnumMembers++
 		out = fmt.Sprintf("enummember_%d", counter.EnumMembers)
-	case shared.NODETYPE_COMMENT:
+	case shared.NODE_TYPE_COMMENT:
 		counter.Comments++
 		out = fmt.Sprintf("comment_%d", counter.Comments)
 	}
@@ -90,8 +90,8 @@ func (nb NodeBuilder) process(counter *NodeCounter) (shared.Node, error) {
 	case shared.SYMBOL_DECLARE_COMPONENT:
 		node = shared.NodeComponent{
 			Metadata: shared.NodeMetadata{
-				Id:       newId(shared.NODETYPE_COMPONENT, counter),
-				Type:     shared.NODETYPE_COMPONENT,
+				Id:       newId(shared.NODE_TYPE_COMPONENT, counter),
+				Type:     shared.NODE_TYPE_COMPONENT,
 				Position: nb.Position,
 				Depth:    nb.Depth,
 			},
@@ -100,11 +100,11 @@ func (nb NodeBuilder) process(counter *NodeCounter) (shared.Node, error) {
 			IsReference: (nb.Value.PreSymbol == shared.SYMBOL_MARK_REFERENCE),
 			IsOptional:  (nb.Value.PostSymbol == shared.SYMBOL_MARK_OPTIONAL),
 		}
-	case shared.SYMBOL_DECLARE_CONSTRAINT:
-		node = shared.NodeConstraint{
+	case shared.SYMBOL_DECLARE_TRAIT:
+		node = shared.NodeTrait{
 			Metadata: shared.NodeMetadata{
-				Id:       newId(shared.NODETYPE_CONSTRAINT, counter),
-				Type:     shared.NODETYPE_CONSTRAINT,
+				Id:       newId(shared.NODE_TYPE_TRAIT, counter),
+				Type:     shared.NODE_TYPE_TRAIT,
 				Position: nb.Position,
 				Depth:    nb.Depth,
 			},
@@ -115,8 +115,8 @@ func (nb NodeBuilder) process(counter *NodeCounter) (shared.Node, error) {
 		if len(nb.CommentContent) > 0 {
 			node = shared.NodeComment{
 				Metadata: shared.NodeMetadata{
-					Id:       newId(shared.NODETYPE_COMMENT, counter),
-					Type:     shared.NODETYPE_COMMENT,
+					Id:       newId(shared.NODE_TYPE_COMMENT, counter),
+					Type:     shared.NODE_TYPE_COMMENT,
 					Position: nb.Position,
 					Depth:    nb.Depth,
 				},
@@ -125,8 +125,8 @@ func (nb NodeBuilder) process(counter *NodeCounter) (shared.Node, error) {
 		} else {
 			node = shared.NodeEnumMember{
 				Metadata: shared.NodeMetadata{
-					Id:       newId(shared.NODETYPE_ENUM_MEMBER, counter),
-					Type:     shared.NODETYPE_ENUM_MEMBER,
+					Id:       newId(shared.NODE_TYPE_ENUM_MEMBER, counter),
+					Type:     shared.NODE_TYPE_ENUM_MEMBER,
 					Position: nb.Position,
 					Depth:    nb.Depth,
 				},

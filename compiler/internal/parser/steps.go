@@ -119,7 +119,7 @@ func (st StepKey) process(
 			return nb, nil, shared.NewSyntaxError(tok.Position, fmt.Sprintf("unexpected symbol %s", tok.Content))
 		}
 		// if so, is enum member
-		nb.NodeType = shared.NODETYPE_ENUM_MEMBER
+		nb.NodeType = shared.NODE_TYPE_ENUM_MEMBER
 		nb.Key.PreSymbol = tok.Content
 		toks.Move(1)
 	}
@@ -153,9 +153,9 @@ func (st StepAssigner) process(
 	error,
 ) {
 	tok := toks.Curr()
-	if isConstraint(tok) {
-		nb.Assigner = shared.SYMBOL_DECLARE_CONSTRAINT
-		nb.NodeType = shared.NODETYPE_CONSTRAINT
+	if isTrait(tok) {
+		nb.Assigner = shared.SYMBOL_DECLARE_TRAIT
+		nb.NodeType = shared.NODE_TYPE_TRAIT
 		toks.Move(1)
 		return nb, stepValue, nil
 	}
@@ -170,7 +170,7 @@ func (st StepAssigner) process(
 		// if value type, is enum member,
 		// end step and return stepValue
 		if isIn(tok.Type, valueMap) {
-			nb.NodeType = shared.NODETYPE_ENUM_MEMBER
+			nb.NodeType = shared.NODE_TYPE_ENUM_MEMBER
 			return nb, stepValue, nil
 		} else {
 			return nb, nil, shared.NewSyntaxError(tok.Position, "unexpected character")
@@ -181,7 +181,7 @@ func (st StepAssigner) process(
 
 	switch asn {
 	case shared.SYMBOL_DECLARE_COMPONENT:
-		nb.NodeType = shared.NODETYPE_COMPONENT
+		nb.NodeType = shared.NODE_TYPE_COMPONENT
 		nb.Assigner = asn
 	}
 

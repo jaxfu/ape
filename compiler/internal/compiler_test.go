@@ -12,7 +12,7 @@ import (
 	lexerPkg "github.com/jaxfu/ape/compiler/internal/lexer"
 	parserPkg "github.com/jaxfu/ape/compiler/internal/parser"
 	"github.com/jaxfu/ape/compiler/internal/shared"
-	components "github.com/jaxfu/ape/components2"
+	"github.com/jaxfu/ape/components"
 )
 
 const (

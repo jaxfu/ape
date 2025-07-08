@@ -1,26 +1,32 @@
 package shared
 
 const (
-	RUNE_CARRIAGE_RETURN   rune = '\r'
-	RUNE_LINEFEED          rune = '\n'
-	RUNE_TAB               rune = '\t'
-	RUNE_SPACE             rune = ' '
-	RUNE_UNDERSCORE        rune = '_'
-	RUNE_HYPHEN            rune = '-'
-	RUNE_GREATER_THAN      rune = '>'
-	RUNE_PERIOD            rune = '.'
-	RUNE_QUESTION          rune = '?'
-	RUNE_COMMENT_SYMBOL    rune = '#'
-	RUNE_CONSTRAINT_SYMBOL rune = ':'
+	RUNE_CARRIAGE_RETURN rune = '\r'
+	RUNE_LINEFEED        rune = '\n'
+	RUNE_TAB             rune = '\t'
+	RUNE_SPACE           rune = ' '
+	RUNE_UNDERSCORE      rune = '_'
+	RUNE_HYPHEN          rune = '-'
+	RUNE_GREATER_THAN    rune = '>'
+	RUNE_PERIOD          rune = '.'
+	RUNE_QUESTION        rune = '?'
+	RUNE_COMMENT_SYMBOL  rune = '#'
+	RUNE_TRAIT_SYMBOL    rune = ':'
 )
 
 const (
-	SYMBOL_DECLARE_COMPONENT  string = "->"
-	SYMBOL_DECLARE_CONSTRAINT string = ":"
+	SYMBOL_DECLARE_COMPONENT string = "->"
+	SYMBOL_DECLARE_TRAIT     string = ":"
 
-	KEYWORD_DECLARE_ENUM  string = "enum"
-	KEYWORD_DECLARE_UNION string = "union"
-	KEYWORD_DECLARE_ARRAY string = "array"
+	KEYWORD_OBJECT string = "object"
+	KEYWORD_ENUM   string = "enum"
+	KEYWORD_ARRAY  string = "array"
+	KEYWORD_STRING string = "string"
+	KEYWORD_BLOB   string = "blob"
+	KEYWORD_INT    string = "int"
+	KEYWORD_UINT   string = "uint"
+	KEYWORD_FLOAT  string = "float"
+	KEYWORD_BOOL   string = "bool"
 
 	SYMBOL_START_COMMENT string = "#"
 

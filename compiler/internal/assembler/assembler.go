@@ -2,10 +2,9 @@ package assembler
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/jaxfu/ape/compiler/internal/shared"
-	components "github.com/jaxfu/ape/components2"
+	"github.com/jaxfu/ape/components"
 	"github.com/jaxfu/golp/stack"
 )
 
@@ -42,16 +41,4 @@ func Assemble(ast shared.Ast) (components.ComponentMap, error) {
 	}
 
 	return ctx.Comps, nil
-}
-
-func classifyComponentNode(node shared.NodeComponent) components.ComponentType {
-	if node.IsReference {
-		return components.COMPTYPE_REFERENCE
-	} else if strings.ToLower(node.Type) == shared.KEYWORD_DECLARE_ENUM {
-		return components.COMPTYPE_ENUM
-	} else if strings.ToLower(node.Type) == shared.KEYWORD_DECLARE_ARRAY {
-		return components.COMPTYPE_ARRAY
-	} else {
-		return components.COMPTYPE_STANDARD
-	}
 }

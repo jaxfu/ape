@@ -158,7 +158,7 @@ func parseSymbol(
 	return symbol
 }
 
-func isConstraint(tok shared.Token) bool {
+func isTrait(tok shared.Token) bool {
 	return (tok.Type == shared.TOKEN_SYMBOL &&
-		tok.Content == shared.SYMBOL_DECLARE_CONSTRAINT)
+		tok.Content == shared.SYMBOL_DECLARE_TRAIT)
 }

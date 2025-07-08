@@ -1,71 +1,112 @@
 package components
 
 const (
-	COMPTYPE_STANDARD  ComponentType = "STANDARD"
-	COMPTYPE_REFERENCE ComponentType = "REFERENCE"
-	COMPTYPE_ENUM      ComponentType = "ENUM"
-	COMPTYPE_ARRAY     ComponentType = "ARRAY"
-	COMPTYPE_UNDEFINED ComponentType = "UNDEFINED"
+	COMPONENT_TYPE_OBJECT    ComponentType = "OBJECT"
+	COMPONENT_TYPE_ENUM      ComponentType = "ENUM"
+	COMPONENT_TYPE_ARRAY     ComponentType = "ARRAY"
+	COMPONENT_TYPE_REFERENCE ComponentType = "REFERENCE"
+
+	COMPONENT_TYPE_STRING ComponentType = "STRING"
+	COMPONENT_TYPE_BLOB   ComponentType = "BLOB"
+	COMPONENT_TYPE_INT    ComponentType = "INT"
+	COMPONENT_TYPE_UINT   ComponentType = "UINT"
+	COMPONENT_TYPE_FLOAT  ComponentType = "FLOAT"
+	COMPONENT_TYPE_BOOL   ComponentType = "BOOL"
+
+	COMPONENT_TYPE_UNDEFINED ComponentType = "UNDEFINED"
 )
 
 // switch ctype {
-// case COMPTYPE_STANDARD:
-// case COMPTYPE_REFERENCE:
-// case COMPTYPE_ENUM:
-// case COMPTYPE_ARRAY:
-// case COMPTYPE_UNDEFINED:
+// case COMPONENT_TYPE_OBJECT:
+// case COMPONENT_TYPE_ENUM:
+// case COMPONENT_TYPE_ARRAY:
+// case COMPONENT_TYPE_REFERENCE:
+// case COMPONENT_TYPE_STRING:
+// case COMPONENT_TYPE_BLOB:
+// case COMPONENT_TYPE_INT:
+// case COMPONENT_TYPE_UINT:
+// case COMPONENT_TYPE_FLOAT:
+// case COMPONENT_TYPE_BOOL:
+// case COMPONENT_TYPE_UNDEFINED:
+// default:
 // }
 
 type ComponentMap map[string]Component
 
-type Component any
-
-type ComponentType string
-
-type ComponentTypesConstraint interface {
-	ComponentStandard |
-		ComponentReference |
-		ComponentEnum |
-		ComponentArray
+type Component interface {
+	Meta() ComponentMetadata
 }
 
-// switch comp.(type) {
-// case ComponentStandard:
-// case ComponentReference:
-// case ComponentEnum:
-// case ComponentArray:
-// }
+type ComponentType string
 
 type ComponentMetadata struct {
 	Type        ComponentType
 	ComponentId string
 	ParentId    string
+	Traits      *TraitsMap
 }
 
-type ComponentStandard struct {
-	Metadata    ComponentMetadata
-	Constraints map[string]Constraint
+type ComponentObject struct {
+	ComponentMetadata
+	Children []*Component
 }
 
 type ComponentReference struct {
-	Metadata ComponentMetadata
-}
-
-type EnumMember struct {
-	EnumId string
-	Key    string
-}
-
-type ComponentEnum struct {
-	Metadata ComponentMetadata
-	Members  map[string]EnumMember
+	ComponentMetadata
 }
 
 type ComponentArray struct {
-	Metadata ComponentMetadata
+	ComponentMetadata
 }
 
-func NewComponent[T ComponentTypesConstraint](
+type ComponentEnum struct {
+	ComponentMetadata
+}
+
+type ComponentString struct {
+	ComponentMetadata
+}
+
+type ComponentBlob struct {
+	ComponentMetadata
+}
+
+type ComponentInt struct {
+	ComponentMetadata
+}
+
+type ComponentUint struct {
+	ComponentMetadata
+}
+
+type ComponentFloat struct {
+	ComponentMetadata
+}
+
+type ComponentBool struct {
+	ComponentMetadata
+}
+
+type ComponentUndefined struct {
+	ComponentMetadata
+}
+
+// switch v := c.(type) {
+// case ComponentObject:
+// case ComponentReference:
+// case ComponentArray:
+// case ComponentEnum:
+// case ComponentString:
+// case ComponentBlob:
+// case ComponentInt:
+// case ComponentUint:
+// case ComponentFloat:
+// case ComponentBool:
+// case ComponentUndefined:
+// default:
+// }
+
+func NewComponent(
 	ctype ComponentType,
 	id, parentId string,
 ) Component {
@@ -73,28 +114,29 @@ func NewComponent[T ComponentTypesConstraint](
 		Type:        ctype,
 		ComponentId: id,
 		ParentId:    parentId,
+		Traits:      new(TraitsMap),
+	}
+	componentTypesMap := map[ComponentType]Component{
+		COMPONENT_TYPE_OBJECT:    ComponentObject{ComponentMetadata: meta},
+		COMPONENT_TYPE_ENUM:      ComponentEnum{ComponentMetadata: meta},
+		COMPONENT_TYPE_ARRAY:     ComponentArray{ComponentMetadata: meta},
+		COMPONENT_TYPE_REFERENCE: ComponentReference{ComponentMetadata: meta},
+		COMPONENT_TYPE_STRING:    ComponentString{ComponentMetadata: meta},
+		COMPONENT_TYPE_BLOB:      ComponentBlob{ComponentMetadata: meta},
+		COMPONENT_TYPE_INT:       ComponentInt{ComponentMetadata: meta},
+		COMPONENT_TYPE_UINT:      ComponentUint{ComponentMetadata: meta},
+		COMPONENT_TYPE_FLOAT:     ComponentFloat{ComponentMetadata: meta},
+		COMPONENT_TYPE_BOOL:      ComponentBool{ComponentMetadata: meta},
 	}
 
-	switch ctype {
-	case COMPTYPE_STANDARD:
-		return ComponentStandard{
-			Metadata:    meta,
-			Constraints: map[string]Constraint{},
-		}
-	case COMPTYPE_REFERENCE:
-		return ComponentReference{
-			Metadata: meta,
-		}
-	case COMPTYPE_ENUM:
-		return ComponentEnum{
-			Metadata: meta,
-			Members:  map[string]EnumMember{},
-		}
-	case COMPTYPE_ARRAY:
-		return ComponentArray{
-			Metadata: meta,
-		}
-	default:
-		return nil
+	comp, ok := componentTypesMap[ctype]
+	if ok {
+		return comp
 	}
+
+	return nil
+}
+
+func (cm ComponentMetadata) Meta() ComponentMetadata {
+	return cm
 }

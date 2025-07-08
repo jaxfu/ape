@@ -1,8 +1,25 @@
 package assembler
 
 import (
+	"fmt"
+	"strconv"
+	"strings"
+
 	"github.com/jaxfu/ape/compiler/internal/shared"
+	"github.com/jaxfu/ape/components"
 )
+
+var keywordToComponentTypeMap = map[string]components.ComponentType{
+	shared.KEYWORD_OBJECT: components.COMPONENT_TYPE_OBJECT,
+	shared.KEYWORD_ENUM:   components.COMPONENT_TYPE_ENUM,
+	shared.KEYWORD_ARRAY:  components.COMPONENT_TYPE_ARRAY,
+	shared.KEYWORD_STRING: components.COMPONENT_TYPE_STRING,
+	shared.KEYWORD_BLOB:   components.COMPONENT_TYPE_BLOB,
+	shared.KEYWORD_INT:    components.COMPONENT_TYPE_INT,
+	shared.KEYWORD_UINT:   components.COMPONENT_TYPE_UINT,
+	shared.KEYWORD_FLOAT:  components.COMPONENT_TYPE_FLOAT,
+	shared.KEYWORD_BOOL:   components.COMPONENT_TYPE_BOOL,
+}
 
 func processNode(node shared.Node, ctx AssemblyCtx) AssemblyCtx {
 	switch n := node.(type) {
@@ -10,8 +27,8 @@ func processNode(node shared.Node, ctx AssemblyCtx) AssemblyCtx {
 		ctx = processNodeComponent(n, ctx)
 	case shared.NodeEnumMember:
 		ctx = processNodeEnumMember(n, ctx)
-	case shared.NodeConstraint:
-		ctx = processNodeConstraint(n, ctx)
+	case shared.NodeTrait:
+		ctx = processNodeTrait(n, ctx)
 	default:
 		ctx.Error = shared.NewSyntaxError(node.Meta().Position, "unrecognized node type")
 	}
@@ -19,38 +36,152 @@ func processNode(node shared.Node, ctx AssemblyCtx) AssemblyCtx {
 	return ctx
 }
 
-func processNodeComponent(node shared.NodeComponent, ctx AssemblyCtx) AssemblyCtx {
-	// 	ctype := classifyComponentNode(node)
-	// 	id := strings.ToLower(node.Name)
-	// 	comp := components.NewComponent(ctype, id)
-	// 	ctx.Comps[comp.Meta().ComponentId] = comp
-	// 	ctx.Stack.Push(comp.Meta().ComponentId)
-	//
-	// 	return ctx
-	// }
-	//
-	// func processNodeEnumMember(node shared.NodeEnumMember, ctx AssemblyCtx) AssemblyCtx {
-	// 	id, ln := ctx.Stack.Curr()
-	// 	if ln <= 0 {
-	// 		ctx.Error = shared.NewSyntaxError(node.Meta().Position, "orphaned enum member")
-	// 		return ctx
-	// 	}
-	//
-	// 	parent, ok := ctx.Comps[id]
-	// 	if ok &&
-	// 		parent.Meta().Type == components.COMPTYPE_ENUM {
-	// 	} else {
-	// 		ctx.Error = shared.NewSyntaxError(node.Meta().Position, "orphaned enum member")
-	// 		return ctx
-	// 	}
+func classifyNodeComponent(
+	node shared.NodeComponent,
+) (components.ComponentType, error) {
+	if node.IsReference {
+		return components.COMPONENT_TYPE_REFERENCE, nil
+	}
+
+	ctype, ok := keywordToComponentTypeMap[strings.ToLower(node.Type)]
+	if ok {
+		return ctype, nil
+	} else {
+		return components.COMPONENT_TYPE_UNDEFINED, shared.NewSyntaxError(node.Meta().Position, fmt.Sprintf("invalid component type '%s'\n", node.Type))
+	}
+}
+
+func processNodeComponent(
+	node shared.NodeComponent,
+	ctx AssemblyCtx,
+) AssemblyCtx {
+	ctype, err := classifyNodeComponent(node)
+	if err != nil {
+		ctx.Error = err
+		return ctx
+	}
+
+	comp := components.NewComponent(ctype, "test_id", findParent(ctx))
+	ctx.Comps[comp.Meta().ComponentId] = comp
 
 	return ctx
 }
 
-func processNodeConstraint(node shared.NodeConstraint, ctx AssemblyCtx) AssemblyCtx {
+func processNodeTrait(
+	node shared.NodeTrait,
+	ctx AssemblyCtx,
+) AssemblyCtx {
+	parentId := findParent(ctx)
+	if parentId == "" {
+		ctx.Error = shared.NewSyntaxError(node.Meta().Position, "orphaned trait")
+		return ctx
+	}
+	parent, ok := ctx.Comps[parentId]
+	if !ok {
+		ctx.Error = fmt.Errorf("error finding parent node '%s'", parentId)
+		return ctx
+	}
+
+	meta := components.TraitMetadata{
+		Key: node.Name,
+		// TODO: wip fix, pass type from parser
+		Type: components.TRAIT_TYPE_UINT,
+		Raw:  node.Value,
+	}
+
+	trait, err := newTrait(meta)
+	if err != nil {
+		ctx.Error = err
+		return ctx
+	}
+
+	(*parent.Meta().Traits)[strings.ToLower(node.Name)] = trait
+
 	return ctx
 }
 
-func processNodeEnumMember(node shared.NodeEnumMember, ctx AssemblyCtx) AssemblyCtx {
+func processNodeEnumMember(
+	node shared.NodeEnumMember,
+	ctx AssemblyCtx,
+) AssemblyCtx {
 	return ctx
+}
+
+func findParent(ctx AssemblyCtx) string {
+	curr, ln := ctx.Stack.Curr()
+	if ln > 0 {
+		return curr
+	} else {
+		return ""
+	}
+}
+
+func newTrait(meta components.TraitMetadata) (components.Trait, error) {
+	switch meta.Type {
+	case components.TRAIT_TYPE_STRING:
+		return components.TraitString{
+			TraitMetadata: meta,
+			Value:         meta.Raw,
+		}, nil
+	case components.TRAIT_TYPE_INT:
+		val, err := castInt(meta.Raw)
+		if err != nil {
+			return nil, fmt.Errorf("could not cast trait '%s' to %s", meta.Key, meta.Type)
+		}
+
+		return components.TraitInt{
+			TraitMetadata: meta,
+			Value:         val,
+		}, nil
+	case components.TRAIT_TYPE_UINT:
+		val, err := castUint(meta.Raw)
+		if err != nil {
+			return nil, fmt.Errorf("could not cast trait '%s' to %s", meta.Key, meta.Type)
+		}
+
+		return components.TraitUint{
+			TraitMetadata: meta,
+			Value:         val,
+		}, nil
+
+	case components.TRAIT_TYPE_FLOAT:
+		val, err := castFloat(meta.Raw)
+		if err != nil {
+			return nil, fmt.Errorf("could not cast trait '%s' to %s", meta.Key, meta.Type)
+		}
+
+		return components.TraitFloat{
+			TraitMetadata: meta,
+			Value:         val,
+		}, nil
+	case components.TRAIT_TYPE_BOOL:
+		val, err := castBool(meta.Raw)
+		if err != nil {
+			return nil, fmt.Errorf("could not cast trait '%s' to %s", meta.Key, meta.Type)
+		}
+
+		return components.TraitBool{
+			TraitMetadata: meta,
+			Value:         val,
+		}, nil
+	default:
+		return nil, fmt.Errorf("invalid trait value '%s' for traint '%s'\n", meta.Raw, meta.Key)
+	}
+}
+
+func castInt(raw string) (int, error) {
+	return strconv.Atoi(raw)
+}
+
+func castUint(raw string) (uint, error) {
+	cast, err := strconv.ParseUint(raw, 10, 0)
+	return uint(cast), err
+}
+
+func castFloat(raw string) (float64, error) {
+	return strconv.ParseFloat(raw, 0)
+}
+
+func castBool(raw string) (bool, error) {
+	return strconv.ParseBool(raw)
 }

@@ -1,13 +1,13 @@
 package shared
 
 const (
-	NODETYPE_COMPONENT   = "NT_COMPONENT"
-	NODETYPE_COMMENT     = "NT_COMMENT"
-	NODETYPE_CONSTRAINT  = "NT_CONSTRAINT"
-	NODETYPE_ENUM_MEMBER = "NT_ENUM_MEMBER"
-	NODETYPE_ARRAY       = "NT_ARRAY"
-	NODETYPE_EMPTYLINE   = "NT_EMPTYLINE"
-	NODETYPE_UNDEFINED   = "NT_UNDEFINED"
+	NODE_TYPE_COMPONENT   = "COMPONENT"
+	NODE_TYPE_COMMENT     = "COMMENT"
+	NODE_TYPE_TRAIT       = "TRAIT"
+	NODE_TYPE_ENUM_MEMBER = "ENUM_MEMBER"
+	NODE_TYPE_ARRAY       = "ARRAY"
+	NODE_TYPE_EMPTYLINE   = "EMPTYLINE"
+	NODE_TYPE_UNDEFINED   = "UNDEFINED"
 )
 
 // switch node.Meta().Type {
@@ -48,7 +48,7 @@ type NodeComponent struct {
 	IsReference bool
 }
 
-type NodeConstraint struct {
+type NodeTrait struct {
 	Metadata NodeMetadata
 	Name     string
 	Value    string
@@ -68,7 +68,7 @@ type NodeEnumMember struct {
 
 type NodeTypesConstraint interface {
 	NodeComponent |
-		NodeConstraint |
+		NodeTrait |
 		NodeComment |
 		NodeEnumMember
 }
@@ -84,7 +84,7 @@ func (cn NodeComponent) Meta() NodeMetadata {
 	return cn.Metadata
 }
 
-func (cn NodeConstraint) Meta() NodeMetadata {
+func (cn NodeTrait) Meta() NodeMetadata {
 	return cn.Metadata
 }
 

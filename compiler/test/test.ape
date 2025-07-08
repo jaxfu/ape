@@ -1,5 +1,3 @@
-TextEnum -> Enum
-	UNDEFINED
-	DIFFERENT         TESTDIFF
-	SAME              SAME
-	TESTLONGALIGNMENT TEST
+Todo -> Object
+	min_length: 4
+	max_length: 16

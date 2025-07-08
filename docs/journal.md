@@ -1,3 +1,7 @@
+### 8.7.25
+
+- began major refactor of entire project
+
 ### 7.7.25
 
 - started ape/compiler/internal/assembler

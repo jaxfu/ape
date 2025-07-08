@@ -20,7 +20,7 @@ func DefaultCompiler() Compiler {
 // just filepath and read file?
 // would allow to use compiler as cli
 func (c Compiler) File(path string, bytes []byte) (
-	components.Components,
+	[]components.Component,
 	error,
 ) {
 	file, err := os.Open(path)
@@ -40,5 +40,5 @@ func (c Compiler) File(path string, bytes []byte) (
 		)
 	}
 
-	return components.Components{}, nil
+	return []components.Component{}, nil
 }
