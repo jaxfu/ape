@@ -1,0 +1,41 @@
+# Text
+Message :: text
+	min_length 4
+	max_length 16
+	alpha      true
+
+# Int
+Score :: int
+	min 25
+	max 100 
+
+# Object
+Todo :: object
+	Ratio :: float
+		max 99.99
+	Content :: Message
+		min_length 5
+	?Comment :: Message
+
+# Array w/ Ref
+Scores :: [Score]
+
+# Array w/ Anon Element
+Scores :: []
+	_ :: Int
+		min 25
+		max 100
+
+
+# Array w/ n dimensions
+# i.e. array where each element is an array of @Score
+Scores :: [[Score]]
+# equivalent
+Scores :: []
+	_ :: [Score]
+
+# Enum
+NumEnum :: enum
+	BLACK  0
+	BLUE   1
+	YELLOW 2

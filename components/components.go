@@ -31,7 +31,7 @@ const (
 // default:
 // }
 
-type ComponentMap map[string]Component
+type ComponentsMap map[string]*Component
 
 type Component interface {
 	Meta() ComponentMetadata
@@ -42,7 +42,7 @@ type ComponentType string
 type ComponentMetadata struct {
 	Type        ComponentType
 	ComponentId string
-	ParentId    string
+	Parent      *Component
 	Traits      *TraitsMap
 }
 
@@ -108,12 +108,13 @@ type ComponentUndefined struct {
 
 func NewComponent(
 	ctype ComponentType,
-	id, parentId string,
+	id string,
+	parent *Component,
 ) Component {
 	meta := ComponentMetadata{
 		Type:        ctype,
 		ComponentId: id,
-		ParentId:    parentId,
+		Parent:      parent,
 		Traits:      new(TraitsMap),
 	}
 	componentTypesMap := map[ComponentType]Component{

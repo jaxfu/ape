@@ -62,7 +62,8 @@ func processNodeComponent(
 	}
 
 	comp := components.NewComponent(ctype, "test_id", findParent(ctx))
-	ctx.Comps[comp.Meta().ComponentId] = comp
+	ctx.Comps[comp.Meta().ComponentId] = &comp
+	ctx.Stack.Push(&comp)
 
 	return ctx
 }
@@ -71,14 +72,9 @@ func processNodeTrait(
 	node shared.NodeTrait,
 	ctx AssemblyCtx,
 ) AssemblyCtx {
-	parentId := findParent(ctx)
-	if parentId == "" {
+	parent := findParent(ctx)
+	if parent == nil {
 		ctx.Error = shared.NewSyntaxError(node.Meta().Position, "orphaned trait")
-		return ctx
-	}
-	parent, ok := ctx.Comps[parentId]
-	if !ok {
-		ctx.Error = fmt.Errorf("error finding parent node '%s'", parentId)
 		return ctx
 	}
 
@@ -89,13 +85,11 @@ func processNodeTrait(
 		Raw:  node.Value,
 	}
 
-	trait, err := newTrait(meta)
+	_, err := newTrait(meta)
 	if err != nil {
 		ctx.Error = err
 		return ctx
 	}
-
-	(*parent.Meta().Traits)[strings.ToLower(node.Name)] = trait
 
 	return ctx
 }
@@ -107,12 +101,12 @@ func processNodeEnumMember(
 	return ctx
 }
 
-func findParent(ctx AssemblyCtx) string {
+func findParent(ctx AssemblyCtx) *components.Component {
 	curr, ln := ctx.Stack.Curr()
 	if ln > 0 {
 		return curr
 	} else {
-		return ""
+		return nil
 	}
 }
 

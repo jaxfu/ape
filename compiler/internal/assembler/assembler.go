@@ -14,18 +14,18 @@ const (
 )
 
 type AssemblyCtx struct {
-	Comps components.ComponentMap
-	Stack stack.Stack[string]
+	Comps components.ComponentsMap
+	Stack stack.Stack[*components.Component]
 	Error error
 }
 
 type ComponentStack stack.Stack[string]
 
 // TODO: wip assembler
-func Assemble(ast shared.Ast) (components.ComponentMap, error) {
+func Assemble(ast shared.Ast) (components.ComponentsMap, error) {
 	ctx := AssemblyCtx{
-		Comps: components.ComponentMap{},
-		Stack: stack.Stack[string]{},
+		Comps: components.ComponentsMap{},
+		Stack: stack.Stack[*components.Component]{},
 	}
 
 	for _, node := range ast {

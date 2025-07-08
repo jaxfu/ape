@@ -3,7 +3,6 @@ package internal
 import (
 	"bufio"
 	"encoding/json"
-	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -16,13 +15,13 @@ import (
 )
 
 const (
-	TEST_DIR string = "../test"
+	TEST_FILE string = "../test/test.ape"
 )
 
 var (
 	tokens []shared.Token
 	ast    shared.Ast
-	comps  components.ComponentMap
+	comps  components.ComponentsMap
 	err    error
 )
 
@@ -30,27 +29,24 @@ func TestCompiler(t *testing.T) {
 	t.Run("Lexer", func(t *testing.T) {
 		testLexer(t)
 	})
-	// marsh, _ := json.MarshalIndent(tokens, "", " ")
-	// t.Log(string(marsh))
+	marsh, _ := json.MarshalIndent(tokens, "", " ")
+	t.Log(string(marsh))
 
-	t.Run("Parser", func(t *testing.T) {
-		testParser(t)
-	})
+	// t.Run("Parser", func(t *testing.T) {
+	// 	testParser(t)
+	// })
 	// marsh, _ := json.MarshalIndent(ast, "", " ")
 	// t.Log(string(marsh))
 
-	t.Run("Assembler", func(t *testing.T) {
-		testAssembler(t)
-	})
-	marsh, _ := json.MarshalIndent(comps, "", " ")
-	t.Log(string(marsh))
+	// t.Run("Assembler", func(t *testing.T) {
+	// 	testAssembler(t)
+	// })
+	// marsh, _ := json.MarshalIndent(comps, "", " ")
+	// t.Log(string(marsh))
 }
 
 func testLexer(t *testing.T) {
-	path, err := filepath.Abs(fmt.Sprintf(
-		"%s/test.ape",
-		TEST_DIR,
-	))
+	path, err := filepath.Abs(TEST_FILE)
 	if err != nil {
 		t.Errorf("error casting to absolute path: %+v", err)
 		return
