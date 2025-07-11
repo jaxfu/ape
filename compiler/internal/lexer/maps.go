@@ -2,23 +2,21 @@ package lexer
 
 import "github.com/jaxfu/ape/compiler/internal/shared"
 
-func isIn(r rune, m map[rune]struct{}) bool {
-	_, ok := m[r]
-	return ok
+var symbolRunes = RuneMap{
+	shared.RUNE_SYM_REFERENCE:      {},
+	shared.RUNE_SYM_OPTIONAL:       {},
+	shared.RUNE_SYM_START_ARRAY:    struct{}{},
+	shared.RUNE_SYM_END_ARRAY:      struct{}{},
+	shared.RUNE_SYM_ANON_COMPONENT: struct{}{},
 }
 
-var symbolRunes = map[rune]struct{}{
-	shared.RUNE_SYM_REFERENCE: {},
-	shared.RUNE_SYM_OPTIONAL:  {},
-}
-
-var numberEntryRunes = map[rune]struct{}{
+var numberEntryRunes = RuneMap{
 	// digits
 	'0': {}, '1': {}, '2': {}, '3': {}, '4': {},
 	'5': {}, '6': {}, '7': {}, '8': {}, '9': {},
 }
 
-var numberIntraRunes = map[rune]struct{}{
+var numberIntraRunes = RuneMap{
 	// symbols
 	'.': {},
 	// digits
@@ -26,7 +24,7 @@ var numberIntraRunes = map[rune]struct{}{
 	'5': {}, '6': {}, '7': {}, '8': {}, '9': {},
 }
 
-var identEntryRunes = map[rune]struct{}{
+var identEntryRunes = RuneMap{
 	'A': {}, 'B': {}, 'C': {}, 'D': {}, 'E': {}, 'F': {}, 'G': {},
 	'H': {}, 'I': {}, 'J': {}, 'K': {}, 'L': {}, 'M': {}, 'N': {},
 	'O': {}, 'P': {}, 'Q': {}, 'R': {}, 'S': {}, 'T': {}, 'U': {},
@@ -37,7 +35,7 @@ var identEntryRunes = map[rune]struct{}{
 	'v': {}, 'w': {}, 'x': {}, 'y': {}, 'z': {},
 }
 
-var identIntraRunes = map[rune]struct{}{
+var identIntraRunes = RuneMap{
 	// symbols
 	shared.RUNE_UNDERSCORE: {},
 	// digits
@@ -54,7 +52,14 @@ var identIntraRunes = map[rune]struct{}{
 	'v': {}, 'w': {}, 'x': {}, 'y': {}, 'z': {},
 }
 
-var indentRunes = map[rune]struct{}{
+var indentRunes = RuneMap{
 	shared.RUNE_SPACE: {},
 	shared.RUNE_TAB:   {},
+}
+
+type RuneMap map[rune]struct{}
+
+func (m RuneMap) contains(r rune) bool {
+	_, ok := m[r]
+	return ok
 }

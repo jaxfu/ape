@@ -1,7 +1,9 @@
 ### Todo
 
-- ape/components redesign
-  - id generator for comps
+- v2 rewrite
+  - lexer
+  - parser
+  - assembler
 - step-wise parser
   - handle enum keys that may be references
 - every element stored separately

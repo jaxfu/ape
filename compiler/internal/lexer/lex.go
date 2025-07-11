@@ -28,13 +28,13 @@ func (l *Lexer) Lex(rdr RuneReader, prealloc uint) ([]shared.Token, error) {
 		case shared.TOKEN_UNDEFINED:
 			// check groups first
 			// can allow utf-8 with unicode.IsLetter()
-			if isIdentPreRune(rune) {
+			if identEntryRunes.contains(rune) {
 				l.StringBuilder.WriteRune(rune)
 				l.Status = shared.TOKEN_IDENT
-			} else if isNumberPreRune(rune) {
+			} else if numberEntryRunes.contains(rune) {
 				l.StringBuilder.WriteRune(rune)
 				l.Status = shared.TOKEN_NUMBER
-			} else if isSymbolRune(rune) {
+			} else if symbolRunes.contains(rune) {
 				l.addSymbol(rune)
 			} else { // check against individual runes
 				switch rune {
@@ -42,7 +42,7 @@ func (l *Lexer) Lex(rdr RuneReader, prealloc uint) ([]shared.Token, error) {
 					l.addSpace()
 				case shared.RUNE_TAB:
 					l.addTab()
-				case shared.RUNE_POUND:
+				case shared.RUNE_SYM_COMMENT:
 					l.addComment()
 				case shared.RUNE_CARRIAGE_RETURN:
 					l.handleCR()
@@ -56,9 +56,9 @@ func (l *Lexer) Lex(rdr RuneReader, prealloc uint) ([]shared.Token, error) {
 			}
 
 		case shared.TOKEN_IDENT:
-			if isIdentPostRune(rune) {
+			if identIntraRunes.contains(rune) {
 				l.StringBuilder.WriteRune(rune)
-			} else if isSymbolRune(rune) {
+			} else if symbolRunes.contains(rune) {
 				l.addIdent()
 				l.addSymbol(rune)
 				l.Status = shared.TOKEN_UNDEFINED
@@ -72,7 +72,7 @@ func (l *Lexer) Lex(rdr RuneReader, prealloc uint) ([]shared.Token, error) {
 					l.addIdent()
 					l.addTab()
 					l.Status = shared.TOKEN_UNDEFINED
-				case shared.RUNE_POUND:
+				case shared.RUNE_SYM_COMMENT:
 					l.addIdent()
 					l.addComment()
 					l.Status = shared.TOKEN_UNDEFINED
@@ -90,7 +90,7 @@ func (l *Lexer) Lex(rdr RuneReader, prealloc uint) ([]shared.Token, error) {
 			}
 
 		case shared.TOKEN_NUMBER:
-			if isNumberPostRune(rune) {
+			if numberIntraRunes.contains(rune) {
 				l.StringBuilder.WriteRune(rune)
 			} else {
 				switch rune {
@@ -141,7 +141,6 @@ func (l *Lexer) Lex(rdr RuneReader, prealloc uint) ([]shared.Token, error) {
 			default: // unmatched, write
 				l.StringBuilder.WriteRune(rune)
 			}
-
 		}
 	}
 

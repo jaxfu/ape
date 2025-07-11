@@ -1,3 +1,8 @@
+### 10.7.25
+
+- rewrote grammar to v2
+- began v2 rewrite w/ ape/compiler/internal/lexer
+
 ### 8.7.25
 
 - began major refactor of entire project

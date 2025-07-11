@@ -63,33 +63,3 @@ func (l *Lexer) nextline() {
 	}
 	l.Status = shared.TOKEN_UNDEFINED
 }
-
-func isSymbolRune(r rune) bool {
-	_, ok := symbolRunes[r]
-	return ok
-}
-
-func isNumberPreRune(r rune) bool {
-	_, ok := numberPreRunes[r]
-	return ok
-}
-
-func isNumberPostRune(r rune) bool {
-	_, ok := numberPostRunes[r]
-	return ok
-}
-
-func isIdentPreRune(r rune) bool {
-	_, ok := identPreRunes[r]
-	return ok
-}
-
-func isIdentPostRune(r rune) bool {
-	_, ok := identPostRunes[r]
-	return ok
-}
-
-func isIndentRune(r rune) bool {
-	_, ok := indentRunes[r]
-	return ok
-}

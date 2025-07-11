@@ -12,7 +12,6 @@ import (
 var keywordToComponentTypeMap = map[string]components.ComponentType{
 	shared.KEYWORD_OBJECT: components.COMPONENT_TYPE_OBJECT,
 	shared.KEYWORD_ENUM:   components.COMPONENT_TYPE_ENUM,
-	shared.KEYWORD_ARRAY:  components.COMPONENT_TYPE_ARRAY,
 	shared.KEYWORD_STRING: components.COMPONENT_TYPE_STRING,
 	shared.KEYWORD_BLOB:   components.COMPONENT_TYPE_BLOB,
 	shared.KEYWORD_INT:    components.COMPONENT_TYPE_INT,
