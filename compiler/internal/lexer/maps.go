@@ -4,6 +4,7 @@ import "github.com/jaxfu/ape/compiler/internal/shared"
 
 var symbolRunes = RuneMap{
 	shared.RUNE_SYM_REFERENCE:      {},
+	shared.RUNE_SYM_TYPEDEF:        {},
 	shared.RUNE_SYM_OPTIONAL:       {},
 	shared.RUNE_SYM_START_ARRAY:    struct{}{},
 	shared.RUNE_SYM_END_ARRAY:      struct{}{},

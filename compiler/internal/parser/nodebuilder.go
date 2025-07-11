@@ -5,28 +5,31 @@ import (
 	"strings"
 
 	"github.com/jaxfu/ape/compiler/internal/shared"
+	"github.com/jaxfu/golp/list"
 )
 
 const (
-	PREALLOC uint = 1024
-
 	INDENT_SPACE  IndentType = "INDENT_SPACE"
 	INDENT_TAB    IndentType = "INDENT_TAB"
 	INDENT_UNKOWN IndentType = "INDENT_UNKOWN"
 )
 
-type NodeBuilder struct {
-	NodeType   shared.NodeType
+type ParseCtx struct {
+	Tokens        *TokenList
+	StringBuilder strings.Builder
+	Position      shared.Position
+
 	IndentType IndentType
+	Step       StepType
+}
 
-	StringBuilder *strings.Builder
-
+type RawNode struct {
 	Depth    uint
 	Position shared.Position
 
-	Key      RawKey
-	Assigner string
-	Value    RawValue
+	Key              RawKey
+	AssignmentSymbol string
+	Value            RawValue
 
 	CommentContent string
 
@@ -54,11 +57,18 @@ type RawKey struct {
 
 type IndentType string
 
-func NewNodeBuilder(indType IndentType) NodeBuilder {
-	return NodeBuilder{
-		NodeType:      shared.NODE_TYPE_UNDEFINED,
-		IndentType:    indType,
-		StringBuilder: &strings.Builder{},
+type TokenList = list.List[shared.Token]
+
+func newRawNode() RawNode {
+	return RawNode{}
+}
+
+func newParseCtx(toks *TokenList) ParseCtx {
+	return ParseCtx{
+		Tokens:        toks,
+		IndentType:    INDENT_UNKOWN,
+		Step:          STEP_UNDEFINED,
+		StringBuilder: strings.Builder{},
 	}
 }
 
@@ -83,59 +93,60 @@ func newId(ntype shared.NodeType, counter *NodeCounter) string {
 	return out
 }
 
-func (nb NodeBuilder) process(counter *NodeCounter) (shared.Node, error) {
-	var node shared.Node
-
-	switch nb.Assigner {
-	case shared.SYMBOL_DECLARE_COMPONENT:
-		node = shared.NodeComponent{
-			Metadata: shared.NodeMetadata{
-				Id:       newId(shared.NODE_TYPE_COMPONENT, counter),
-				Type:     shared.NODE_TYPE_COMPONENT,
-				Position: nb.Position,
-				Depth:    nb.Depth,
-			},
-			Name:        nb.Key.Content,
-			Type:        nb.Value.Content,
-			IsReference: (nb.Value.PreSymbol == shared.SYMBOL_REFERENCE),
-			IsOptional:  (nb.Value.PostSymbol == shared.SYMBOL_OPTIONAL),
-		}
-	case shared.SYMBOL_DECLARE_TRAIT:
-		node = shared.NodeTrait{
-			Metadata: shared.NodeMetadata{
-				Id:       newId(shared.NODE_TYPE_TRAIT, counter),
-				Type:     shared.NODE_TYPE_TRAIT,
-				Position: nb.Position,
-				Depth:    nb.Depth,
-			},
-			Name:  nb.Key.Content,
-			Value: nb.Value.Content,
-		}
-	default:
-		if len(nb.CommentContent) > 0 {
-			node = shared.NodeComment{
-				Metadata: shared.NodeMetadata{
-					Id:       newId(shared.NODE_TYPE_COMMENT, counter),
-					Type:     shared.NODE_TYPE_COMMENT,
-					Position: nb.Position,
-					Depth:    nb.Depth,
-				},
-				Content: nb.CommentContent,
-			}
-		} else {
-			node = shared.NodeEnumMember{
-				Metadata: shared.NodeMetadata{
-					Id:       newId(shared.NODE_TYPE_ENUM_MEMBER, counter),
-					Type:     shared.NODE_TYPE_ENUM_MEMBER,
-					Position: nb.Position,
-					Depth:    nb.Depth,
-				},
-				Key:         nb.Key.Content,
-				IsReference: nb.Key.PreSymbol != "",
-				Alias:       nb.Value.Content,
-			}
-		}
-	}
-
-	return node, nil
-}
+// func (nb NodeBuilder) process(counter *NodeCounter) (shared.Node, error) {
+// 	var node shared.Node
+//
+// 	switch nb.AssignmentSymbol {
+// 	case shared.SYMBOL_TYPEDEF:
+// 		node = shared.NodeComponent{
+// 			Metadata: shared.NodeMetadata{
+// 				Id:       newId(shared.NODE_TYPE_COMPONENT, counter),
+// 				Type:     shared.NODE_TYPE_COMPONENT,
+// 				Position: nb.Position,
+// 				Depth:    nb.Depth,
+// 			},
+// 			Name:        nb.Key.Content,
+// 			Type:        nb.Value.Content,
+// 			IsReference: (nb.Value.PreSymbol == shared.SYMBOL_REFERENCE),
+// 			IsOptional:  (nb.Value.PostSymbol == shared.SYMBOL_OPTIONAL),
+// 		}
+// 	// TODO: handle traits
+// 	case shared.SYMBOL_DECLARE_TRAIT:
+// 		node = shared.NodeTrait{
+// 			Metadata: shared.NodeMetadata{
+// 				Id:       newId(shared.NODE_TYPE_TRAIT, counter),
+// 				Type:     shared.NODE_TYPE_TRAIT,
+// 				Position: nb.Position,
+// 				Depth:    nb.Depth,
+// 			},
+// 			Name:  nb.Key.Content,
+// 			Value: nb.Value.Content,
+// 		}
+// 	default:
+// 		if len(nb.CommentContent) > 0 {
+// 			node = shared.NodeComment{
+// 				Metadata: shared.NodeMetadata{
+// 					Id:       newId(shared.NODE_TYPE_COMMENT, counter),
+// 					Type:     shared.NODE_TYPE_COMMENT,
+// 					Position: nb.Position,
+// 					Depth:    nb.Depth,
+// 				},
+// 				Content: nb.CommentContent,
+// 			}
+// 		} else {
+// 			node = shared.NodeEnumMember{
+// 				Metadata: shared.NodeMetadata{
+// 					Id:       newId(shared.NODE_TYPE_ENUM_MEMBER, counter),
+// 					Type:     shared.NODE_TYPE_ENUM_MEMBER,
+// 					Position: nb.Position,
+// 					Depth:    nb.Depth,
+// 				},
+// 				Key:         nb.Key.Content,
+// 				IsReference: nb.Key.PreSymbol != "",
+// 				Alias:       nb.Value.Content,
+// 			}
+// 		}
+// 	}
+//
+// 	return node, nil
+// }

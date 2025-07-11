@@ -6,43 +6,40 @@ for their specific step type (i.e. key, value)
 package parser
 
 import (
-	"fmt"
-
 	"github.com/jaxfu/ape/compiler/internal/shared"
 	"github.com/jaxfu/golp/list"
 )
 
 func Parse(tokens []shared.Token, prealloc uint) (
-	shared.Ast,
+	[]RawNode,
 	[]error,
 	error,
 ) {
 	toks := list.Wrap(tokens)
-	ast := make(shared.Ast, 0, prealloc)
+	nodes := make([]RawNode, 0, prealloc)
+	// ast := make(shared.Ast, 0, prealloc)
 	errors := make([]error, 0, prealloc/4)
-	indentType := INDENT_UNKOWN
-	counter := NodeCounter{}
+	ctx := newParseCtx(&toks)
 
 	for {
 		var step, next Step = stepEntry, stepEntry
 		var err error
-		nb := NewNodeBuilder(indentType)
+		rawnode := newRawNode()
 
 		// parse node
 		for {
-			nb, next, err = step.process(&toks, nb)
+			ctx, rawnode, next, err = step.process(ctx, rawnode)
 			if err != nil || next == nil {
 				break
 			}
 			step = next
-			indentType = nb.IndentType
 		}
-		// process, append node
-		node, err := nb.process(&counter)
 		if err != nil {
-			fmt.Printf("error casting node: %+v\n", nb)
+			continue
 		}
-		ast = append(ast, node)
+
+		// process, append node
+		nodes = append(nodes, rawnode)
 
 		// seek terminator or comment
 		res, tok := seekCommentOrTerminator(&toks)
@@ -55,10 +52,6 @@ func Parse(tokens []shared.Token, prealloc uint) (
 			err = shared.NewSyntaxError(tok.Position, "unexpected token")
 		}
 
-		// TODO: handle err
-		if err != nil {
-		}
-
 		// advance if not EOF
 		if toks.Look(1).Type == shared.TOKEN_EOF {
 			break
@@ -67,7 +60,7 @@ func Parse(tokens []shared.Token, prealloc uint) (
 		}
 	}
 
-	return ast, errors, nil
+	return nodes, errors, nil
 }
 
 // seeks until anything other than space
@@ -77,11 +70,11 @@ func seekNextElem(toks *list.List[shared.Token]) (
 ) {
 	tok := toks.Curr()
 	for ; ; tok = toks.Move(1) {
-		if isIn(tok.Type, spacerMap) {
+		if ttmSpacer.contains(tok.Type) {
 			continue
 		} else if tok.Type == shared.TOKEN_EOF {
 			return RESULT_EOF, shared.Token{}
-		} else if isIn(tok.Type, nodeTerminatorMap) {
+		} else if ttmNodeTerminator.contains(tok.Type) {
 			return RESULT_TERMINATOR, shared.Token{}
 		} else {
 			break
@@ -107,22 +100,6 @@ func seekTokType(
 	return res, tok
 }
 
-func seekMapMember(
-	toks *list.List[shared.Token],
-	tm tokenTypesMap,
-) (Result, shared.Token) {
-	res, tok := seekNextElem(toks)
-	if res == RESULT_SUCCESS {
-		if isIn(tok.Type, tm) {
-			return RESULT_SUCCESS, tok
-		} else {
-			return RESULT_UNEXPECTED, tok
-		}
-	}
-
-	return res, tok
-}
-
 func seekCommentOrTerminator(toks *list.List[shared.Token]) (
 	Result,
 	shared.Token,
@@ -133,13 +110,6 @@ func seekCommentOrTerminator(toks *list.List[shared.Token]) (
 	}
 
 	return res, tok
-}
-
-func seekValueEntry(toks *list.List[shared.Token]) (
-	Result,
-	shared.Token,
-) {
-	return seekMapMember(toks, valueMap)
 }
 
 func parseSymbol(
@@ -156,9 +126,4 @@ func parseSymbol(
 	}
 
 	return symbol
-}
-
-func isTrait(tok shared.Token) bool {
-	return (tok.Type == shared.TOKEN_SYMBOL &&
-		tok.Content == shared.SYMBOL_DECLARE_TRAIT)
 }

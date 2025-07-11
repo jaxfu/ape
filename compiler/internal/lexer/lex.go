@@ -208,11 +208,11 @@ func (l *Lexer) addSymbol(rune rune) {
 }
 
 func (l *Lexer) addSpace() {
-	l.createAndAppendToken(shared.TOKEN_SPACE, shared.SPACER_SPACE)
+	l.createAndAppendToken(shared.TOKEN_SPACE, shared.SYMBOL_SPACE)
 }
 
 func (l *Lexer) addTab() {
-	l.createAndAppendToken(shared.TOKEN_TAB, shared.SPACER_TAB)
+	l.createAndAppendToken(shared.TOKEN_TAB, shared.SYMBOL_TAB)
 }
 
 func (l *Lexer) handleCR() {

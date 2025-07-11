@@ -10,14 +10,14 @@ import (
 )
 
 var keywordToComponentTypeMap = map[string]components.ComponentType{
-	shared.KEYWORD_OBJECT: components.COMPONENT_TYPE_OBJECT,
-	shared.KEYWORD_ENUM:   components.COMPONENT_TYPE_ENUM,
-	shared.KEYWORD_STRING: components.COMPONENT_TYPE_STRING,
-	shared.KEYWORD_BLOB:   components.COMPONENT_TYPE_BLOB,
-	shared.KEYWORD_INT:    components.COMPONENT_TYPE_INT,
-	shared.KEYWORD_UINT:   components.COMPONENT_TYPE_UINT,
-	shared.KEYWORD_FLOAT:  components.COMPONENT_TYPE_FLOAT,
-	shared.KEYWORD_BOOL:   components.COMPONENT_TYPE_BOOL,
+	shared.KEYWORD_TYPE_OBJECT: components.COMPONENT_TYPE_OBJECT,
+	shared.KEYWORD_TYPE_ENUM:   components.COMPONENT_TYPE_ENUM,
+	shared.KEYWORD_TYPE_STRING: components.COMPONENT_TYPE_STRING,
+	shared.KEYWORD_TYPE_BLOB:   components.COMPONENT_TYPE_BLOB,
+	shared.KEYWORD_TYPE_INT:    components.COMPONENT_TYPE_INT,
+	shared.KEYWORD_TYPE_UINT:   components.COMPONENT_TYPE_UINT,
+	shared.KEYWORD_TYPE_FLOAT:  components.COMPONENT_TYPE_FLOAT,
+	shared.KEYWORD_TYPE_BOOL:   components.COMPONENT_TYPE_BOOL,
 }
 
 func processNode(node shared.Node, ctx AssemblyCtx) AssemblyCtx {

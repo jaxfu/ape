@@ -8,3 +8,4 @@ build_and_run.sh
 *.sh
 TEST_FMT.ape
 .vscode/
+testdump.json

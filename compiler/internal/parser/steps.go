@@ -4,24 +4,24 @@ import (
 	"fmt"
 
 	"github.com/jaxfu/ape/compiler/internal/shared"
-	"github.com/jaxfu/golp/list"
 )
 
 const (
-	STEP_ENTRY           = "STEP_ENTRY"
-	STEP_DEPTH           = "STEP_DEPTH"
-	STEP_KEY             = "STEP_KEY"
-	STEP_ASSIGNER        = "STEP_ASSIGNER"
-	STEP_SEEK_TERMINATOR = "STEP_SEEK_TERMINATOR"
-	STEP_VALUE           = "STEP_VALUE"
-	STEP_COMMENT         = "STEP_COMMENT"
+	STEP_COMMENT         StepType = "COMMENT"
+	STEP_ENTRY           StepType = "ENTRY"
+	STEP_DEPTH           StepType = "DEPTH"
+	STEP_KEY             StepType = "KEY"
+	STEP_ASSIGNMENT_SYM  StepType = "ASSIGNMENT_SYM"
+	STEP_VALUE           StepType = "VALUE"
+	STEP_SEEK_TERMINATOR StepType = "SEEK_TERMINATOR"
+	STEP_UNDEFINED       StepType = "UNDEFINED"
 )
 
-type StepType = string
+type StepType string
 
 type Step interface {
 	stype() StepType
-	process(*list.List[shared.Token], NodeBuilder) (NodeBuilder, Step, error)
+	process(ParseCtx, RawNode) (ParseCtx, RawNode, Step, error)
 }
 
 // entry
@@ -36,27 +36,28 @@ func (st StepEntry) stype() StepType {
 }
 
 func (st StepEntry) process(
-	toks *list.List[shared.Token],
-	nb NodeBuilder,
+	ctx ParseCtx,
+	node RawNode,
 ) (
-	NodeBuilder,
+	ParseCtx,
+	RawNode,
 	Step,
 	error,
 ) {
-	tok := toks.Curr()
+	tok := ctx.Tokens.Curr()
 	tt := tok.Type
-	if isIn(tt, nodeEntryMap) {
-		nb.Position = tok.Position
-		return nb, stepKey, nil
-	} else if isIn(tt, commentEntryMap) {
-		nb.Assigner = tok.Content
-		nb.Position = tok.Position
-		return nb, stepComment, nil
-	} else if isIn(tt, indentMap) {
-		nb.Position = tok.Position
-		return nb, stepDepth, nil
+	if ttmNodeEntry.contains(tt) {
+		node.Position = tok.Position
+		return ctx, node, stepKey, nil
+	} else if ttmCommentEntry.contains(tt) {
+		node.AssignmentSymbol = tok.Content
+		node.Position = tok.Position
+		return ctx, node, stepComment, nil
+	} else if ttmIndent.contains(tt) {
+		node.Position = tok.Position
+		return ctx, node, stepDepth, nil
 	} else {
-		return nb, nil, shared.NewSyntaxError(tok.Position, "unexpected character")
+		return ctx, node, nil, shared.NewSyntaxError(tok.Position, fmt.Sprintf("unexpected token '%s'\n", tok.Content))
 	}
 }
 
@@ -72,24 +73,25 @@ func (st StepComment) stype() StepType {
 }
 
 func (st StepComment) process(
-	toks *list.List[shared.Token],
-	nb NodeBuilder,
+	ctx ParseCtx,
+	node RawNode,
 ) (
-	NodeBuilder,
+	ParseCtx,
+	RawNode,
 	Step,
 	error,
 ) {
-	tok := toks.Curr()
+	tok := ctx.Tokens.Curr()
 	tt := tok.Type
 
-	if isIn(tt, nodeTerminatorMap) {
-		nb.CommentContent = nb.StringBuilder.String()
-		return nb, nil, nil
+	if ttmNodeTerminator.contains(tt) {
+		node.CommentContent = ctx.StringBuilder.String()
+		return ctx, node, nil, nil
+	} else {
+		ctx.StringBuilder.WriteString(tok.Content)
+		ctx.Tokens.Move(1)
+		return ctx, node, stepComment, nil
 	}
-
-	nb.StringBuilder.WriteString(tok.Content)
-	toks.Move(1)
-	return nb, stepComment, nil
 }
 
 // key
@@ -104,89 +106,80 @@ func (st StepKey) stype() StepType {
 }
 
 func (st StepKey) process(
-	toks *list.List[shared.Token],
-	nb NodeBuilder,
+	ctx ParseCtx,
+	node RawNode,
 ) (
-	NodeBuilder,
+	ParseCtx,
+	RawNode,
 	Step,
 	error,
 ) {
-	tok := toks.Curr()
-	// if key starts with symbol,
+	tok := ctx.Tokens.Curr()
+	// prefix symbol check
 	if tok.Type == shared.TOKEN_SYMBOL {
-		// check if ref symbol
-		if tok.Content != shared.SYMBOL_REFERENCE {
-			return nb, nil, shared.NewSyntaxError(tok.Position, fmt.Sprintf("unexpected symbol %s", tok.Content))
+		if tok.Content == shared.SYMBOL_OPTIONAL {
+			node.Key.PreSymbol = shared.SYMBOL_OPTIONAL
+			ctx.Tokens.Move(1)
+		} else if tok.Content == shared.SYMBOL_REFERENCE {
+			// is enum if key starts with ref sym
+			node.Key.PreSymbol = tok.Content
+			ctx.Tokens.Move(1)
+		} else {
+			return ctx, node, nil, shared.NewSyntaxError(tok.Position, fmt.Sprintf("unexpected symbol %s", tok.Content))
 		}
-		// if so, is enum member
-		nb.NodeType = shared.NODE_TYPE_ENUM_MEMBER
-		nb.Key.PreSymbol = tok.Content
-		toks.Move(1)
 	}
 
 	if tok.Type != shared.TOKEN_IDENT {
-		return nb, nil, shared.NewSyntaxError(tok.Position, "unexpected token")
+		return ctx, node, nil, shared.NewSyntaxError(tok.Position, "unexpected token")
 	}
-	nb.Key.Content = tok.Content
+	node.Key.Content = tok.Content
 
-	toks.Move(1)
-	return nb, stepAssigner, nil
+	ctx.Tokens.Move(1)
+	return ctx, node, stepAssignmentSym, nil
 }
 
-// assigner
-type StepAssigner struct {
+// assignment sym
+type StepAssignmentSym struct {
 	stepType StepType
 }
 
-var stepAssigner = StepAssigner{stepType: STEP_ASSIGNER}
+var stepAssignmentSym = StepAssignmentSym{stepType: STEP_ASSIGNMENT_SYM}
 
-func (st StepAssigner) stype() StepType {
+func (st StepAssignmentSym) stype() StepType {
 	return st.stepType
 }
 
-func (st StepAssigner) process(
-	toks *list.List[shared.Token],
-	nb NodeBuilder,
+func (st StepAssignmentSym) process(
+	ctx ParseCtx,
+	node RawNode,
 ) (
-	NodeBuilder,
+	ParseCtx,
+	RawNode,
 	Step,
 	error,
 ) {
-	tok := toks.Curr()
-	if isTrait(tok) {
-		nb.Assigner = shared.SYMBOL_DECLARE_TRAIT
-		nb.NodeType = shared.NODE_TYPE_TRAIT
-		toks.Move(1)
-		return nb, stepValue, nil
-	}
+	tok := ctx.Tokens.Curr()
 
-	res, tok := seekTokType(toks, shared.TOKEN_SYMBOL)
+	res, tok := seekTokType(
+		ctx.Tokens,
+		shared.TOKEN_SYMBOL,
+	)
 	switch res {
 	case RESULT_TERMINATOR:
-		return nb, nil, shared.NewSyntaxError(tok.Position, "unexpected node ending")
+		return ctx, node, nil, shared.NewSyntaxError(tok.Position, "unexpected node ending")
 	case RESULT_EOF:
-		return nb, nil, shared.NewSyntaxError(tok.Position, "unexpected EOF")
+		return ctx, node, nil, shared.NewSyntaxError(tok.Position, "unexpected EOF")
 	case RESULT_UNEXPECTED:
-		// if value type, is enum member,
-		// end step and return stepValue
-		if isIn(tok.Type, valueMap) {
-			nb.NodeType = shared.NODE_TYPE_ENUM_MEMBER
-			return nb, stepValue, nil
+		if ttmValue.contains(tok.Type) {
+			return ctx, node, stepValue, nil
 		} else {
-			return nb, nil, shared.NewSyntaxError(tok.Position, "unexpected character")
+			return ctx, node, nil, shared.NewSyntaxError(tok.Position, "unexpected character")
 		}
 	}
 
-	asn := parseSymbol(toks)
-
-	switch asn {
-	case shared.SYMBOL_DECLARE_COMPONENT:
-		nb.NodeType = shared.NODE_TYPE_COMPONENT
-		nb.Assigner = asn
-	}
-
-	toks.Move(1)
-	return nb, stepValue, nil
+	node.AssignmentSymbol = parseSymbol(ctx.Tokens)
+	ctx.Tokens.Move(1)
+	return ctx, node, stepValue, nil
 }
 
 // value
@@ -201,50 +194,46 @@ func (st StepValue) stype() StepType {
 }
 
 func (st StepValue) process(
-	toks *list.List[shared.Token],
-	nb NodeBuilder,
+	ctx ParseCtx,
+	node RawNode,
 ) (
-	NodeBuilder,
+	ParseCtx,
+	RawNode,
 	Step,
 	error,
 ) {
-	res, tok := seekValueEntry(toks)
+	toks := ctx.Tokens
+	res, tok := ttmValue.seekMember(toks)
 	switch res {
 	case RESULT_TERMINATOR:
-		return nb, nil, shared.NewSyntaxError(tok.Position, "unexpected node ending")
+		return ctx, node, nil, shared.NewSyntaxError(tok.Position, fmt.Sprintf("unexpected token '%s'\n", tok.Content))
 	case RESULT_UNEXPECTED:
-		return nb, nil, shared.NewSyntaxError(tok.Position, "unexpected character")
+		return ctx, node, nil, shared.NewSyntaxError(tok.Position, fmt.Sprintf("unexpected token '%s'\n", tok.Content))
 	case RESULT_EOF:
-		return nb, nil, shared.NewSyntaxError(tok.Position, "unexpected EOF")
+		return ctx, node, nil, shared.NewSyntaxError(tok.Position, fmt.Sprintf("unexpected token '%s'\n", tok.Content))
 	}
 
-	// get pre-symbol (if any)
+	// check for prefix sym
 	if tok.Type == shared.TOKEN_SYMBOL {
-		if tok.Content != shared.SYMBOL_REFERENCE {
-			return nb, nil, shared.NewSyntaxError(tok.Position, "unexpected symbol")
-		} else {
-			nb.Value.PreSymbol = shared.SYMBOL_REFERENCE
-			tok = toks.Move(1)
-		}
+		node.Value.PreSymbol = parseSymbol(toks)
+		toks.Move(1)
 	}
+
 	// get value content
-	if !isIn(tok.Type, valueMap) {
-		return nb, nil, shared.NewSyntaxError(tok.Position, "unexpected token")
+	if !ttmValue.contains(tok.Type) {
+		return ctx, node, nil, shared.NewSyntaxError(tok.Position, fmt.Sprintf("unexpected token '%s'\n", tok.Content))
 	} else {
-		nb.Value.Content = tok.Content
+		node.Value.Content = tok.Content
 		tok = toks.Move(1)
 	}
-	// get post-symbol (if any)
+
+	// check for postfix sym
 	if tok.Type == shared.TOKEN_SYMBOL {
-		if tok.Content != shared.SYMBOL_OPTIONAL {
-			return nb, nil, shared.NewSyntaxError(tok.Position, "unexpected symbol")
-		} else {
-			nb.Value.PostSymbol = shared.SYMBOL_OPTIONAL
-			toks.Move(1)
-		}
+		node.Value.PostSymbol = parseSymbol(toks)
+		toks.Move(1)
 	}
 
-	return nb, nil, nil
+	return ctx, node, nil, nil
 }
 
 // depth
@@ -259,32 +248,34 @@ func (st StepDepth) stype() StepType {
 }
 
 func (st StepDepth) process(
-	toks *list.List[shared.Token],
-	nb NodeBuilder,
+	ctx ParseCtx,
+	node RawNode,
 ) (
-	NodeBuilder,
+	ParseCtx,
+	RawNode,
 	Step,
 	error,
 ) {
+	toks := ctx.Tokens
 	tok := toks.Curr()
 
-	if nb.IndentType == INDENT_UNKOWN { // indentation has not been set
+	if ctx.IndentType == INDENT_UNKOWN { // indentation has not been set
 		if tok.Type == shared.TOKEN_TAB {
-			nb.IndentType = INDENT_TAB
+			ctx.IndentType = INDENT_TAB
 		} else if tok.Type == shared.TOKEN_SPACE {
-			nb.IndentType = INDENT_SPACE
+			ctx.IndentType = INDENT_SPACE
 		}
 	} else { // ensure consistent indentation
-		if nb.IndentType == INDENT_SPACE &&
+		if ctx.IndentType == INDENT_SPACE &&
 			tok.Type == shared.TOKEN_TAB {
-			return nb, nil, shared.NewSyntaxError(tok.Position, "inconsistent indentation, expected space")
-		} else if nb.IndentType == INDENT_TAB &&
+			return ctx, node, nil, shared.NewSyntaxError(tok.Position, "inconsistent indentation, expected space")
+		} else if ctx.IndentType == INDENT_TAB &&
 			tok.Type == shared.TOKEN_SPACE {
-			return nb, nil, shared.NewSyntaxError(tok.Position, "inconsistent indentation, expected tab")
+			return ctx, node, nil, shared.NewSyntaxError(tok.Position, "inconsistent indentation, expected tab")
 		}
 	}
 
-	nb.Depth++
+	node.Depth++
 	toks.Move(1)
-	return nb, stepEntry, nil
+	return ctx, node, stepEntry, nil
 }
