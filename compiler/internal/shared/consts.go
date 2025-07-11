@@ -12,6 +12,10 @@ const (
 	RUNE_QUESTION        rune = '?'
 	RUNE_POUND           rune = '#'
 	RUNE_SEMI_COLON      rune = ':'
+
+	RUNE_SYM_COMMENT   rune = RUNE_POUND
+	RUNE_SYM_REFERENCE rune = RUNE_PERIOD
+	RUNE_SYM_OPTIONAL  rune = RUNE_QUESTION
 )
 
 const (
