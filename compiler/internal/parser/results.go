@@ -3,10 +3,11 @@ package parser
 type Result string
 
 const (
-	RESULT_SUCCESS    Result = "RESULT_SUCCESS"
-	RESULT_TERMINATOR Result = "RESULT_TERMINATOR"
-	RESULT_UNEXPECTED Result = "RESULT_UNEXPECTED"
-	RESULT_EOF        Result = "RESULT_EOF"
+	RESULT_SUCCESS    Result = "SUCCESS"
+	RESULT_TERMINATOR Result = "TERMINATOR"
+	RESULT_COMMENT    Result = "COMMENT"
+	RESULT_UNEXPECTED Result = "UNEXPECTED"
+	RESULT_EOF        Result = "EOF"
 )
 
 // switch res {

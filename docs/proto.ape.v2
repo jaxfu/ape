@@ -1,1 +1,6 @@
-Scores :: [[.Score]]
+# Text
+Message :: text
+	min_length 4
+	max_length 16
+	alpha      true
+

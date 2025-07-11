@@ -1,6 +1,54 @@
 package parser
 
-import "github.com/jaxfu/ape/compiler/internal/shared"
+import (
+	"github.com/jaxfu/ape/compiler/internal/shared"
+	"github.com/jaxfu/golp/list"
+)
+
+// entry
+var ttmNodeEntry = newTokenTypesMap(
+	shared.TOKEN_SYMBOL,
+	shared.TOKEN_IDENT,
+)
+
+var ttmCommentEntry = newTokenTypesMap(
+	shared.TOKEN_COMMENT_SYM,
+)
+
+var ttmIndent = newTokenTypesMap(
+	shared.TOKEN_SPACE,
+	shared.TOKEN_TAB,
+)
+
+// key
+var ttmKeyEntry = newTokenTypesMap(
+	shared.TOKEN_IDENT,
+	shared.TOKEN_SYMBOL,
+)
+
+// value
+var ttmValue = newTokenTypesMap(
+	shared.TOKEN_IDENT,
+	shared.TOKEN_SYMBOL,
+	shared.TOKEN_STRING,
+	shared.TOKEN_NUMBER,
+)
+
+// nodes
+var ttmNodeTerminator = newTokenTypesMap(
+	shared.TOKEN_NEWLINE,
+	shared.TOKEN_EOF,
+)
+
+var ttmAfterCompleteNode = newTokenTypesMap(
+	shared.TOKEN_NEWLINE,
+	shared.TOKEN_COMMENT_SYM,
+)
+
+var ttmSpacer = newTokenTypesMap(
+	shared.TOKEN_SPACE,
+	shared.TOKEN_TAB,
+)
 
 type tokenTypesMap map[shared.TokenType]struct{}
 
@@ -12,53 +60,22 @@ func newTokenTypesMap(toks ...shared.TokenType) tokenTypesMap {
 	return m
 }
 
-// entry
-var nodeEntryMap = newTokenTypesMap(
-	shared.TOKEN_SYMBOL,
-	shared.TOKEN_IDENT,
-)
-
-var commentEntryMap = newTokenTypesMap(
-	shared.TOKEN_COMMENT_SYM,
-)
-
-var indentMap = newTokenTypesMap(
-	shared.TOKEN_SPACE,
-	shared.TOKEN_TAB,
-)
-
-// key
-var keyEntryMap = newTokenTypesMap(
-	shared.TOKEN_IDENT,
-	shared.TOKEN_SYMBOL,
-)
-
-// value
-var valueMap = newTokenTypesMap(
-	shared.TOKEN_IDENT,
-	shared.TOKEN_SYMBOL,
-	shared.TOKEN_STRING,
-	shared.TOKEN_NUMBER,
-)
-
-// nodes
-var nodeTerminatorMap = newTokenTypesMap(
-	shared.TOKEN_NEWLINE,
-	shared.TOKEN_EOF,
-)
-
-var postCompleteNodeMap = newTokenTypesMap(
-	shared.TOKEN_NEWLINE,
-	shared.TOKEN_COMMENT_SYM,
-)
-
-var spacerMap = newTokenTypesMap(
-	shared.TOKEN_SPACE,
-	shared.TOKEN_TAB,
-)
-
-// returns if ttype is key in map
-func isIn(toktype shared.TokenType, tokmap tokenTypesMap) bool {
-	_, ok := tokmap[toktype]
+func (tm tokenTypesMap) contains(toktype shared.TokenType) bool {
+	_, ok := tm[toktype]
 	return ok
+}
+
+func (tm tokenTypesMap) seekMember(
+	toks *list.List[shared.Token],
+) (Result, shared.Token) {
+	res, tok := seekNextElem(toks)
+	if res == RESULT_SUCCESS {
+		if tm.contains(tok.Type) {
+			return RESULT_SUCCESS, tok
+		} else {
+			return RESULT_UNEXPECTED, tok
+		}
+	}
+
+	return res, tok
 }
