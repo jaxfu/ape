@@ -216,7 +216,7 @@ func (st StepValue) process(
 	// check for prefix sym
 	if tok.Type == shared.TOKEN_SYMBOL {
 		node.Value.PreSymbol = parseSymbol(toks)
-		toks.Move(1)
+		tok = toks.Curr()
 	}
 
 	// get value content
@@ -230,7 +230,6 @@ func (st StepValue) process(
 	// check for postfix sym
 	if tok.Type == shared.TOKEN_SYMBOL {
 		node.Value.PostSymbol = parseSymbol(toks)
-		toks.Move(1)
 	}
 
 	return ctx, node, nil, nil
