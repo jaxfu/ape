@@ -38,6 +38,7 @@ var ttmValue = newTokenTypesMap(
 var ttmNodeTerminator = newTokenTypesMap(
 	shared.TOKEN_NEWLINE,
 	shared.TOKEN_EOF,
+	shared.TOKEN_COMMENT_SYM,
 )
 
 var ttmAfterCompleteNode = newTokenTypesMap(
