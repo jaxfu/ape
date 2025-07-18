@@ -9,6 +9,8 @@ import (
 var ttmNodeEntry = newTokenTypesMap(
 	shared.TOKEN_SYMBOL,
 	shared.TOKEN_IDENT,
+	shared.TOKEN_TAB,
+	shared.TOKEN_SPACE,
 )
 
 var ttmCommentEntry = newTokenTypesMap(
@@ -63,6 +65,11 @@ func newTokenTypesMap(toks ...shared.TokenType) tokenTypesMap {
 
 func (tm tokenTypesMap) contains(toktype shared.TokenType) bool {
 	_, ok := tm[toktype]
+	return ok
+}
+
+func isIn(ttype shared.TokenType, tm tokenTypesMap) bool {
+	_, ok := tm[ttype]
 	return ok
 }
 

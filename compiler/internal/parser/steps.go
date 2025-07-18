@@ -8,27 +8,18 @@ import (
 
 // for each step:
 //  1. find next elem
-//  2. if elem is in valid map, process and call next func
-//  3. else error
-func testEntry(
-	ctx ParseCtx,
-	node RawNode,
-) (
-	ParseCtx,
-	RawNode,
-	Step,
-	error,
-) {
-	res, _ := seekNextElem(ctx.Tokens)
-	switch res {
-	case RESULT_SUCCESS:
-	case RESULT_COMMENT:
-	case RESULT_TERMINATOR:
-	case RESULT_EOF:
-	default:
+//  2. if success
+//     - see if in map
+//  3. else terminator
+//     - if comment
+//  4. else EOF
+func findValidEntry(toks *TokenList) bool {
+	res, tok := seekNextElem(toks)
+	if res == RESULT_SUCCESS &&
+		isIn(tok.Type, ttmNodeEntry) {
 	}
 
-	return ParseCtx{}, RawNode{}, nil, nil
+	return false
 }
 
 const (
