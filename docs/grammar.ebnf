@@ -1,17 +1,37 @@
-Node             ::= ComponentDef | ConstraintDef | EnumDef | Comment
-ComponentDef     ::= [{Indent}] Ident "->" Type
-Type             ::= ComponentRef | "Collection[?]" | "Integer" | "Float" | "String" | "Bool" | "Blob" 
-Ident            ::= {Letter | IdentInternalSym}
-IdentInternalSym ::= '_' | '-'
-ConstraintDef    ::= "(Ident):" ConstraintVal
-ConstraintVal    ::= String | Number | Integer | Boolean
-EnumDef          ::= Ident [EnumVal]
-EnumVal          ::= ComponentRef | String | Number | Integer | Boolean
-ComponentRef     ::= ".(Ident)"
-Indent           ::= {Tab} | {Space}
-Number           ::= ['.'] Digit { Digit }
-Integer          ::= Digit { Digit }
-String           ::= { any character }
+Declaration      ::= {Indent} [SymOptional] (Ident | SymAnon) Space SymDeclaration Space DeclarationType Terminator
+DeclarationType  ::= BaseType | Array | Ident | Reference
+
+Trait            ::= Ident Space+ TraitValue Terminator
+TraitValue       ::= Integer | Float | String | Boolean
+
+EnumMember       ::= EnumMemberKey Space+ [EnumMemberAlias] (Terminator | SymSeparator EnumMember)
+EnumMemberAlias  ::= Ident | Reference
+
+Ident            ::= Letter {(Letter | Digit | Underscore)}
+BaseType         ::= 'int' | 'uint' | 'float' | 'text' | 'blob' | 'bool' | 'object' | 'enum'
+Array            ::= '[' (Ident | Reference | SymAnon) ']'
+Reference        ::= SymReference Ident
+
+Indent           ::= Tab {Tab} | Space {Space}
+Space            ::= ' '
+Space+           ::= Space {Space}
+Tab              ::= '\t'
+Terminator       ::= '\n'
+
+String           ::= {Chars Space}
+Float            ::= Digit {Digit} [Period] {Digit}
+Integer          ::= Digit {Digit}
 Boolean          ::= 'true' | 'false'
-Letter           ::= A..Z | a..z | extended ascii
 Digit            ::= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+Letter           ::= 'A'..'Z' | 'a'..'z'
+Chars            ::= utf-8
+
+SymComment       ::= '#'
+SymDeclaration   ::= '::'
+SymTrait         ::= ':'
+SymReference     ::= '.'
+SymOptional      ::= '?'
+SymAnon          ::= '_'
+SymSeparator     ::= ','
+
+Underscore       ::= '_'

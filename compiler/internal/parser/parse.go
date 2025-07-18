@@ -27,12 +27,12 @@ func Parse(tokens []shared.Token, prealloc uint) (
 		rawnode := newRawNode()
 
 		// exit if EOF
-		if toks.Curr().Type == shared.TOKEN_EOF {
-			break
-		} else if toks.Curr().Type == shared.TOKEN_NEWLINE {
-			toks.Move(1)
-			continue
-		}
+		// if toks.Curr().Type == shared.TOKEN_EOF {
+		// 	break
+		// } else if toks.Curr().Type == shared.TOKEN_NEWLINE {
+		// 	toks.Move(1)
+		// 	continue
+		// }
 
 		// parse node
 		for {

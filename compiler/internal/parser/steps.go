@@ -17,9 +17,10 @@ func findValidEntry(toks *TokenList) bool {
 	res, tok := seekNextElem(toks)
 	if res == RESULT_SUCCESS &&
 		isIn(tok.Type, ttmNodeEntry) {
+		return true
+	} else {
+		return false
 	}
-
-	return false
 }
 
 const (
@@ -62,7 +63,7 @@ func (st StepEntry) process(
 ) {
 	tok := ctx.Tokens.Curr()
 	tt := tok.Type
-	if ttmNodeEntry.contains(tt) {
+	if isIn(tt, ttmNodeEntry) {
 		node.Position = tok.Position
 		return ctx, node, stepKey, nil
 	} else if ttmCommentEntry.contains(tt) {

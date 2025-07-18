@@ -1,23 +1,19 @@
 ### Todo
 
 - v2 rewrite
-  - lexer
   - parser
-  - assembler
-- step-wise parser
-  - handle enum keys that may be references
-- every element stored separately
-- compile project dir
+    - make more readable
+    - bugfix "?Comment :: .Message"
+    - handle enum keys that may be references
+  - assembler or assembler
 - handle refs
 - client
   - render components
   - form for creating
-- sync core/store with db on load
-- api versioning
+- builtin api versioning
 - OpenApi translator
-  - Will need YAML parser
+- Typescript generator
 - custom output type for compiler
-- typescript schema generator
 - cli
 - web client
   - objects
@@ -26,14 +22,6 @@
     - update
   - forms for building and editing
   - group by category and components
-- url registry similar to Category
-- Object composition?
-- error handling for Reader (unkown dirs, file formats, etc)
-- tests
-  - package
-  - api
-- compression file format
-- each component should have logging level outputs
 - generators
   - protobuf
   - openapi
@@ -41,7 +29,6 @@
     - typescript
     - golang
 - lsp
-- validate component names
 - schema validators (easy extensions and built-in)
 
 ### Decisions
@@ -51,6 +38,7 @@
   - logger choice
 - allow generators to be importable from generators pkg manager
   - create public repo a la NPM
+- object composition?
 
 ### Hierarchy (bottom-up)
 

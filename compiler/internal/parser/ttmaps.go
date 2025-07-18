@@ -68,6 +68,7 @@ func (tm tokenTypesMap) contains(toktype shared.TokenType) bool {
 	return ok
 }
 
+// returns true if token type is in map
 func isIn(ttype shared.TokenType, tm tokenTypesMap) bool {
 	_, ok := tm[ttype]
 	return ok
