@@ -39,15 +39,15 @@ func TestCompiler(t *testing.T) {
 	t.Run("Lexer", func(t *testing.T) {
 		testLexer(t)
 	})
-	// marsh, _ = json.MarshalIndent(tokens, "", " ")
-	// fmt.Fprint(file, string(marsh))
-	// t.Log(string(marsh))
-
-	t.Run("Parser", func(t *testing.T) {
-		testParser(t)
-	})
-	marsh, _ = json.MarshalIndent(rawNodes, "", " ")
+	marsh, _ = json.MarshalIndent(tokens, "", " ")
 	fmt.Fprint(file, string(marsh))
+	t.Log(string(marsh))
+
+	// t.Run("Parser", func(t *testing.T) {
+	// 	testParser(t)
+	// })
+	// marsh, _ = json.MarshalIndent(rawNodes, "", " ")
+	// fmt.Fprint(file, string(marsh))
 	// t.Log(string(marsh))
 
 	// t.Run("Assembler", func(t *testing.T) {

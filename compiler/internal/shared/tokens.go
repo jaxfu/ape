@@ -18,7 +18,6 @@ const (
 // case shared.TOKEN_NUMBER:
 // case shared.TOKEN_SYMBOL:
 // case shared.TOKEN_STRING:
-// case shared.TOKEN_COMMENT_SYM:
 // case shared.TOKEN_NEWLINE:
 // case shared.TOKEN_SPACE:
 // case shared.TOKEN_TAB:

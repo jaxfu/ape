@@ -1,3 +1,7 @@
+### 19.7.25
+
+- rewrote first pass of lexer
+
 ### 18.7.25
 
 - updated grammar

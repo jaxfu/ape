@@ -15,6 +15,7 @@ func (l *Lexer) Lex(rdr RuneReader, prealloc uint) ([]shared.Token, error) {
 	l.setup(prealloc)
 
 	for ; ; l.Position.Col++ {
+		// get rune from buf
 		rune, _, err := rdr.ReadRune()
 		if err == io.EOF {
 			break
@@ -37,22 +38,7 @@ func (l *Lexer) Lex(rdr RuneReader, prealloc uint) ([]shared.Token, error) {
 			} else if symbolRunes.contains(rune) {
 				l.addSymbol(rune)
 			} else { // check against individual runes
-				switch rune {
-				case shared.RUNE_SPACE:
-					l.addSpace()
-				case shared.RUNE_TAB:
-					l.addTab()
-				case shared.RUNE_SYM_COMMENT:
-					l.addComment()
-				case shared.RUNE_CARRIAGE_RETURN:
-					l.handleCR()
-				case shared.RUNE_LINEFEED:
-					l.addNewline()
-				default: // unmatched, start string literal
-					// TODO: unmatched rune sanitization
-					l.Status = shared.TOKEN_STRING
-					l.StringBuilder.WriteRune(rune)
-				}
+				l.handleIndividualRune(rune)
 			}
 
 		case shared.TOKEN_IDENT:
@@ -61,61 +47,16 @@ func (l *Lexer) Lex(rdr RuneReader, prealloc uint) ([]shared.Token, error) {
 			} else if symbolRunes.contains(rune) {
 				l.addIdent()
 				l.addSymbol(rune)
-				l.Status = shared.TOKEN_UNDEFINED
+
 			} else {
-				switch rune {
-				case shared.RUNE_SPACE:
-					l.addIdent()
-					l.addSpace()
-					l.Status = shared.TOKEN_UNDEFINED
-				case shared.RUNE_TAB:
-					l.addIdent()
-					l.addTab()
-					l.Status = shared.TOKEN_UNDEFINED
-				case shared.RUNE_SYM_COMMENT:
-					l.addIdent()
-					l.addComment()
-					l.Status = shared.TOKEN_UNDEFINED
-				case shared.RUNE_CARRIAGE_RETURN:
-					l.handleCR()
-					l.Status = shared.TOKEN_UNDEFINED
-				case shared.RUNE_LINEFEED:
-					l.addIdent()
-					l.addNewline()
-					l.Status = shared.TOKEN_UNDEFINED
-				default: // unmatched, change status to string
-					l.Status = shared.TOKEN_STRING
-					l.StringBuilder.WriteRune(rune)
-				}
+				l.handleIndividualRune(rune)
 			}
 
 		case shared.TOKEN_NUMBER:
 			if numberIntraRunes.contains(rune) {
 				l.StringBuilder.WriteRune(rune)
 			} else {
-				switch rune {
-				case shared.RUNE_SPACE:
-					l.addNumber()
-					l.addSpace()
-					l.Status = shared.TOKEN_UNDEFINED
-				case shared.RUNE_TAB:
-					l.addNumber()
-					l.addTab()
-					l.Status = shared.TOKEN_UNDEFINED
-				case shared.RUNE_POUND:
-					l.addNumber()
-					l.addComment()
-					l.Status = shared.TOKEN_UNDEFINED
-				case shared.RUNE_CARRIAGE_RETURN:
-					l.handleCR()
-				case shared.RUNE_LINEFEED:
-					l.addNumber()
-					l.addNewline()
-					l.Status = shared.TOKEN_UNDEFINED
-				default: // unmatched, change status to string
-					l.Status = shared.TOKEN_STRING
-					l.StringBuilder.WriteRune(rune)
-				}
+				l.handleIndividualRune(rune)
 			}
 
 		case shared.TOKEN_STRING:
@@ -123,21 +64,14 @@ func (l *Lexer) Lex(rdr RuneReader, prealloc uint) ([]shared.Token, error) {
 			case shared.RUNE_SPACE:
 				l.addString()
 				l.addSpace()
-				l.Status = shared.TOKEN_UNDEFINED
 			case shared.RUNE_TAB:
 				l.addString()
 				l.addTab()
-				l.Status = shared.TOKEN_UNDEFINED
-			case shared.RUNE_POUND:
-				l.addString()
-				l.addComment()
-				l.Status = shared.TOKEN_UNDEFINED
 			case shared.RUNE_CARRIAGE_RETURN:
 				l.handleCR()
 			case shared.RUNE_LINEFEED:
 				l.addString()
 				l.addNewline()
-				l.Status = shared.TOKEN_UNDEFINED
 			default: // unmatched, write
 				l.StringBuilder.WriteRune(rune)
 			}
@@ -162,49 +96,57 @@ func (l *Lexer) Lex(rdr RuneReader, prealloc uint) ([]shared.Token, error) {
 
 func (l *Lexer) addIdent() {
 	cnt := l.StringBuilder.String()
-	tok := shared.NewToken(
-		shared.TOKEN_IDENT,
-		cnt,
-		shared.Position{
-			Line: l.Position.Line,
-			Col:  l.Position.Col - uint(len(cnt)),
-		},
-	)
-	l.appendToken(tok)
 	l.StringBuilder.Reset()
+
+	l.appendToken(
+		shared.NewToken(
+			shared.TOKEN_IDENT,
+			cnt,
+			shared.Position{
+				Line: l.Position.Line,
+				Col:  l.Position.Col - uint(len(cnt)),
+			},
+		),
+	)
 	l.Status = shared.TOKEN_UNDEFINED
 }
 
 func (l *Lexer) addNumber() {
 	cnt := l.StringBuilder.String()
-	tok := shared.NewToken(
-		shared.TOKEN_NUMBER,
-		cnt,
-		shared.Position{
-			Line: l.Position.Line,
-			Col:  l.Position.Col - uint(len(cnt)),
-		},
-	)
-	l.appendToken(tok)
 	l.StringBuilder.Reset()
+
+	l.appendToken(
+		shared.NewToken(
+			shared.TOKEN_NUMBER,
+			cnt,
+			shared.Position{
+				Line: l.Position.Line,
+				Col:  l.Position.Col - uint(len(cnt)),
+			},
+		),
+	)
+	l.Status = shared.TOKEN_UNDEFINED
 }
 
 func (l *Lexer) addString() {
 	cnt := l.StringBuilder.String()
-	tok := shared.NewToken(
-		shared.TOKEN_STRING,
-		cnt,
-		shared.Position{
-			Line: l.Position.Line,
-			Col:  l.Position.Col - uint(len(cnt)),
-		},
-	)
-	l.appendToken(tok)
 	l.StringBuilder.Reset()
+
+	l.appendToken(
+		shared.NewToken(
+			shared.TOKEN_STRING,
+			cnt,
+			shared.Position{
+				Line: l.Position.Line,
+				Col:  l.Position.Col - uint(len(cnt)),
+			},
+		),
+	)
+	l.Status = shared.TOKEN_UNDEFINED
 }
 
-func (l *Lexer) addSymbol(rune rune) {
-	l.createAndAppendToken(shared.TOKEN_SYMBOL, string(rune))
+func (l *Lexer) addSymbol(r rune) {
+	l.createAndAppendToken(shared.TOKEN_SYMBOL, string(r))
 }
 
 func (l *Lexer) addSpace() {
@@ -226,6 +168,39 @@ func (l *Lexer) handleCR() {
 	}
 }
 
+func (l *Lexer) addFromStatus() {
+	switch l.Status {
+	case shared.TOKEN_IDENT:
+		l.addIdent()
+	case shared.TOKEN_STRING:
+		l.addString()
+	case shared.TOKEN_NUMBER:
+		l.addNumber()
+	}
+}
+
+func (l *Lexer) handleIndividualRune(r rune) {
+	switch r {
+	case shared.RUNE_SPACE:
+		l.addFromStatus()
+		l.addSpace()
+		l.Status = shared.TOKEN_UNDEFINED
+	case shared.RUNE_TAB:
+		l.addFromStatus()
+		l.addTab()
+		l.Status = shared.TOKEN_UNDEFINED
+	case shared.RUNE_CARRIAGE_RETURN:
+		l.handleCR()
+	case shared.RUNE_LINEFEED:
+		l.addFromStatus()
+		l.addNewline()
+		l.Status = shared.TOKEN_UNDEFINED
+	default: // unmatched, change status to string
+		l.StringBuilder.WriteRune(r)
+		l.Status = shared.TOKEN_STRING
+	}
+}
+
 func (l *Lexer) addNewline() {
 	if !l.HasFoundLineEnd {
 		l.HasFoundLineEnd = true
@@ -233,8 +208,4 @@ func (l *Lexer) addNewline() {
 	}
 	l.createAndAppendToken(shared.TOKEN_NEWLINE, shared.SYMBOL_NEWLINE)
 	l.nextline()
-}
-
-func (l *Lexer) addComment() {
-	l.createAndAppendToken(shared.TOKEN_COMMENT_SYM, shared.SYMBOL_COMMENT)
 }

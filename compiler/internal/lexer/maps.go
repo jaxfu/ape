@@ -6,9 +6,10 @@ var symbolRunes = RuneMap{
 	shared.RUNE_SYM_REFERENCE:      {},
 	shared.RUNE_SYM_TYPEDEF:        {},
 	shared.RUNE_SYM_OPTIONAL:       {},
-	shared.RUNE_SYM_START_ARRAY:    struct{}{},
-	shared.RUNE_SYM_END_ARRAY:      struct{}{},
-	shared.RUNE_SYM_ANON_COMPONENT: struct{}{},
+	shared.RUNE_SYM_START_ARRAY:    {},
+	shared.RUNE_SYM_END_ARRAY:      {},
+	shared.RUNE_SYM_ANON_COMPONENT: {},
+	shared.RUNE_SYM_COMMENT:        {},
 }
 
 var numberEntryRunes = RuneMap{
@@ -19,7 +20,7 @@ var numberEntryRunes = RuneMap{
 
 var numberIntraRunes = RuneMap{
 	// symbols
-	'.': {},
+	shared.RUNE_PERIOD: {},
 	// digits
 	'0': {}, '1': {}, '2': {}, '3': {}, '4': {},
 	'5': {}, '6': {}, '7': {}, '8': {}, '9': {},

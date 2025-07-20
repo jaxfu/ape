@@ -1,6 +1,10 @@
 ### Todo
 
 - v2 rewrite
+  - lexer
+    - two passes
+      - basic (ident, string, number)
+      - refined (join symbols, float vs int, etc)
   - parser
     - make more readable
     - bugfix "?Comment :: .Message"
